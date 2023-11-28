@@ -1,13 +1,15 @@
 import re
 from datetime import datetime
 
+from DataNotFoundException import DataNotFoundException
+
 
 class Arrest:
     def __init__(self, num, reader):
         self.rectified = False
         self.date = None
         self.reader = reader
-        self.num = num
+        self.ref = num
 
     def find_date(self):
         """find the date of arrest
@@ -20,7 +22,10 @@ class Arrest:
         index_page = 0
         if self.rectified:
             index_page = 1
-        date_line = re.findall(r'(n\s*o\s.*\sdu\s\d{1,2}.*\s\d{4})', self.reader.pages[index_page].extract_text())[0]
+        try:
+            date_line = re.findall(r'(n\s*o\s.*\sdu\s\d{1,2}.*\s\d{4})', self.reader.pages[index_page].extract_text())[0]
+        except IndexError:
+            raise DataNotFoundException(data="date", ref=self.ref)
         date_line_clean = " ".join(date_line.split()).replace('1er', '1')
         self.date = datetime.strptime(re.findall(r'(\d{1,2} \w* \d{4}$)', date_line_clean)[0], '%d %B %Y')
         return self
@@ -28,8 +33,8 @@ class Arrest:
     def format_number(self):
         """format the number with '.'"""
         # TODO Tester avec xx, xxx, xxxxxx, xxxxxxx, doit donner xx, xxx, xxx.xxx, x.xxx.xxx
-        chunks, chunk_size = len(self.num), 3
-        reverted_number = self.num[::-1]
+        chunks, chunk_size = len(self.ref), 3
+        reverted_number = self.ref[::-1]
         split = [reverted_number[i:i + chunk_size] for i in range(0, chunks, chunk_size)]
         return '.'.join(split)[::-1]
 

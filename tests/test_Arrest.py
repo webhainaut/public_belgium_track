@@ -4,11 +4,18 @@ from unittest import TestCase
 from pypdf import PdfReader
 
 from Arrest import Arrest
+from DataNotFoundException import DataNotFoundException
 
 locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
 
 
 class TestArrest(TestCase):
+    @staticmethod
+    def read_pdf(arrest_ref):
+        reader = PdfReader("./resources/arrests/{ref}.pdf".format(ref=arrest_ref))
+        arrest = Arrest(arrest_ref, reader)
+        return arrest
+
     def test_find_date_simple_format(self):
         arrest_ref = 255267
         arrest = self.read_pdf(arrest_ref)
@@ -48,10 +55,19 @@ class TestArrest(TestCase):
     def test_find_date_before_is_rectified(self):
         arrest_ref = 256672
         arrest = self.read_pdf(arrest_ref)
-        self.assertRaises(IndexError, arrest.find_date)
+        with self.assertRaises(DataNotFoundException) as context:
+            arrest.find_date()
+        print(context.exception)
+        self.assertEqual('date non trouvée dans le pdf 256672', str(context.exception))
 
-    @staticmethod
-    def read_pdf(arrest_ref):
-        reader = PdfReader("./resources/arrests/{ref}.pdf".format(ref=arrest_ref))
-        arrest = Arrest(arrest_ref, reader)
-        return arrest
+    def test_is_rectified_not_found(self):
+        arrest_ref = 247478
+        arrest = self.read_pdf(arrest_ref)
+        arrest.is_rectified()
+        self.assertFalse(arrest.rectified)
+
+    def test_is_rectified_found(self):
+        arrest_ref = 256672
+        arrest = self.read_pdf(arrest_ref)
+        arrest.is_rectified()
+        self.assertTrue(arrest.rectified)
