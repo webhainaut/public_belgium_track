@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from pypdf import PdfReader
 
 from Arrest import Arrest
+from Exceptions.MissingSectionException import MissingSectionException
 
 
 class WebScraper:
@@ -20,16 +21,22 @@ class WebScraper:
         self.requests = requests
 
     def get_public_procurements_number_list(self, month):
-        """get public procurements number list for a month"""
-        response_last_month = self.requests.get(WebScraper.URL_LAST_MONTH.format(month=month))
+        """get public procurements (ref, contact type) list for a month"""
+        month_format_url = WebScraper.URL_LAST_MONTH.format(month=month)
+        response_last_month = self.requests.get(month_format_url)
+        if response_last_month.status_code != 200:
+            raise Exception(
+                "Code error {status} on page {url}".format(status=response_last_month.status_code,
+                                                           url=month_format_url))
         html_last_month = response_last_month.content
         soup_last_month = BeautifulSoup(html_last_month, 'html.parser')
-        # "Marchés et travaux publics"
-        # TODO remove print
-        print(soup_last_month)
-        public_procurements_text = soup_last_month.find_all(string=re.compile("Marchés et travaux publics"))
-        print(public_procurements_text)
-        public_procurements = [re.findall('[0-9]+', public_text)[0] for public_text in public_procurements_text]
+        arrest_section = soup_last_month.find(string=re.compile("Marchés et travaux publics"))
+        if not arrest_section:
+            raise MissingSectionException(title="Marchés et travaux publics", url=month_format_url)
+        public_procurements_text = arrest_section.findNext('ul').findAll('li')
+        public_procurements = [(re.findall(r'[0-9]+', public_text.text)[0],
+                                re.findall(r'\(.*\)', public_text.text)[0].replace("(", "").replace(")", ""))
+                               for public_text in public_procurements_text]
         return public_procurements
 
     def find_public_procurement(self, num):
@@ -46,8 +53,9 @@ class WebScraper:
     def extract_arrets(self, year=SEARCH_YEAR):
         arrests = []
         for month in WebScraper.MONTHS:
-            for num in self.get_public_procurements_number_list(month):
-                arrest = self.find_one(num)
+            for (ref, contract) in self.get_public_procurements_number_list(month):
+                arrest = self.find_one(ref)
+                arrest.contract_type = contract
                 if arrest.date.year == year:
                     arrests.append(arrest)
         return arrests

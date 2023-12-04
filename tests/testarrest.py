@@ -4,7 +4,7 @@ from unittest import TestCase
 from pypdf import PdfReader
 
 from Arrest import Arrest
-from DataNotFoundException import DataNotFoundException
+from Exceptions.DataNotFoundException import DataNotFoundException
 
 locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
 
@@ -57,7 +57,6 @@ class TestArrest(TestCase):
         arrest = self.read_pdf(arrest_ref)
         with self.assertRaises(DataNotFoundException) as context:
             arrest.find_date()
-        print(context.exception)
         self.assertEqual('date non trouvée dans le pdf 256672', str(context.exception))
 
     def test_is_rectified_not_found(self):

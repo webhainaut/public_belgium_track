@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 
-from DataNotFoundException import DataNotFoundException
+from Exceptions.DataNotFoundException import DataNotFoundException
 
 
 class Arrest:
@@ -10,6 +10,7 @@ class Arrest:
         self.date = None
         self.reader = reader
         self.ref = num
+        self.contract_type = None
 
     def find_date(self):
         """find the date of arrest
@@ -23,7 +24,8 @@ class Arrest:
         if self.rectified:
             index_page = 1
         try:
-            date_line = re.findall(r'(n\s*o\s.*\sdu\s\d{1,2}.*\s\d{4})', self.reader.pages[index_page].extract_text())[0]
+            date_line = re.findall(r'(n\s*o\s.*\sdu\s\d{1,2}.*\s\d{4})', self.reader.pages[index_page].extract_text())[
+                0]
         except IndexError:
             raise DataNotFoundException(data="date", ref=self.ref)
         date_line_clean = " ".join(date_line.split()).replace('1er', '1')
@@ -46,5 +48,6 @@ class Arrest:
         return self
 
     def as_dict(self):
-        return {'Réf.': self.format_number(), 'Date publication': self.date.strftime("%d/%m/%Y"),
+        return {'Réf.': self.format_number(), 'Type de contract': self.contract_type,
+                'Date publication': self.date.strftime("%d/%m/%Y"),
                 'Rectifié': self.rectified.real}
