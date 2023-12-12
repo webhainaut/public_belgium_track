@@ -10,17 +10,17 @@ class Arrest:
     CONTRACT_TYPE = 'Type de contract'
     REF = 'Réf.'
 
-    def __init__(self, num, reader):
+    def __init__(self, ref, reader):
         self.rectified = False
         self.date = None
         self.reader = reader
-        self.ref = num
+        self.ref = ref
         self.contract_type = None
 
     @classmethod
     def from_dic(cls, dic):
-        arrest = cls(num=str(dic[cls.REF]).replace(".", ""), reader=None)
-        arrest.date = datetime.strptime(dic[cls.PUBLISH_DATE], "%d/%m/%Y")
+        arrest = cls(ref=dic[cls.REF], reader=None)
+        arrest.date = dic[cls.PUBLISH_DATE]
         arrest.contract_type = dic[cls.CONTRACT_TYPE]
         arrest.rectified = dic[cls.RECTIFIED]
         return arrest
@@ -45,14 +45,6 @@ class Arrest:
         self.date = datetime.strptime(re.findall(r'(\d{1,2} \w* \d{4}$)', date_line_clean)[0], '%d %B %Y')
         return self
 
-    def format_ref(self):
-        """format the number with '.'"""
-        # TODO Tester avec xx, xxx, xxxxxx, xxxxxxx, doit donner xx, xxx, xxx.xxx, x.xxx.xxx
-        chunks, chunk_size = len(self.ref), 3
-        reverted_number = self.ref[::-1]
-        split = [reverted_number[i:i + chunk_size] for i in range(0, chunks, chunk_size)]
-        return '.'.join(split)[::-1]
-
     def is_rectified(self):
         self.rectified = re.search(r'(arrêt n.* du .* est rectif.* par .*arrêt n.* du .*)',
                                    self.reader.pages[0].extract_text()) is not None
@@ -65,6 +57,6 @@ class Arrest:
             return self.date.strftime("%d/%m/%Y")
 
     def as_dict(self):
-        return {self.REF: self.format_ref(), self.CONTRACT_TYPE: self.contract_type,
-                self.PUBLISH_DATE: self.format_date(),
+        return {self.REF: self.ref, self.CONTRACT_TYPE: self.contract_type,
+                self.PUBLISH_DATE: self.date,
                 self.RECTIFIED: self.rectified.real}

@@ -14,8 +14,6 @@ class WebScraper:
     URL_LAST_MONTH = 'http://www.conseildetat.be/?lang=fr&page=lastmonth_{month}'
     URL_PUBLIC_PROCUREMENT = 'http://www.conseildetat.be/arr.php?nr={num}&l=fr'
     SEARCH_YEAR = datetime.now().year
-    # TODO test with one month
-    MONTHS = ["04"]  # ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
 
     def __init__(self):
         self.requests = requests
@@ -45,17 +43,31 @@ class WebScraper:
         pdf = response_public_procurement.content
         return PdfReader(io.BytesIO(pdf))
 
-    def find_one(self, num):
-        print("Traitement de {num}".format(num=num))
-        pdf_reader = self.find_public_procurement(num)
-        return Arrest(num, pdf_reader).is_rectified().find_date()
+    def find_one(self, ref):
+        pdf_reader = self.find_public_procurement(ref)
+        arrest = Arrest(ref, pdf_reader).is_rectified().find_date()
+        print("Traitement de {num} en date du {date}".format(num=ref, date=arrest.format_date()))
+        return arrest
 
-    def extract_arrets(self, year=SEARCH_YEAR):
+    def extract_arrets(self, year=SEARCH_YEAR, last_arrest=None):
         arrests = []
-        for month in WebScraper.MONTHS:
+        last_month = 1
+        last_ref = 1
+        if last_arrest is not None:
+            last_month = last_arrest.date.month
+            last_ref = last_arrest.ref
+        months = self.get_months(last_month)
+        for month in months:
             for (ref, contract) in self.get_public_procurements_number_list(month):
-                arrest = self.find_one(ref)
-                arrest.contract_type = contract
-                if arrest.date.year == year:
-                    arrests.append(arrest)
+                if last_ref < int(ref):
+                    arrest = self.find_one(int(ref))
+                    arrest.contract_type = contract
+                    if arrest.date.year == year:
+                        arrests.append(arrest)
         return arrests
+
+    @staticmethod
+    def get_months(last_month=1):
+        all_months = [str(i).zfill(2) for i in range(1, 13)]
+        partial_months = all_months[last_month - 1:]
+        return partial_months

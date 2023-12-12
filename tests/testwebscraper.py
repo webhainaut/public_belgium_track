@@ -149,3 +149,15 @@ class TestWebScraper(TestCase):
         ref_list = self.web_scraper.get_public_procurements_number_list("02")
         self.requestsMock.get.assert_called_with('http://www.conseildetat.be/?lang=fr&page=lastmonth_02')
         self.assertEqual(REF_LIST, ref_list)
+
+    def test_get_months_all(self):
+        self.assertEqual(["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
+                         self.web_scraper.get_months())
+
+    def test_get_months_after06(self):
+        self.assertEqual(["06", "07", "08", "09", "10", "11", "12"],
+                         self.web_scraper.get_months(6))
+
+    def test_get_months_after11(self):
+        self.assertEqual(["11", "12"],
+                         self.web_scraper.get_months(11))
