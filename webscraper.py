@@ -32,10 +32,36 @@ class WebScraper:
         if not arrest_section:
             raise MissingSectionException(title="Marchés et travaux publics", url=month_format_url)
         public_procurements_text = arrest_section.findNext('ul').findAll('li')
-        public_procurements = [(re.findall(r'[0-9]+', public_text.text)[0],
-                                re.findall(r'\(.*\)', public_text.text)[0].replace("(", "").replace(")", ""))
-                               for public_text in public_procurements_text]
-        return public_procurements
+
+        results = self.extract_public_procurement_infos(public_procurements_text)
+        return results
+
+    def extract_public_procurement_infos(self, public_procurements_text):
+        results = []
+        for public_text in public_procurements_text:
+            text_result = {Arrest.REF: self.extract_ref(public_text.text),
+                           Arrest.CONTRACT_TYPE: self.extract_contract_type(public_text.text),
+                           Arrest.PUBLISH_DATE: self.extract_publish_date(public_text.text)}
+            results.append(text_result)
+        return results
+
+    @staticmethod
+    def extract_contract_type(public_text):
+        # Extraire la description entre parenthèses
+        description_match = re.search(r'\((.*?)\)', public_text)
+        return description_match.group(1) if description_match else None
+
+    @staticmethod
+    def extract_publish_date(public_text):
+        # Extraire la date entre crochets
+        date_match = re.search(r'\[Ajouté le (\d{2}/\d{2}/\d{4})]', public_text)
+        return date_match.group(1) if date_match else None
+
+    @staticmethod
+    def extract_ref(public_text):
+        # Extract ref
+        ref_match = re.search(r'\b(\d+)\b', public_text)
+        return ref_match.group(1) if ref_match else None
 
     def find_public_procurement(self, num):
         """get pdf to the public procurement for num xxxxxx"""
@@ -43,10 +69,9 @@ class WebScraper:
         pdf = response_public_procurement.content
         return PdfReader(io.BytesIO(pdf))
 
-    def find_one(self, ref):
+    def find_one(self, ref, publish_date, contract_type):
         pdf_reader = self.find_public_procurement(ref)
-        arrest = Arrest(ref, pdf_reader).is_rectified().find_date()
-        print("Traitement de {num} en date du {date}".format(num=ref, date=arrest.format_date()))
+        arrest = Arrest(ref, pdf_reader, datetime.strptime(publish_date, '%d/%m/%Y'), contract_type).is_rectified().find_arrest_date()
         return arrest
 
     def extract_arrets(self, year=SEARCH_YEAR, last_arrest=None):
@@ -54,16 +79,18 @@ class WebScraper:
         last_month = 1
         last_ref = 1
         if last_arrest is not None:
-            last_month = last_arrest.date.month
+            last_month = last_arrest.publish_date.month
             last_ref = last_arrest.ref
         months = self.get_months(last_month)
         for month in months:
-            for (ref, contract) in self.get_public_procurements_number_list(month):
-                if last_ref < int(ref):
-                    arrest = self.find_one(int(ref))
-                    arrest.contract_type = contract
-                    if arrest.date.year == year:
-                        arrests.append(arrest)
+            try:
+                for dic in self.get_public_procurements_number_list(month):
+                    if last_ref < int(dic[Arrest.REF]):
+                        arrest = self.find_one(int(dic[Arrest.REF]), dic[Arrest.PUBLISH_DATE], dic[Arrest.CONTRACT_TYPE])
+                        if arrest.publish_date.year == year:
+                            arrests.append(arrest)
+            except MissingSectionException as e:
+                print(f"{e}")
         return arrests
 
     @staticmethod

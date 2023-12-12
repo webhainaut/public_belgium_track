@@ -4,20 +4,46 @@ from unittest.mock import Mock
 from Exceptions.MissingSectionException import MissingSectionException
 from webscraper import WebScraper
 
-REF_LIST = [('255878', 'Marchés publics'), ('255882', 'Marchés publics'), ('255896', 'Marchés publics'),
-            ('255905', 'Marchés publics'), ('255906', 'Marchés publics'), ('255907', 'Marchés publics'),
-            ('255908', 'Marchés publics'), ('255909', 'Marchés publics'), ('255954', 'Marchés publics'),
-            ('255962', 'Marchés publics'), ('255964', 'Marchés publics'), ('255965', 'Marchés publics'),
-            ('255994', 'Marchés publics'), ('256006', 'Marchés publics'), ('256032', 'Marchés publics'),
-            ('256036', 'Marchés publics'), ('256037', 'Marchés publics'), ('256074', 'Marchés publics'),
-            ('256088', 'Marchés publics'), ('256090', 'Marchés publics'), ('256098', 'Marchés publics'),
-            ('256104', 'Marchés publics'), ('256111', 'Marchés publics'), ('256129', 'Marchés publics'),
-            ('256143', 'Marchés publics'), ('256144', 'Marchés publics'), ('256147', 'Marchés publics'),
-            ('256161', 'Marchés publics'), ('256185', 'Marchés publics'), ('256213', 'Marchés publics'),
-            ('256223', 'Marchés publics'), ('256224', 'Marchés publics'), ('256232', 'Marchés publics'),
-            ('256233', 'Marchés publics'), ('256234', 'Marchés publics'), ('256235', 'Marchés publics'),
-            ('256236', 'Marchés publics'), ('256244', 'Marchés publics'), ('256245', 'Marchés publics'),
-            ('256014', 'Autres contrats')]
+REF_LIST = [{'Date publication': '16/04/2023', 'Réf.': '255878', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '255882', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '255896', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '255905', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '255906', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '255907', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '255908', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '255909', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '255954', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '255962', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '255964', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '255965', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '255994', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '256006', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '256032', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '256036', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '256037', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '256074', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '256088', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '256090', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '256098', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '256104', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '256111', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '256129', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '21/04/2023', 'Réf.': '256143', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '21/04/2023', 'Réf.': '256144', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '21/04/2023', 'Réf.': '256147', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '21/04/2023', 'Réf.': '256161', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '21/04/2023', 'Réf.': '256185', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '29/04/2023', 'Réf.': '256213', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '29/04/2023', 'Réf.': '256223', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '29/04/2023', 'Réf.': '256224', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '29/04/2023', 'Réf.': '256232', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '29/04/2023', 'Réf.': '256233', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '29/04/2023', 'Réf.': '256234', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '29/04/2023', 'Réf.': '256235', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '29/04/2023', 'Réf.': '256236', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '29/04/2023', 'Réf.': '256244', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '29/04/2023', 'Réf.': '256245', 'Type de contrat': 'Marchés publics'},
+            {'Date publication': '16/04/2023', 'Réf.': '256014', 'Type de contrat': 'Autres contrats'}]
 
 CONTENT_NOT_OK = "<html> test </html>"
 CONTENT_OK = """<?xml version="1.0" encoding="utf-8"?>
@@ -148,6 +174,7 @@ class TestWebScraper(TestCase):
         self.requestsMock.get.return_value = response_mock
         ref_list = self.web_scraper.get_public_procurements_number_list("02")
         self.requestsMock.get.assert_called_with('http://www.conseildetat.be/?lang=fr&page=lastmonth_02')
+        print(ref_list)
         self.assertEqual(REF_LIST, ref_list)
 
     def test_get_months_all(self):
