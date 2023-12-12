@@ -5,12 +5,25 @@ from Exceptions.DataNotFoundException import DataNotFoundException
 
 
 class Arrest:
+    RECTIFIED = 'Rectifié'
+    PUBLISH_DATE = 'Date publication'
+    CONTRACT_TYPE = 'Type de contract'
+    REF = 'Réf.'
+
     def __init__(self, num, reader):
         self.rectified = False
         self.date = None
         self.reader = reader
         self.ref = num
         self.contract_type = None
+
+    @classmethod
+    def from_dic(cls, dic):
+        arrest = cls(num=str(dic[cls.REF]).replace(".", ""), reader=None)
+        arrest.date = datetime.strptime(dic[cls.PUBLISH_DATE], "%d/%m/%Y")
+        arrest.contract_type = dic[cls.CONTRACT_TYPE]
+        arrest.rectified = dic[cls.RECTIFIED]
+        return arrest
 
     def find_date(self):
         """find the date of arrest
@@ -32,7 +45,7 @@ class Arrest:
         self.date = datetime.strptime(re.findall(r'(\d{1,2} \w* \d{4}$)', date_line_clean)[0], '%d %B %Y')
         return self
 
-    def format_number(self):
+    def format_ref(self):
         """format the number with '.'"""
         # TODO Tester avec xx, xxx, xxxxxx, xxxxxxx, doit donner xx, xxx, xxx.xxx, x.xxx.xxx
         chunks, chunk_size = len(self.ref), 3
@@ -47,7 +60,11 @@ class Arrest:
             print("Arrêt rectifié")
         return self
 
+    def format_date(self):
+        if self.date is not None:
+            return self.date.strftime("%d/%m/%Y")
+
     def as_dict(self):
-        return {'Réf.': self.format_number(), 'Type de contract': self.contract_type,
-                'Date publication': self.date.strftime("%d/%m/%Y"),
-                'Rectifié': self.rectified.real}
+        return {self.REF: self.format_ref(), self.CONTRACT_TYPE: self.contract_type,
+                self.PUBLISH_DATE: self.format_date(),
+                self.RECTIFIED: self.rectified.real}

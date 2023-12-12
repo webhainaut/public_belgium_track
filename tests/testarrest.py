@@ -1,4 +1,5 @@
 import locale
+from datetime import datetime
 from unittest import TestCase
 
 from pypdf import PdfReader
@@ -17,56 +18,66 @@ class TestArrest(TestCase):
         return arrest
 
     def test_find_date_simple_format(self):
-        arrest_ref = 255267
+        arrest_ref = "255267"
         arrest = self.read_pdf(arrest_ref)
         arrest.find_date()
         self.assertEqual("14/12/2022", arrest.date.strftime("%d/%m/%Y"), "Simple format date")
 
     def test_find_date_multi_space(self):
-        arrest_ref = 255470
+        arrest_ref = "255470"
         arrest = self.read_pdf(arrest_ref)
         arrest.find_date()
         self.assertEqual("12/01/2023", arrest.date.strftime("%d/%m/%Y"), "more space")
 
     def test_find_date_1er(self):
-        arrest_ref = 255668
+        arrest_ref = "255668"
         arrest = self.read_pdf(arrest_ref)
         arrest.find_date()
         self.assertEqual("01/02/2023", arrest.date.strftime("%d/%m/%Y"), "1er du mois -> 1 du mois")
 
     def test_find_date_no_on_multi_line(self):
-        arrest_ref = 255844
+        arrest_ref = "255844"
         arrest = self.read_pdf(arrest_ref)
         arrest.find_date()
         self.assertEqual("16/02/2023", arrest.date.strftime("%d/%m/%Y"), "n o is strange...")
 
     def test_find_date_29_NBSP_char(self):
-        arrest_ref = 257478
+        arrest_ref = "257478"
         arrest = self.read_pdf(arrest_ref)
         arrest.find_date()
         self.assertEqual("29/09/2023", arrest.date.strftime("%d/%m/%Y"), "some strange char")
 
     def test_find_date_other_space_char(self):
-        arrest_ref = 247478
+        arrest_ref = "247478"
         arrest = self.read_pdf(arrest_ref)
         arrest.find_date()
         self.assertEqual("30/04/2020", arrest.date.strftime("%d/%m/%Y"), "Some strange space")
 
     def test_find_date_before_is_rectified(self):
-        arrest_ref = 256672
+        arrest_ref = "256672"
         arrest = self.read_pdf(arrest_ref)
         with self.assertRaises(DataNotFoundException) as context:
             arrest.find_date()
         self.assertEqual('date non trouvée dans le pdf 256672', str(context.exception))
 
     def test_is_rectified_not_found(self):
-        arrest_ref = 247478
+        arrest_ref = "247478"
         arrest = self.read_pdf(arrest_ref)
         arrest.is_rectified()
         self.assertFalse(arrest.rectified)
 
     def test_is_rectified_found(self):
-        arrest_ref = 256672
+        arrest_ref = "256672"
         arrest = self.read_pdf(arrest_ref)
         arrest.is_rectified()
         self.assertTrue(arrest.rectified)
+
+    def test_from_dic(self):
+        arrest_ref = "256672"
+        arrest = Arrest(arrest_ref, None)
+        arrest.rectified = True
+        arrest.date = datetime(2022, 5, 23)
+        arrest.contract_type = "ceci"
+        arrest_from_dic = Arrest.from_dic(arrest.as_dict())
+        self.assertEqual(arrest.as_dict(), arrest_from_dic.as_dict())
+
