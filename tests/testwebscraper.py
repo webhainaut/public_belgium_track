@@ -1,3 +1,4 @@
+import unittest
 from unittest import TestCase
 from unittest.mock import Mock
 
@@ -174,7 +175,6 @@ class TestWebScraper(TestCase):
         self.requestsMock.get.return_value = response_mock
         ref_list = self.web_scraper.get_public_procurements_number_list("02")
         self.requestsMock.get.assert_called_with('http://www.conseildetat.be/?lang=fr&page=lastmonth_02')
-        print(ref_list)
         self.assertEqual(REF_LIST, ref_list)
 
     def test_get_months_all(self):
@@ -188,3 +188,7 @@ class TestWebScraper(TestCase):
     def test_get_months_after11(self):
         self.assertEqual(["11", "12"],
                          self.web_scraper.get_months(11))
+
+
+if __name__ == '__main__':
+    unittest.main()

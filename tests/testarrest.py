@@ -1,10 +1,11 @@
 import locale
+import unittest
 from datetime import datetime
 from unittest import TestCase
 
 from pypdf import PdfReader
 
-from Arrest import Arrest
+from Arrest import Arrest, Process
 from Exceptions.DataNotFoundException import DataNotFoundException
 
 locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
@@ -58,7 +59,7 @@ class TestArrest(TestCase):
         arrest = self.read_pdf(arrest_ref)
         with self.assertRaises(DataNotFoundException) as context:
             arrest.find_arrest_date()
-        self.assertEqual('date non trouvée dans le pdf 256672', str(context.exception))
+        self.assertEqual("Date de l'arrêt non trouvée dans le pdf 256672 ", str(context.exception))
 
     def test_is_rectified_not_found(self):
         arrest_ref = "247478"
@@ -77,6 +78,76 @@ class TestArrest(TestCase):
         arrest = Arrest(arrest_ref, None, datetime.strptime("23/06/2023", '%d/%m/%Y'), "ceci")
         arrest.rectified = True
         arrest.arrest_date = datetime(2022, 5, 23)
+        arrest.procedures = [Process.ANNULATION, Process.SUSPENSION]
         arrest_from_dic = Arrest.from_dic(arrest.as_dict())
         self.assertEqual(arrest.as_dict(), arrest_from_dic.as_dict())
 
+    def test_find_process_annulation(self):
+        arrest_ref = "247478"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.ANNULATION], arrest.procedures, "")
+
+    def test_find_process_strange_annulation(self):
+        arrest_ref = "255267"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.SUSPENSION, Process.ANNULATION], arrest.procedures, "")
+
+    def test_find_process_2_process(self):
+        arrest_ref = "255470"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.SUSPENSION, Process.ANNULATION], arrest.procedures, "")
+
+    def test_find_process_suspension(self):
+        arrest_ref = "255668"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.SUSPENSION], arrest.procedures, "")
+
+    def test_find_process_suspension_solicite(self):
+        arrest_ref = "255844"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.SUSPENSION], arrest.procedures, "")
+
+    def test_find_process_is_rectified(self):
+        arrest_ref = "256672"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.is_rectified().find_process()
+        self.assertEqual([Process.SUSPENSION], arrest.procedures, "")
+
+    def test_find_process_first_delimiter_on_second_page(self):
+        arrest_ref = "255472"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.SUSPENSION, Process.ANNULATION], arrest.procedures, "")
+
+    def test_find_process_strange_space(self):
+        arrest_ref = "255962"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.ANNULATION, Process.REPARATION], arrest.procedures, "")
+
+    def test_find_process(self):
+        arrest_ref = "255964"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.ANNULATION, Process.REPARATION], arrest.procedures, "")
+
+    def test_find_process_suspension_space(self):
+        arrest_ref = "255679"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.SUSPENSION], arrest.procedures, "")
+
+    def test_find_process_sus(self):
+        arrest_ref = "256014"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.SUSPENSION, Process.ANNULATION], arrest.procedures, "")
+
+
+if __name__ == '__main__':
+    unittest.main()

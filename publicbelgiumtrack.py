@@ -8,7 +8,7 @@ from openpyxl.reader.excel import load_workbook
 from Arrest import Arrest
 from webscraper import WebScraper
 
-FILE_PATH_EXCEL = "result/2023_Marchés et travaux publics2.xlsx"
+FILE_PATH_EXCEL = "result/2023_Marchés et travaux publics.xlsx"
 
 locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
 

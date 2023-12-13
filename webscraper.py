@@ -71,7 +71,8 @@ class WebScraper:
 
     def find_one(self, ref, publish_date, contract_type):
         pdf_reader = self.find_public_procurement(ref)
-        arrest = Arrest(ref, pdf_reader, datetime.strptime(publish_date, '%d/%m/%Y'), contract_type).is_rectified().find_arrest_date()
+        arrest = Arrest(ref, pdf_reader, datetime.strptime(publish_date, '%d/%m/%Y'),
+                        contract_type).is_rectified().find_arrest_date().find_process()
         return arrest
 
     def extract_arrets(self, year=SEARCH_YEAR, last_arrest=None):
@@ -86,7 +87,8 @@ class WebScraper:
             try:
                 for dic in self.get_public_procurements_number_list(month):
                     if last_ref < int(dic[Arrest.REF]):
-                        arrest = self.find_one(int(dic[Arrest.REF]), dic[Arrest.PUBLISH_DATE], dic[Arrest.CONTRACT_TYPE])
+                        arrest = self.find_one(int(dic[Arrest.REF]), dic[Arrest.PUBLISH_DATE],
+                                               dic[Arrest.CONTRACT_TYPE])
                         if arrest.publish_date.year == year:
                             arrests.append(arrest)
             except MissingSectionException as e:
