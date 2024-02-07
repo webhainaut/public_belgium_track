@@ -148,6 +148,54 @@ class TestArrest(TestCase):
         arrest.find_process()
         self.assertEqual([Process.SUSPENSION, Process.ANNULATION], arrest.procedures, "")
 
+    def test_find_process_suspension_only(self):
+        arrest_ref = "255438"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.SUSPENSION], arrest.procedures, "")
+
+    def test_find_process_reparation_only(self):
+        arrest_ref = "255681"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.REPARATION], arrest.procedures, "")
+
+    def test_find_process_suspension_poursuite(self):
+        arrest_ref = "256484"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.SUSPENSION], arrest.procedures, "")
+
+    def test_find_process_annulation_2(self):
+        arrest_ref = "257654"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.ANNULATION], arrest.procedures, "")
+
+    def test_find_process_requete_suspension_annulation(self):
+        arrest_ref = "257919"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.SUSPENSION, Process.ANNULATION], arrest.procedures, "")
+
+    def test_find_process_recours_suspension(self):
+        arrest_ref = "257921"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.SUSPENSION], arrest.procedures, "")
+
+    def test_find_process_suspension_2(self):
+        arrest_ref = "255678"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.SUSPENSION], arrest.procedures, "")
+
+    def test_find_process_annulation_3(self):
+        arrest_ref = "257819"
+        arrest = self.read_pdf(arrest_ref)
+        arrest.find_process()
+        self.assertEqual([Process.ANNULATION], arrest.procedures, "")
+
 
 if __name__ == '__main__':
     unittest.main()

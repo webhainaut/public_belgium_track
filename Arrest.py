@@ -115,6 +115,17 @@ class Arrest:
 
 
 class Process(Enum):
-    SUSPENSION = r"((d\s*e\s*m\s*a\s*n\s*d\s*e)|(s\s*o\s*l\s*l\s*i\s*c\s*i\s*t\s*e)).*\W*.*l\s*a\s*s\s*u\s*s\s*p\s*e\s*ns\s*i\s*o\s*n"
-    ANNULATION = r"(((d\s*e\s*m\s*a\s*n\s*d\s*e)|(s\s*o\s*l\s*l\s*i\s*c\s*i\s*t\s*e)).*\W*.*l\s*('|’)a\s*n\s*n\s*u\s*l\s*a\s*t\s*i\s*o\s*n)|(d\s*('|’)a\s*u\s*t\s*r\s*e\s*p\s*a\s*r\s*t,\s*l\s*('|’)a\s*n\s*n\s*u\s*l\s*a\s*t\s*i\s*o\s*n)"
-    REPARATION = r"((d\s*e\s*m\s*a\s*n\s*d\s*e)|(s\s*o\s*l\s*l\s*i\s*c\s*i\s*t\s*e)).*\W*.*\s*i\s*n\s*d\s*e\s*m\s*n\s*i\s*t\s*é\s*r\s*é\s*p\s*a\s*r\s*a\s*t\s*r\s*i\s*c\s*e"
+    SUSPENSION = (r"((d\s*e\s*m\s*a\s*n\s*d\s*e)|(s\s*o\s*l\s*l\s*i\s*c\s*i\s*t\s*e)|(p\s*o\s*u\s*r\s*s\s*u\s*i\s*t)|("
+                  r"r\s*e\s*c\s*o\s*u\s*r\s*s)).*\W*.*((l\s*a)|(d\s*e)|("
+                  r"e\s*n))\s*s\s*u\s*s\s*p\s*e\s*n\s*s\s*i\s*o\s*n")
+    ANNULATION = (r"(?!(.*s\s*u\s*i\s*t\s*e\s*à\s*l\s*('|’)\s*a\s*n\s*n\s*u\s*l\s*a\s*t\s*i\s*o\s*n))(?=((("
+                  r"d\s*e\s*m\s*a\s*n\s*d\s*e)|(s\s*o\s*l\s*l\s*i\s*c\s*i\s*t\s*e)|("
+                  r"r\s*e\s*q\s*u\s*ê\s*t\s*e))\s*\W*.*\W*\s*((l\s*('|’))|("
+                  r"e\s*n))\s*a\s*n\s*n\s*u\s*l\s*a\s*t\s*i\s*o\s*n)|(d\s*('|’)\s*a\s*u\s*t\s*r\s*e\s*p\s*a\s*r\s*t,"
+                  r"\s*l\s*('|’)\s*a\s*n\s*n\s*u\s*l\s*a\s*t\s*i\s*o\s*n))")
+    REPARATION = (r"((d\s*e\s*m\s*a\s*n\s*d\s*e)|(s\s*o\s*l\s*l\s*i\s*c\s*i\s*t\s*e)).*\W*.*i\s*n\s*d\s*e\s*m\s*n\s*i"
+                  r"\s*t\s*é\s*r\s*é\s*p\s*a\s*r\s*a\s*t\s*r\s*i\s*c\s*e")
+    # Même chose que ci-dessus mais en lisible si besoin de reprendre pour modification.
+    # SUSPENSION = r"((demande)|(sollicite)|(poursuit)|(recours)).*\W*.*((la)|(de)|(en))\s*suspens\s*ion"
+    # ANNULATION = r"(?!(.*suite\s*à\s*l\s*('|’)\s*annulation))(?=(((demande)|(sollicite)|(requête))\W*.*\W*((l\s*('|’))|(en))\s*annu\s*lation)|(d\s*('|’)\s*autre\s*part,\s*l\s*('|’)\s*annulation))"
+    # REPARATION = r"((demande)|(sollicite)).*\W*.*indemnité\s*répara\s*trice"
