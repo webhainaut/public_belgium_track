@@ -5,8 +5,8 @@ from datetime import datetime
 import pandas as pd
 from openpyxl.reader.excel import load_workbook
 
-from Arrest import Arrest
-from webscraper import WebScraper
+from main.Arrest import Arrest
+from main.webscraper import WebScraper
 
 YEAR = 2023
 

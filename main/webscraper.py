@@ -6,8 +6,8 @@ import requests
 from bs4 import BeautifulSoup
 from pypdf import PdfReader
 
-from Arrest import Arrest
-from Exceptions.MissingSectionException import MissingSectionException
+from main.Arrest import Arrest
+from main.Exceptions.MissingSectionException import MissingSectionException
 
 
 class WebScraper:

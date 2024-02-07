@@ -5,8 +5,8 @@ from unittest import TestCase
 
 from pypdf import PdfReader
 
-from Arrest import Arrest, Process
-from Exceptions.DataNotFoundException import DataNotFoundException
+from main.Arrest import Arrest, Process
+from main.Exceptions.DataNotFoundException import DataNotFoundException
 
 locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
 
