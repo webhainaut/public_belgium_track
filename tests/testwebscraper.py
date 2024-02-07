@@ -179,15 +179,15 @@ class TestWebScraper(TestCase):
 
     def test_get_months_all(self):
         self.assertEqual(["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
-                         self.web_scraper.get_months())
+                         self.web_scraper.get_months_order())
 
     def test_get_months_after06(self):
-        self.assertEqual(["06", "07", "08", "09", "10", "11", "12"],
-                         self.web_scraper.get_months(6))
+        self.assertEqual(["06", "07", "08", "09", "10", "11", "12", "01", "02", "03", "04", "05"],
+                         self.web_scraper.get_months_order(6))
 
     def test_get_months_after11(self):
-        self.assertEqual(["11", "12"],
-                         self.web_scraper.get_months(11))
+        self.assertEqual(["11", "12", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10"],
+                         self.web_scraper.get_months_order(11))
 
 
 if __name__ == '__main__':
