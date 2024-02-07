@@ -82,21 +82,23 @@ class WebScraper:
         if last_arrest is not None:
             last_month = last_arrest.publish_date.month
             last_ref = last_arrest.ref
-        months = self.get_months(last_month)
+        months = self.get_months_order(last_month)
         for month in months:
             try:
                 for dic in self.get_public_procurements_number_list(month):
                     if last_ref < int(dic[Arrest.REF]):
                         arrest = self.find_one(int(dic[Arrest.REF]), dic[Arrest.PUBLISH_DATE],
                                                dic[Arrest.CONTRACT_TYPE])
-                        if arrest.publish_date.year == year:
+                        if arrest.arrest_date.year == year:
                             arrests.append(arrest)
             except MissingSectionException as e:
                 print(f"{e}")
         return arrests
 
     @staticmethod
-    def get_months(last_month=1):
+    def get_months_order(last_month=1):
+        """ Change order off the months with last_month the first """
         all_months = [str(i).zfill(2) for i in range(1, 13)]
-        partial_months = all_months[last_month - 1:]
-        return partial_months
+        months_order = all_months[last_month - 1:]
+        months_order.extend(all_months[:last_month - 1])
+        return months_order
