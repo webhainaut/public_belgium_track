@@ -13,6 +13,7 @@ locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
 
 class PublicBelgiumTrack:
     YEAR = 2023
+    # YEAR = datetime.now().year
     FILE_PATH_EXCEL_FORMAT = "result/CE VIe ch. {year}.xlsx"
 
     def __init__(self, file_path=FILE_PATH_EXCEL_FORMAT, year=YEAR):

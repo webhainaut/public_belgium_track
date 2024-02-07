@@ -1,4 +1,5 @@
 import io
+import os.path
 import re
 from datetime import datetime
 
@@ -13,7 +14,6 @@ from main.Exceptions.MissingSectionException import MissingSectionException
 class WebScraper:
     URL_LAST_MONTH = 'http://www.conseildetat.be/?lang=fr&page=lastmonth_{month}'
     URL_PUBLIC_PROCUREMENT = 'http://www.conseildetat.be/arr.php?nr={num}&l=fr'
-    SEARCH_YEAR = datetime.now().year
 
     def __init__(self):
         self.requests = requests
@@ -63,19 +63,28 @@ class WebScraper:
         ref_match = re.search(r'\b(\d+)\b', public_text)
         return ref_match.group(1) if ref_match else None
 
-    def find_public_procurement(self, num):
+    def find_public_procurement(self, num, year):
         """get pdf to the public procurement for num xxxxxx"""
-        response_public_procurement = self.requests.get(WebScraper.URL_PUBLIC_PROCUREMENT.format(num=num))
-        pdf = response_public_procurement.content
-        return PdfReader(io.BytesIO(pdf))
+        directory = "result/arrest/{year}".format(year=year)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        file_path = "{directory}/{num}.pdf".format(directory=directory, num=num)
+        if not os.path.isfile(file_path):
+            pdf = self.requests.get(WebScraper.URL_PUBLIC_PROCUREMENT.format(num=num)).content
+            print("download : {num}.pdf".format(num=num))
+            with open(file_path, mode="wb") as file:
+                file.write(pdf)
+            return PdfReader(io.BytesIO(pdf))
+        else:
+            return PdfReader(file_path)
 
-    def find_one(self, ref, publish_date, contract_type):
-        pdf_reader = self.find_public_procurement(ref)
+    def find_one(self, ref, publish_date, contract_type, year):
+        pdf_reader = self.find_public_procurement(ref, year)
         arrest = Arrest(ref, pdf_reader, datetime.strptime(publish_date, '%d/%m/%Y'),
                         contract_type).is_rectified().find_arrest_date().find_process()
         return arrest
 
-    def extract_arrets(self, year=SEARCH_YEAR, last_arrest=None):
+    def extract_arrets(self, year, last_arrest=None):
         arrests = []
         last_month = 1
         last_ref = 1
@@ -88,7 +97,7 @@ class WebScraper:
                 for dic in self.get_public_procurements_number_list(month):
                     if last_ref < int(dic[Arrest.REF]):
                         arrest = self.find_one(int(dic[Arrest.REF]), dic[Arrest.PUBLISH_DATE],
-                                               dic[Arrest.CONTRACT_TYPE])
+                                               dic[Arrest.CONTRACT_TYPE], year)
                         if arrest.arrest_date.year == year:
                             arrests.append(arrest)
             except MissingSectionException as e:
