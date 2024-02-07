@@ -26,6 +26,7 @@ class PublicBelgiumTrack:
 
     def write_to_excel(self, arrests):
         df = self.pd.DataFrame([arrest.as_dict() for arrest in arrests])
+        df = df.sort_values(by=Arrest.REF)
         try:
             with pd.ExcelWriter(self.file_path, engine='openpyxl', mode='a', if_sheet_exists="overlay") as writer:
                 df.to_excel(writer, sheet_name='Feuille1', index=False, startrow=self.begin_line, header=False)
