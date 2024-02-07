@@ -8,7 +8,9 @@ from openpyxl.reader.excel import load_workbook
 from Arrest import Arrest
 from webscraper import WebScraper
 
-FILE_PATH_EXCEL = "result/2023_Marchés et travaux publics.xlsx"
+YEAR = 2023
+
+FILE_PATH_EXCEL = "result/CE VIe ch. {year}.xlsx"
 
 locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
 
@@ -37,7 +39,8 @@ class PublicBelgiumTrack:
 
 def main():
     public_belgium_track = PublicBelgiumTrack()
-    previous_df = public_belgium_track.read_from_excel(FILE_PATH_EXCEL)
+    file_path = FILE_PATH_EXCEL.format(year=YEAR)
+    previous_df = public_belgium_track.read_from_excel(file_path)
     last_arrest = None
     begin_line = 0
     if previous_df is not None:
@@ -46,8 +49,8 @@ def main():
         print("remlir a partir de {begin_line} - last arrest : {arrest}".format(begin_line=begin_line,
                                                                                 arrest=last_arrest.as_dict()))
     webscraper = WebScraper()
-    arrests = webscraper.extract_arrets(2023, last_arrest)
-    public_belgium_track.write_to_excel(arrests, FILE_PATH_EXCEL, begin_line)
+    arrests = webscraper.extract_arrets(YEAR, last_arrest)
+    public_belgium_track.write_to_excel(arrests, file_path, begin_line)
 
 
 if __name__ == "__main__":
