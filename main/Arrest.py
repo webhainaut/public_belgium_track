@@ -11,7 +11,9 @@ class Arrest:
     ARREST_DATE = 'Date de l\'arrêt'
     CONTRACT_TYPE = 'Type de contrat'
     REF = 'Réf.'
-    PROCESS = 'Demande de procédure'
+    ASK_PROCESS = 'Demande de procédure'  # <> Procédure traitée -> voir Article 1er last page (ou presque - si "Les
+    # dépens ... sont réservés" => procédure continue et dons annulation pas traitée et ou indemnité réparatrice ?.)
+    PROCESS_HANDLED = 'Procédure traitée' # TODO
 
     def __init__(self, ref, reader, publish_date, contract_type):
         self.rectified = False
@@ -28,12 +30,12 @@ class Arrest:
                      contract_type=dic[cls.CONTRACT_TYPE])
         arrest.arrest_date = dic[cls.ARREST_DATE]
         arrest.rectified = dic[cls.RECTIFIED]
-        arrest.procedures = [Process[chaine.strip()] for chaine in dic[cls.PROCESS].split(",")]
+        arrest.procedures = [Process[chaine.strip()] for chaine in dic[cls.ASK_PROCESS].split(",")]
         return arrest
 
     def find_arrest_date(self):
         """find the date of arrest
-        Attention quand lusieurs espace
+        Attention quand plusieurs espace
         des fois, 1er ...
         parfois n\n o
         """
@@ -77,10 +79,10 @@ class Arrest:
                 self.procedures = self.search_process_in_text(intern_text)
 
             else:
-                raise DataNotFoundException(data=self.PROCESS, ref=self.ref, message="first delimiter not found")
+                raise DataNotFoundException(data=self.ASK_PROCESS, ref=self.ref, message="first delimiter not found")
 
         except IndexError:
-            raise DataNotFoundException(data=self.PROCESS, ref=self.ref)
+            raise DataNotFoundException(data=self.ASK_PROCESS, ref=self.ref)
 
         return self
 
@@ -92,7 +94,7 @@ class Arrest:
         if match:
             return match.group(0).strip()
         else:
-            raise DataNotFoundException(data=self.PROCESS, ref=self.ref, message="Delimiters not found in text")
+            raise DataNotFoundException(data=self.ASK_PROCESS, ref=self.ref, message="Delimiters not found in text")
 
     @staticmethod
     def search_process_in_text(text):
@@ -111,7 +113,7 @@ class Arrest:
         return {self.REF: self.ref, self.PUBLISH_DATE: self.publish_date, self.CONTRACT_TYPE: self.contract_type,
                 self.ARREST_DATE: self.arrest_date,
                 self.RECTIFIED: self.rectified.real,
-                self.PROCESS: ', '.join([process.name for process in self.procedures])}
+                self.ASK_PROCESS: ', '.join([process.name for process in self.procedures])}
 
 
 class Process(Enum):
