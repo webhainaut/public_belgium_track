@@ -58,17 +58,22 @@ class PublicBelgiumTrack:
         if self.previous_df is not None:
             return Arrest.from_dic(self.previous_df.tail(1).to_dict(orient='records')[0])
 
-    def get_arrests(self):
-        return self.webscraper.extract_arrets(self.YEAR, self.last_arrest)
+    def get_arrests(self, refs=None):
+        if refs is not None:
+            return self.webscraper.extract_arrets_list(refs, self.last_arrest)
+        else:
+            return self.webscraper.extract_arrets_year(self.YEAR, self.last_arrest)
 
 
 def main():
     public_belgium_track = PublicBelgiumTrack()
     public_belgium_track.find_last_arrest()
-    arrests = public_belgium_track.get_arrests()
+    arrests = public_belgium_track.get_arrests(REFS)
     public_belgium_track.write_to_excel(arrests)
 
 
+REFS = None
+# REFS = []
 if __name__ == "__main__":
     start_time = datetime.now()
     main()

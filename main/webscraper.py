@@ -78,13 +78,13 @@ class WebScraper:
         else:
             return PdfReader(file_path)
 
-    def find_one(self, ref, publish_date, contract_type, year):
+    def find_one(self, ref, publish_date="1/1/1900", contract_type="/", year=1900):
         pdf_reader = self.find_public_procurement(ref, year)
         arrest = Arrest(ref, pdf_reader, datetime.strptime(publish_date, '%d/%m/%Y'),
                         contract_type).is_rectified().find_arrest_date().find_process()
         return arrest
 
-    def extract_arrets(self, year, last_arrest=None):
+    def extract_arrets_year(self, year, last_arrest=None):
         arrests = []
         last_month = 1
         last_ref = 1
@@ -102,6 +102,17 @@ class WebScraper:
                             arrests.append(arrest)
             except MissingSectionException as e:
                 print(f"{e}")
+        return arrests
+
+    def extract_arrets_list(self, refs, last_arrest=None):
+        arrests = []
+        filtered_refs = refs
+        filtered_refs.sort()
+        if last_arrest is not None:
+            filtered_refs = filter(lambda ref_filter: ref_filter > last_arrest.ref, filtered_refs)
+        for ref in filtered_refs:
+            arrest = self.find_one(ref)
+            arrests.append(arrest)
         return arrests
 
     @staticmethod
