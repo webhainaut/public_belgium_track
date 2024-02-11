@@ -1,9 +1,9 @@
 import re
 
-from main.arrest_finder.FinderInterface import FinderInterface
+from main.arrest_finder.FinderAbstract import FinderAbstract
 
 
-class IsRectifiedFinder(FinderInterface):
+class IsRectifiedFinder(FinderAbstract):
 
     def find(self, ref, reader, args=None):
         return re.search(r'(arrêt n.* du .* est rectif.* par .*arrêt n.* du .*)',

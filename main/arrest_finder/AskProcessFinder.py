@@ -2,19 +2,18 @@ import re
 from enum import Enum
 
 from main.Exceptions.DataNotFoundException import DataNotFoundException
-from main.arrest_finder.FinderInterface import FinderInterface
+from main.arrest_finder.FinderAbstract import FinderAbstract
 
 
-class AskProcessFinder(FinderInterface):
+class AskProcessFinder(FinderAbstract):
     """
     si suspension / annulation / indemnité réparatrice / une combinaison
     """
 
     def find(self, ref, reader, args=None):
-        self.kwargs_contain_arg(args)
+        index_page = self.get_first_page(args)
         first_delimiter_pattern = re.compile(r'I\.\s*Objets*\s*(de\s*la|de\s*s|du)\s*(requête|recours)', re.IGNORECASE)
         second_delimiter_pattern = re.compile(r'II\.\s*Procédure', re.IGNORECASE)
-        index_page = 0 if not args[self.IS_RECTIFIED_LABEL] else 1
 
         try:
 
@@ -43,10 +42,6 @@ class AskProcessFinder(FinderInterface):
         except IndexError:
             raise DataNotFoundException(data=self.label, ref=ref)
         return procedures
-
-    def kwargs_contain_arg(self, kwargs):
-        if kwargs is None or self.IS_RECTIFIED_LABEL not in kwargs:
-            raise NotADirectoryError("{rectified} no in the dic".format(rectified=self.IS_RECTIFIED_LABEL))
 
     @staticmethod
     def search_process_in_text(text):

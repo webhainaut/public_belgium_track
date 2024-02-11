@@ -1,12 +1,13 @@
 # test_all.py
 import unittest
 
-from tests.arrest_finder.test_ArrestDateFinder import TestArrestDateFinder
-from testwebscraper import TestWebScraper
 from testarrest import TestArrest
+from tests.arrest_finder.test_ArrestDateFinder import TestArrestDateFinder
+from tests.arrest_finder.test_FinderAbstract import TestFinderAbstract
+from testwebscraper import TestWebScraper
 
 # Ajoutez toutes les classes de test que vous souhaitez exécuter
-test_classes = [TestWebScraper, TestArrest, TestArrestDateFinder]
+test_classes = [TestWebScraper, TestArrest, TestArrestDateFinder, TestFinderAbstract]
 
 # Créez une suite de tests
 test_suites = [unittest.TestLoader().loadTestsFromTestCase(test_classe) for test_classe in test_classes]

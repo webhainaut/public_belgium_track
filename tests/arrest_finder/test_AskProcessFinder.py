@@ -1,8 +1,8 @@
 from main.arrest_finder.AskProcessFinder import AskProcessFinder, Process
-from tests.arrest_finder.test_FinderAbstract import TestFinderAbstract
+from tests.arrest_finder.testAbstract_Finder import TestAbstractFinder
 
 
-class TestAskProcessFinder(TestFinderAbstract):
+class TestAskProcessFinder(TestAbstractFinder):
 
     def setUp(self):
         self.askProcessFinder = AskProcessFinder("finder")

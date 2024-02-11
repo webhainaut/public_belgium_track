@@ -1,25 +1,12 @@
 from main.Exceptions.DataNotFoundException import DataNotFoundException
 from main.arrest_finder.ArrestDateFinder import ArrestDateFinder
-from tests.arrest_finder.test_FinderAbstract import TestFinderAbstract
+from tests.arrest_finder.testAbstract_Finder import TestAbstractFinder
 
 
-class TestArrestDateFinder(TestFinderAbstract):
+class TestArrestDateFinder(TestAbstractFinder):
 
     def setUp(self):
         self.arrestDateFinder = ArrestDateFinder("finder")
-
-    def test_kwargs_contain_arg_no_dic(self):
-        with self.assertRaises(NotADirectoryError) as context:
-            self.arrestDateFinder.kwargs_contain_arg(None)
-        self.assertEqual("isRectified no in the dic", str(context.exception))
-
-    def test_kwargs_contain_arg_bad_dic(self):
-        with self.assertRaises(NotADirectoryError) as context:
-            self.arrestDateFinder.kwargs_contain_arg({"coucou": 1})
-        self.assertEqual("isRectified no in the dic", str(context.exception))
-
-    def test_kwargs_contain_arg_ok(self):
-        self.arrestDateFinder.kwargs_contain_arg({self.arrestDateFinder.IS_RECTIFIED_LABEL: True})
 
     def test_find_date_simple_format(self):
         arrest_ref = "255267"
