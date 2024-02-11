@@ -9,4 +9,4 @@ class ArrestFinder:
         self.isRectifiedFinder = IsRectifiedFinder('Rectifié')
         self.arrestDateFinder = ArrestDateFinder('Date de l\'arrêt')
         self.askProcessFinder = AskProcessFinder('Demande de procédure')
-        self.roleNumberFinder = RoleNumberFinder('Numéro de Rôle')
+        self.roleNumberFinder = RoleNumberFinder('N° de Rôle')
