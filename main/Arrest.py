@@ -3,6 +3,7 @@ from main.arrest_finder.ArrestFinder import ArrestFinder
 
 class Arrest:
     REF = 'Réf.'
+    N_PAGES = 'Pages'
     PUBLISH_DATE = 'Date publication'
     CONTRACT_TYPE = 'Type de contrat'
     # RECTIFIED = 'Rectifié'
@@ -21,9 +22,11 @@ class Arrest:
         self.arrest_date = None
         self.ask_procedures = None
         self.roles = []
+        self.n_pages = 0
 
     def as_dict(self):
         return {self.REF: self.ref,
+                self.N_PAGES: self.n_pages,
                 self.finder.roleNumberFinder.label: '\n'.join(self.roles),
                 self.finder.isRectifiedFinder.label: self.isRectified.real,
                 self.PUBLISH_DATE: self.publish_date,
@@ -43,6 +46,7 @@ class Arrest:
                 .find_arrest_date()
                 .find_ask_process()
                 .find_role_number()
+                .find_n_pages()
                 )
 
     def is_rectified(self):
@@ -62,4 +66,8 @@ class Arrest:
     def find_role_number(self):
         self.roles = self.finder.roleNumberFinder.find(self.ref, self.reader, {
             self.finder.roleNumberFinder.IS_RECTIFIED_LABEL: self.isRectified})
+        return self
+
+    def find_n_pages(self):
+        self.n_pages = len(self.reader.pages)
         return self
