@@ -26,17 +26,18 @@ class PublicBelgiumTrack:
         self.last_arrest = None
 
     def write_to_excel(self, arrests):
-        df = self.pd.DataFrame([arrest.as_dict() for arrest in arrests])
-        if not df.empty:
-            df = df.sort_values(by=Arrest.REF)
-        try:
-            with pd.ExcelWriter(self.file_path, engine='openpyxl', mode='a', if_sheet_exists="overlay") as writer:
-                df.to_excel(writer, sheet_name='Feuille1', index=False, startrow=self.begin_line, header=False)
-            print("remlir a partir de {begin_line} - last arrest : {arrest}".format(begin_line=self.begin_line,
-                                                                                    arrest=self.last_arrest.as_dict()))
-        except FileNotFoundError:
-            with pd.ExcelWriter(self.file_path, engine='openpyxl', mode='w') as writer:
-                df.to_excel(writer, sheet_name='Feuille1', index=False)
+        if arrests:
+            df = self.pd.DataFrame([arrest.as_dict() for arrest in arrests])
+            if not df.empty:
+                df = df.sort_values(by=Arrest.REF)
+            try:
+                with pd.ExcelWriter(self.file_path, engine='openpyxl', mode='a', if_sheet_exists="overlay") as writer:
+                    df.to_excel(writer, sheet_name='Feuille1', index=False, startrow=self.begin_line, header=False)
+                print("remlir a partir de {begin_line} - last arrest : {arrest}".format(begin_line=self.begin_line,
+                                                                                        arrest=self.last_arrest.as_dict()))
+            except FileNotFoundError:
+                with pd.ExcelWriter(self.file_path, engine='openpyxl', mode='w') as writer:
+                    df.to_excel(writer, sheet_name='Feuille1', index=False)
 
     def read_from_excel(self):
         if os.path.isfile(self.file_path):
