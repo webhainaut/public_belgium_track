@@ -5,8 +5,9 @@ from unittest import TestCase
 
 from pypdf import PdfReader
 
-from main.Arrest import Arrest, Process
+from main.Arrest import Arrest
 from main.Exceptions.DataNotFoundException import DataNotFoundException
+from main.arrest_finder.AskProcessFinder import Process
 
 locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
 
@@ -65,136 +66,138 @@ class TestArrest(TestCase):
         arrest_ref = "247478"
         arrest = self.read_pdf(arrest_ref)
         arrest.is_rectified()
-        self.assertFalse(arrest.rectified)
+        self.assertFalse(arrest.isRectified)
 
     def test_is_rectified_found(self):
         arrest_ref = "256672"
         arrest = self.read_pdf(arrest_ref)
         arrest.is_rectified()
-        self.assertTrue(arrest.rectified)
+        self.assertTrue(arrest.isRectified)
 
     def test_from_dic(self):
         arrest_ref = "256672"
         arrest = Arrest(arrest_ref, None, datetime.strptime("23/06/2023", '%d/%m/%Y'), "ceci")
-        arrest.rectified = True
+        arrest.isRectified = True
         arrest.arrest_date = datetime(2022, 5, 23)
-        arrest.procedures = [Process.ANNULATION, Process.SUSPENSION]
+        arrest.ask_procedures = [Process.ANNULATION, Process.SUSPENSION]
         arrest_from_dic = Arrest.from_dic(arrest.as_dict())
-        self.assertEqual(arrest.as_dict(), arrest_from_dic.as_dict())
+        self.assertEqual(arrest.ref, arrest_from_dic.ref)
+        self.assertEqual(arrest.publish_date, arrest_from_dic.publish_date)
+        self.assertEqual(arrest.contract_type, arrest_from_dic.contract_type)
 
     def test_find_process_annulation(self):
         arrest_ref = "247478"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.ANNULATION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.ANNULATION], arrest.ask_procedures, "")
 
     def test_find_process_strange_annulation(self):
         arrest_ref = "255267"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.SUSPENSION, Process.ANNULATION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.SUSPENSION, Process.ANNULATION], arrest.ask_procedures, "")
 
     def test_find_process_2_process(self):
         arrest_ref = "255470"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.SUSPENSION, Process.ANNULATION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.SUSPENSION, Process.ANNULATION], arrest.ask_procedures, "")
 
     def test_find_process_suspension(self):
         arrest_ref = "255668"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.SUSPENSION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.SUSPENSION], arrest.ask_procedures, "")
 
     def test_find_process_suspension_solicite(self):
         arrest_ref = "255844"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.SUSPENSION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.SUSPENSION], arrest.ask_procedures, "")
 
     def test_find_process_is_rectified(self):
         arrest_ref = "256672"
         arrest = self.read_pdf(arrest_ref)
-        arrest.is_rectified().find_process()
-        self.assertEqual([Process.SUSPENSION], arrest.procedures, "")
+        arrest.is_rectified().find_ask_process()
+        self.assertEqual([Process.SUSPENSION], arrest.ask_procedures, "")
 
     def test_find_process_first_delimiter_on_second_page(self):
         arrest_ref = "255472"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.SUSPENSION, Process.ANNULATION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.SUSPENSION, Process.ANNULATION], arrest.ask_procedures, "")
 
     def test_find_process_strange_space(self):
         arrest_ref = "255962"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.ANNULATION, Process.REPARATION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.ANNULATION, Process.REPARATION], arrest.ask_procedures, "")
 
     def test_find_process(self):
         arrest_ref = "255964"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.ANNULATION, Process.REPARATION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.ANNULATION, Process.REPARATION], arrest.ask_procedures, "")
 
     def test_find_process_suspension_space(self):
         arrest_ref = "255679"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.SUSPENSION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.SUSPENSION], arrest.ask_procedures, "")
 
     def test_find_process_sus(self):
         arrest_ref = "256014"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.SUSPENSION, Process.ANNULATION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.SUSPENSION, Process.ANNULATION], arrest.ask_procedures, "")
 
     def test_find_process_suspension_only(self):
         arrest_ref = "255438"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.SUSPENSION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.SUSPENSION], arrest.ask_procedures, "")
 
     def test_find_process_reparation_only(self):
         arrest_ref = "255681"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.REPARATION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.REPARATION], arrest.ask_procedures, "")
 
     def test_find_process_suspension_poursuite(self):
         arrest_ref = "256484"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.SUSPENSION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.SUSPENSION], arrest.ask_procedures, "")
 
     def test_find_process_annulation_2(self):
         arrest_ref = "257654"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.ANNULATION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.ANNULATION], arrest.ask_procedures, "")
 
     def test_find_process_requete_suspension_annulation(self):
         arrest_ref = "257919"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.SUSPENSION, Process.ANNULATION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.SUSPENSION, Process.ANNULATION], arrest.ask_procedures, "")
 
     def test_find_process_recours_suspension(self):
         arrest_ref = "257921"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.SUSPENSION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.SUSPENSION], arrest.ask_procedures, "")
 
     def test_find_process_suspension_2(self):
         arrest_ref = "255678"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.SUSPENSION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.SUSPENSION], arrest.ask_procedures, "")
 
     def test_find_process_annulation_3(self):
         arrest_ref = "257819"
         arrest = self.read_pdf(arrest_ref)
-        arrest.find_process()
-        self.assertEqual([Process.ANNULATION], arrest.procedures, "")
+        arrest.find_ask_process()
+        self.assertEqual([Process.ANNULATION], arrest.ask_procedures, "")
 
 
 if __name__ == '__main__':

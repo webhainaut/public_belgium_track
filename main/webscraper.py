@@ -81,7 +81,7 @@ class WebScraper:
     def find_one(self, ref, publish_date="1/1/1900", contract_type="/", year=1900):
         pdf_reader = self.find_public_procurement(ref, year)
         arrest = Arrest(ref, pdf_reader, datetime.strptime(publish_date, '%d/%m/%Y'),
-                        contract_type).is_rectified().find_arrest_date().find_process()
+                        contract_type).is_rectified().find_arrest_date().find_ask_process()
         return arrest
 
     def extract_arrets_year(self, year, last_arrest=None):
