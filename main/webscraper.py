@@ -1,6 +1,7 @@
 import io
 import os.path
 import re
+import shutil
 from datetime import datetime
 
 import requests
@@ -9,6 +10,8 @@ from pypdf import PdfReader
 
 from main.Arrest import Arrest
 from main.Exceptions.MissingSectionException import MissingSectionException
+
+NEW_DIRECTORY = "result/arrest/new"
 
 
 class WebScraper:
@@ -63,6 +66,18 @@ class WebScraper:
         ref_match = re.search(r'\b(\d+)\b', public_text)
         return ref_match.group(1) if ref_match else None
 
+    @staticmethod
+    def clean_new_directory():
+        if os.path.exists(NEW_DIRECTORY):
+            shutil.rmtree(NEW_DIRECTORY)
+        os.makedirs(NEW_DIRECTORY)
+
+    @staticmethod
+    def add_to_new(num, pdf):
+        file_path = "{directory}/{num}.pdf".format(directory=NEW_DIRECTORY, num=num)
+        with open(file_path, mode="wb") as file:
+            file.write(pdf)
+
     def find_public_procurement(self, num, year):
         """get pdf to the public procurement for num xxxxxx"""
         directory = "result/arrest/{year}".format(year=year)
@@ -74,15 +89,10 @@ class WebScraper:
             print("download : {num}.pdf".format(num=num))
             with open(file_path, mode="wb") as file:
                 file.write(pdf)
+            self.add_to_new(num, pdf)
             return PdfReader(io.BytesIO(pdf))
         else:
             return PdfReader(file_path)
-
-    def find_one(self, ref, publish_date="1/1/1900", contract_type="/", year=1900):
-        pdf_reader = self.find_public_procurement(ref, year)
-        arrest = Arrest(ref, pdf_reader, datetime.strptime(publish_date, '%d/%m/%Y'),
-                        contract_type).find_all()
-        return arrest
 
     def extract_arrets_year(self, year, last_arrest=None):
         arrests = []
@@ -103,6 +113,12 @@ class WebScraper:
             except MissingSectionException as e:
                 print(f"{e}")
         return arrests
+
+    def find_one(self, ref, publish_date="1/1/1900", contract_type="/", year=1900):
+        pdf_reader = self.find_public_procurement(ref, year)
+        arrest = Arrest(ref, pdf_reader, datetime.strptime(publish_date, '%d/%m/%Y'),
+                        contract_type).find_all()
+        return arrest
 
     def extract_arrets_list(self, refs, last_arrest=None):
         arrests = []

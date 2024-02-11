@@ -60,6 +60,7 @@ class PublicBelgiumTrack:
             return Arrest.from_dic(self.previous_df.tail(1).to_dict(orient='records')[0])
 
     def get_arrests(self, refs=None):
+        self.webscraper.clean_new_directory()
         if refs is not None:
             return self.webscraper.extract_arrets_list(refs, self.last_arrest)
         else:
