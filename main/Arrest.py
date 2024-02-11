@@ -24,12 +24,12 @@ class Arrest:
 
     def as_dict(self):
         return {self.REF: self.ref,
+                self.finder.roleNumberFinder.label: '\n'.join(self.roles),
+                self.finder.isRectifiedFinder.label: self.isRectified.real,
                 self.PUBLISH_DATE: self.publish_date,
                 self.CONTRACT_TYPE: self.contract_type,
                 self.finder.arrestDateFinder.label: self.arrest_date,
-                self.finder.isRectifiedFinder.label: self.isRectified.real,
-                self.finder.askProcessFinder.label: ', '.join([process.name for process in self.ask_procedures]),
-                self.finder.roleNumberFinder.label: '\n'.join(self.roles)
+                self.finder.askProcessFinder.label: ', '.join([process.name for process in self.ask_procedures])
                 }
 
     @classmethod
