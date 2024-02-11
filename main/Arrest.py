@@ -20,6 +20,7 @@ class Arrest:
         self.isRectified = False
         self.arrest_date = None
         self.ask_procedures = None
+        self.roles = []
 
     def as_dict(self):
         return {self.REF: self.ref,
@@ -27,13 +28,22 @@ class Arrest:
                 self.CONTRACT_TYPE: self.contract_type,
                 self.finder.arrestDateFinder.label: self.arrest_date,
                 self.finder.isRectifiedFinder.label: self.isRectified.real,
-                self.finder.askProcessFinder.label: ', '.join([process.name for process in self.ask_procedures])}
+                self.finder.askProcessFinder.label: ', '.join([process.name for process in self.ask_procedures]),
+                self.finder.roleNumberFinder.label: '\n'.join(self.roles)
+                }
 
     @classmethod
     def from_dic(cls, dic):
         arrest = cls(ref=dic[cls.REF], reader=None, publish_date=dic[cls.PUBLISH_DATE],
                      contract_type=dic[cls.CONTRACT_TYPE])
         return arrest
+
+    def find_all(self):
+        return (self.is_rectified()
+                .find_arrest_date()
+                .find_ask_process()
+                .find_role_number()
+                )
 
     def is_rectified(self):
         self.isRectified = self.finder.isRectifiedFinder.find(self.ref, self.reader)
@@ -47,4 +57,9 @@ class Arrest:
     def find_ask_process(self):
         self.ask_procedures = self.finder.askProcessFinder.find(self.ref, self.reader, {
             self.finder.askProcessFinder.IS_RECTIFIED_LABEL: self.isRectified})
+        return self
+
+    def find_role_number(self):
+        self.roles = self.finder.roleNumberFinder.find(self.ref, self.reader, {
+            self.finder.roleNumberFinder.IS_RECTIFIED_LABEL: self.isRectified})
         return self

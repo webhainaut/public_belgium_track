@@ -12,7 +12,7 @@ class AskProcessFinder(FinderAbstract):
 
     def find(self, ref, reader, args=None):
         index_page = self.get_first_page(args)
-        first_delimiter_pattern = re.compile(r'I\.\s*Objets*\s*(de\s*la|de\s*s|du)\s*(requête|recours)', re.IGNORECASE)
+        first_delimiter_pattern = re.compile(self.FIRST_TITLE_PATTERN, re.IGNORECASE)
         second_delimiter_pattern = re.compile(r'II\.\s*Procédure', re.IGNORECASE)
 
         try:

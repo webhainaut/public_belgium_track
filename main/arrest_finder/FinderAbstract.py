@@ -4,6 +4,7 @@ from main.Exceptions.DataNotFoundException import DataNotFoundException
 
 
 class FinderAbstract:
+    FIRST_TITLE_PATTERN = r'I\.\s*Objets*\s*(de\s*la|de\s*s|du)\s*(requête|recours)'
     IS_RECTIFIED_LABEL = 'isRectified'
 
     def __init__(self, label):

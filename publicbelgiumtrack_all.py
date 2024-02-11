@@ -14,7 +14,7 @@ locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
 class PublicBelgiumTrack:
     YEAR = 2023
     # YEAR = datetime.now().year
-    FILE_PATH_EXCEL_FORMAT = "result/CE VIe ch. {year}.xlsx"
+    FILE_PATH_EXCEL_FORMAT = "result/test_CE VIe ch. {year}.xlsx"
 
     def __init__(self, file_path=FILE_PATH_EXCEL_FORMAT, year=YEAR):
         self.pd = pd
@@ -73,7 +73,7 @@ def main():
 
 
 REFS = None
-# REFS = []
+# REFS = [247478, 255267, 255438, 255470, 255472, 255668, 255678, 255679, 255681, 255844, 255962, 255964, 256014, 256484, 256672, 257478, 257654, 257819, 257919, 257921, 258204, 240250, 255824, 258274, 255681]
 if __name__ == "__main__":
     start_time = datetime.now()
     main()
