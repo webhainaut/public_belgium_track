@@ -6,11 +6,6 @@ class Arrest:
     N_PAGES = 'Pages'
     PUBLISH_DATE = 'Date publication'
     CONTRACT_TYPE = 'Type de contrat'
-    # RECTIFIED = 'Rectifié'
-    # ARREST_DATE = 'Date de l\'arrêt'
-    # ASK_PROCESS = 'Demande de procédure'  # <> Procédure traitée -> voir Article 1er last page (ou presque - si "Les
-    # dépens ... sont réservés" => procédure continue et dons annulation pas traitée et ou indemnité réparatrice ?.)
-    PROCESS_HANDLED = 'Procédure traitée'  # TODO
 
     def __init__(self, ref, reader, publish_date, contract_type):
         self.ref = ref
@@ -27,12 +22,12 @@ class Arrest:
     def as_dict(self):
         return {self.REF: self.ref,
                 self.N_PAGES: self.n_pages,
-                self.finder.roleNumberFinder.label: '\n'.join(self.roles),
+                self.finder.roleNumberFinder.label: '\n'.join(self.roles_numbers),
                 self.finder.isRectifiedFinder.label: self.isRectified.real,
                 self.PUBLISH_DATE: self.publish_date,
                 self.CONTRACT_TYPE: self.contract_type,
                 self.finder.arrestDateFinder.label: self.arrest_date,
-                self.finder.askProcessFinder.label: ', '.join([process.name for process in self.ask_procedures])
+                self.finder.askProcessFinder.label: ', '.join([process.label for process in self.ask_procedures])
                 }
 
     @classmethod
@@ -64,7 +59,7 @@ class Arrest:
         return self
 
     def find_role_number(self):
-        self.roles = self.finder.roleNumberFinder.find(self.ref, self.reader, {
+        self.roles_numbers = self.finder.roleNumberFinder.find(self.ref, self.reader, {
             self.finder.roleNumberFinder.IS_RECTIFIED_LABEL: self.isRectified})
         return self
 
