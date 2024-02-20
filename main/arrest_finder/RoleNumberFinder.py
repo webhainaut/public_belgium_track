@@ -2,15 +2,16 @@ import re
 
 from main.Exceptions.DataNotFoundException import DataNotFoundException
 from main.arrest_finder.FinderAbstract import FinderAbstract
+from main.arrest_finder.FinderService import FinderService
 
 
-class RoleNumberFinder(FinderAbstract):
+class RoleNumberFinder(FinderAbstract, FinderService):
 
-    def __check_args_contains(self, args):
+    def _check_args_contains(self, args):
         self.args_contain_is_rectified(args)
 
-    def __find_data(self, ref, reader, args=None):
-        index_page = self.__get_first_page(args)
+    def _find_data(self, ref, reader, args=None):
+        index_page = self._get_first_page(args)
         try:
             text = reader.pages[index_page].extract_text()
             search_first_part = re.search(self.FIRST_TITLE_PATTERN, text, re.IGNORECASE)
@@ -20,5 +21,5 @@ class RoleNumberFinder(FinderAbstract):
             roles_numbers = [re.findall(r'(\d+ *\d*\.\d+ *\d*)', role)[0].replace(" ", "") for role in
                              roles_numbers_fiter]
         except IndexError:
-            raise DataNotFoundException(data=self.label, ref=ref)
+            raise DataNotFoundException(data=self.service, ref=ref)
         return roles_numbers

@@ -1,49 +1,26 @@
 import re
 from enum import Enum
 
-from main.Exceptions.DataNotFoundException import DataNotFoundException
 from main.arrest_finder.FinderAbstract import FinderAbstract
+from main.arrest_finder.FinderService import FinderService
 
 
-class AskProcessFinder(FinderAbstract):
+class AskProcessFinder(FinderAbstract, FinderService):
     """
     si suspension / annulation / indemnité réparatrice / une combinaison
     """
 
-    def __check_args_contains(self, args):
+    def _check_args_contains(self, args):
         self.args_contain_is_rectified(args)
 
-    def __find_data(self, ref, reader, args=None):
-        index_page = self.__get_first_page(args)
-        first_delimiter_pattern = re.compile(self.FIRST_TITLE_PATTERN, re.IGNORECASE)
-        second_delimiter_pattern = re.compile(r'II\.\s*Procédure', re.IGNORECASE)
+    def _find_data(self, ref, reader, args=None):
+        index_page = self._get_first_page(args)
+        first_delimiter_pattern = self.FIRST_TITLE_PATTERN
+        second_delimiter_pattern = r'II\.\s*Procédure'
 
-        try:
-
-            text = reader.pages[index_page].extract_text()
-
-            # Vérifier si le premier délimiteur est présent dans le texte
-            if first_delimiter_pattern.search(text) is None:
-                index_page = index_page + 1
-                text = reader.pages[index_page].extract_text()
-            if first_delimiter_pattern.search(text) is not None:
-
-                # Utiliser une boucle pour rechercher le deuxième délimiteur
-                while second_delimiter_pattern.search(text) is None:
-                    index_page += 1
-                    text += reader.pages[index_page].extract_text()
-
-                # Extraire le texte entre les délimiteurs
-                intern_text = self.extract_text_between_delimiters_1(ref, text, first_delimiter_pattern,
-                                                                     second_delimiter_pattern)
-                # Appliquer la recherche des processus dans le texte interne
-                procedures = self.search_process_in_text(intern_text)
-
-            else:
-                raise DataNotFoundException(data=self.label, ref=ref, message="first delimiter not found")
-
-        except IndexError:
-            raise DataNotFoundException(data=self.label, ref=ref)
+        text = self.extract_text_between_delimiters_for_reader(self.service, ref, reader, first_delimiter_pattern,
+                                                               second_delimiter_pattern, page_1=index_page)
+        procedures = self.search_process_in_text(text)
         return procedures
 
     @staticmethod

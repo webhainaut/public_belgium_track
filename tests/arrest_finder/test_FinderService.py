@@ -1,12 +1,12 @@
 from main.Exceptions.DataNotFoundException import DataNotFoundException
-from main.arrest_finder.FinderAbstract import FinderAbstract
+from main.arrest_finder.FinderService import FinderService
 from tests.arrest_finder.testAbstract_Finder import TestAbstractFinder
 
 
-class TestFinderAbstract(TestAbstractFinder):
+class TestFinderService(TestAbstractFinder):
 
     def setUp(self):
-        self.finder = FinderAbstract("finder")
+        self.finder = FinderService()
 
     def test_kwargs_contain_arg_no_dic(self):
         with self.assertRaises(NotADirectoryError) as context:
@@ -22,16 +22,16 @@ class TestFinderAbstract(TestAbstractFinder):
         self.finder.args_contain_is_rectified({self.finder.IS_RECTIFIED_LABEL: True})
 
     def test_get_first_age_1(self):
-        self.assertEqual(1, self.finder._FinderAbstract__get_first_page({self.finder.IS_RECTIFIED_LABEL: True}))
+        self.assertEqual(1, self.finder._get_first_page({self.finder.IS_RECTIFIED_LABEL: True}))
 
     def test_get_first_age_0(self):
-        self.assertEqual(0, self.finder._FinderAbstract__get_first_page({self.finder.IS_RECTIFIED_LABEL: False}))
+        self.assertEqual(0, self.finder._get_first_page({self.finder.IS_RECTIFIED_LABEL: False}))
 
     def test_extract_text_between_delimiters_only_one_delimiter(self):
         arrest_ref = "255267"
         reader = self.read_pdf(arrest_ref)
         delimiter_1 = r"PAR CES MOTIFS,\s*LE CONSEIL D’ÉTAT DÉCIDE :"
-        text = self.finder.extract_text_between_delimiters_for_reader(arrest_ref, reader, delimiter_1)
+        text = self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1)
         self.assertEqual("""PAR CES MOTIFS,  
 LE CONSEIL D’ÉTAT DÉCIDE :  
  
@@ -84,7 +84,8 @@ siégeant en référé, le 14 décembre  2022, par :
         reader = self.read_pdf(arrest_ref)
         delimiter_1 = r"Par une requête"
         delimiter_2 = r"la société"
-        text = self.finder.extract_text_between_delimiters_for_reader(arrest_ref, reader, delimiter_1, delimiter_2)
+        text = self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1,
+                                                                      delimiter_2)
         self.assertEqual("""Par une requête introduite le  27 octobre 2022 , la société à responsabilité 
 limitée DXA.Archi,  la société à responsabilité limitée Atelier Caneva -s, Sami  
 Kamar , la société à responsabilité limitée Ney & Partners WOW  et la société à 
@@ -97,7 +98,8 @@ d'administration de la Société""", text)
         reader = self.read_pdf(arrest_ref)
         delimiter_1 = r"Par une requête"
         delimiter_2 = r"la société"
-        text = self.finder.extract_text_between_delimiters_for_reader(arrest_ref, reader, delimiter_1, delimiter_2,
+        text = self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1,
+                                                                      delimiter_2,
                                                                       page_1=1)
         self.assertEqual("""Par une requête introduite le 8 décembre 2022, les requérants demandent 
 l’annulation de la décision précitée.  
@@ -138,7 +140,8 @@ III. Faits  utiles à l’examen de la demande
         reader = self.read_pdf(arrest_ref)
         delimiter_1 = r"Conformément"
         delimiter_2 = r"réservés"
-        text = self.finder.extract_text_between_delimiters_for_reader(arrest_ref, reader, delimiter_1, delimiter_2,
+        text = self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1,
+                                                                      delimiter_2,
                                                                       page_1=21, page_2=21)
         self.assertEqual("""Conformément à l’article 3, § 1er, alinéa 2, de l’arrêté royal du 
 5 décembre 1991 déterminant la procédure en référé devant le Conseil d’État, le 
@@ -153,7 +156,8 @@ Article 5.
         arrest_ref = "255267"
         reader = self.read_pdf(arrest_ref)
         delimiter_1 = r"suspension"
-        text = self.finder.extract_text_between_delimiters_for_reader(arrest_ref, reader, delimiter_1, page_2=0)
+        text = self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1,
+                                                                      page_2=0)
         self.assertEqual("""suspension , selon la 
 procédure d’extrême urgence , de l’exécution  de « la décision prise par le Conseil 
 d'administration de la Société du Logement de la Région de Bruxelles -capitale (en 
@@ -170,7 +174,7 @@ Blondel Architectes + Alt -O + COSEAS + BESP  [....] ».""", text)
         reader = self.read_pdf(arrest_ref)
         delimiter_1 = r"coucou"
         with self.assertRaises(DataNotFoundException) as context:
-            self.finder.extract_text_between_delimiters_for_reader(arrest_ref, reader, delimiter_1)
+            self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1)
         self.assertEqual("finder non trouvée dans le pdf 255267 delimiter: \"coucou\" not found in the text",
                          str(context.exception))
 
@@ -180,7 +184,8 @@ Blondel Architectes + Alt -O + COSEAS + BESP  [....] ».""", text)
         delimiter_1 = r"suspension"
         delimiter_2 = r"coucou"
         with self.assertRaises(DataNotFoundException) as context:
-            self.finder.extract_text_between_delimiters_for_reader(arrest_ref, reader, delimiter_1, delimiter_2)
+            self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1,
+                                                                   delimiter_2)
         self.assertEqual("finder non trouvée dans le pdf 255267 delimiter: \"coucou\" not found in the text",
                          str(context.exception))
 
@@ -190,7 +195,8 @@ Blondel Architectes + Alt -O + COSEAS + BESP  [....] ».""", text)
         delimiter_1 = r"coucou 1"
         delimiter_2 = r"coucou"
         with self.assertRaises(DataNotFoundException) as context:
-            self.finder.extract_text_between_delimiters_for_reader(arrest_ref, reader, delimiter_1, delimiter_2,
+            self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1,
+                                                                   delimiter_2,
                                                                    strict_2=False)
         self.assertEqual("finder non trouvée dans le pdf 255267 delimiter: \"coucou 1\" not found in the text",
                          str(context.exception))
@@ -200,7 +206,8 @@ Blondel Architectes + Alt -O + COSEAS + BESP  [....] ».""", text)
         reader = self.read_pdf(arrest_ref)
         delimiter_1 = r"suspension"
         delimiter_2 = r"coucou"
-        text = self.finder.extract_text_between_delimiters_for_reader(arrest_ref, reader, delimiter_1, delimiter_2,
+        text = self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1,
+                                                                      delimiter_2,
                                                                       strict_2=False)
         self.assertEqual("""suspension , selon la 
 procédure d’extrême urgence , de l’exécution  de « la décision prise par le Conseil 
@@ -218,7 +225,8 @@ Blondel Architectes + Alt -O + COSEAS + BESP  [....] ».""", text)
         reader = self.read_pdf(arrest_ref)
         delimiter_1 = r"suspension"
         delimiter_2 = r"7"
-        text = self.finder.extract_text_between_delimiters_for_reader(arrest_ref, reader, delimiter_1, delimiter_2,
+        text = self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1,
+                                                                      delimiter_2,
                                                                       reverse_1=True)
         self.assertEqual("""suspension de l’exécution de la décision prise par la Société du 
 Logement de la Région de Bruxelles -capitale  d'attribuer le marché public de services 
@@ -231,7 +239,8 @@ avenue des Cailles à 117""", text)
         reader = self.read_pdf(arrest_ref)
         delimiter_1 = r"suspension"
         delimiter_2 = r"7"
-        text = self.finder.extract_text_between_delimiters_for_reader(arrest_ref, reader, delimiter_1, delimiter_2,
+        text = self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1,
+                                                                      delimiter_2,
                                                                       reverse_1=True,
                                                                       reverse_2=True)
         self.assertEqual("""suspension de l’exécution de la décision prise par la Société du 
@@ -253,7 +262,8 @@ Article 3.
         reader = self.read_pdf(arrest_ref)
         delimiter_1 = r"suspension"
         delimiter_2 = r"7"
-        text = self.finder.extract_text_between_delimiters_for_reader(arrest_ref, reader, delimiter_1, delimiter_2,
+        text = self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1,
+                                                                      delimiter_2,
                                                                       page_1=19,
                                                                       reverse_2=True)
         self.assertEqual("""suspension de l’exécution de l’acte attaqué, qui 
@@ -298,7 +308,7 @@ Article 3.
         reader = self.read_pdf(arrest_ref)
         delimiter_1 = r"suspension"
         with self.assertRaises(IndexError) as context:
-            self.finder.extract_text_between_delimiters_for_reader(arrest_ref, reader, delimiter_1, page_1=-2)
+            self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1, page_1=-2)
         self.assertEqual("255267, first_page: -2 < 0", str(context.exception))
 
     def test_extract_text_between_delimiters_page_1_error(self):
@@ -306,7 +316,8 @@ Article 3.
         reader = self.read_pdf(arrest_ref)
         delimiter_1 = r"suspension"
         with self.assertRaises(IndexError) as context:
-            self.finder.extract_text_between_delimiters_for_reader(arrest_ref, reader, delimiter_1, page_1=500)
+            self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1,
+                                                                   page_1=500)
         self.assertEqual("255267, first_page: 500 > last_page: 21", str(context.exception))
 
     def test_extract_text_between_delimiters_page_2_neg(self):
@@ -314,7 +325,7 @@ Article 3.
         reader = self.read_pdf(arrest_ref)
         delimiter_1 = r"suspension"
         with self.assertRaises(IndexError) as context:
-            self.finder.extract_text_between_delimiters_for_reader(arrest_ref, reader, delimiter_1, page_2=-2)
+            self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1, page_2=-2)
         self.assertEqual("255267, second_page: -2 < 0", str(context.exception))
 
     def test_extract_text_between_delimiters_page_2_error(self):
@@ -322,7 +333,8 @@ Article 3.
         reader = self.read_pdf(arrest_ref)
         delimiter_1 = r"suspension"
         with self.assertRaises(IndexError) as context:
-            self.finder.extract_text_between_delimiters_for_reader(arrest_ref, reader, delimiter_1, page_2=500)
+            self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1,
+                                                                   page_2=500)
         self.assertEqual("255267, second_page: 500 > last_page: 21", str(context.exception))
 
     def test_extract_text_between_delimiters_page_1_sup_page2(self):
@@ -330,6 +342,6 @@ Article 3.
         reader = self.read_pdf(arrest_ref)
         delimiter_1 = r"suspension"
         with self.assertRaises(IndexError) as context:
-            self.finder.extract_text_between_delimiters_for_reader(arrest_ref, reader, delimiter_1, page_1=10, page_2=5)
+            self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1, page_1=10,
+                                                                   page_2=5)
         self.assertEqual("255267, first_page: 10 > second_page: 5", str(context.exception))
-        # self.finder.extract_text_between_delimiters(ref, reader, delimiter_1, delimiter_2, page_1, page_2, strict_1, strict_2, reverse_1, reverse_2)
