@@ -12,8 +12,11 @@ class ArrestDateFinder(FinderAbstract):
     parfois n\n o
     """
 
-    def find(self, ref, reader, args=None):
-        index_page = self.get_first_page(args)
+    def __check_args_contains(self, args):
+        self.args_contain_is_rectified(args)
+
+    def __find_data(self, ref, reader, args=None):
+        index_page = self.__get_first_page(args)
         try:
             date_line = re.findall(r'(n\s*o\s.*\sdu\s\d{1,2}.*\s\d{4})', reader.pages[index_page].extract_text())[
                 0]

@@ -6,8 +6,11 @@ from main.arrest_finder.FinderAbstract import FinderAbstract
 
 class RoleNumberFinder(FinderAbstract):
 
-    def find(self, ref, reader, args=None):
-        index_page = self.get_first_page(args)
+    def __check_args_contains(self, args):
+        self.args_contain_is_rectified(args)
+
+    def __find_data(self, ref, reader, args=None):
+        index_page = self.__get_first_page(args)
         try:
             text = reader.pages[index_page].extract_text()
             search_first_part = re.search(self.FIRST_TITLE_PATTERN, text, re.IGNORECASE)

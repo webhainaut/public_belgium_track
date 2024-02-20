@@ -10,8 +10,11 @@ class AskProcessFinder(FinderAbstract):
     si suspension / annulation / indemnité réparatrice / une combinaison
     """
 
-    def find(self, ref, reader, args=None):
-        index_page = self.get_first_page(args)
+    def __check_args_contains(self, args):
+        self.args_contain_is_rectified(args)
+
+    def __find_data(self, ref, reader, args=None):
+        index_page = self.__get_first_page(args)
         first_delimiter_pattern = re.compile(self.FIRST_TITLE_PATTERN, re.IGNORECASE)
         second_delimiter_pattern = re.compile(r'II\.\s*Procédure', re.IGNORECASE)
 
@@ -31,8 +34,8 @@ class AskProcessFinder(FinderAbstract):
                     text += reader.pages[index_page].extract_text()
 
                 # Extraire le texte entre les délimiteurs
-                intern_text = self.extract_text_between_delimiters(ref, text, first_delimiter_pattern,
-                                                                   second_delimiter_pattern)
+                intern_text = self.extract_text_between_delimiters_1(ref, text, first_delimiter_pattern,
+                                                                     second_delimiter_pattern)
                 # Appliquer la recherche des processus dans le texte interne
                 procedures = self.search_process_in_text(intern_text)
 
