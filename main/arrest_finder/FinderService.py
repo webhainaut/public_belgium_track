@@ -18,7 +18,7 @@ class FinderService:
 
     def extract_text_between_delimiters_for_reader(self, service, ref, reader: PdfReader, pattern_delimiter_1,
                                                    pattern_delimiter_2=None, page_1=None, page_2=None,
-                                                   strict_2=True, reverse_1=False, reverse_2=False,
+                                                   strict=True, reverse_1=False, reverse_2=False,
                                                    flags=re.IGNORECASE + re.DOTALL):
         """Extract text between 2 delimiters (the text contain the delimiters)"""
 
@@ -42,18 +42,17 @@ class FinderService:
         else:
             if not reverse_2:
                 current_page_2 = self.__ascending_search(service, ref, delimiter_2, current_page_1, reader, second_page,
-                                                         strict_2)
+                                                         strict)
             else:
                 current_page_2 = self.__descending_search(service, ref, delimiter_2, current_page_1, reader,
-                                                          second_page,
-                                                          strict_2)
+                                                          second_page, strict)
         text = ''.join([page.extract_text() for page in reader.pages[current_page_1:current_page_2 + 1]])
         return self.extract_text_between_delimiters_for_string(service, ref, text, pattern_delimiter_1,
                                                                pattern_delimiter_2,
-                                                               flags)
+                                                               flags, strict)
 
     def extract_text_between_delimiters_for_string(self, service, ref, text, delimiter_1, delimiter_2,
-                                                   flags=re.IGNORECASE + re.DOTALL, strict_2=False):
+                                                   flags=re.IGNORECASE + re.DOTALL, strict=False):
         if delimiter_2 is None:
             pattern_delimiter = re.compile(delimiter_1 + r'(.*)', flags)
         else:
@@ -63,12 +62,14 @@ class FinderService:
         if match:
             return match.group(0).strip()
         else:
-            if delimiter_2 is None or strict_2:
+            if delimiter_2 is None or strict:
                 raise DataNotFoundException(data=service, ref=ref, message="Delimiters not found in text")
             else:
-                return self.extract_text_between_delimiters_for_string(service, ref, text, delimiter_1, None, flags)
+                return self.extract_text_between_delimiters_for_string(service, ref, text, delimiter_1, None, flags,
+                                                                       strict)
 
-    def __descending_search(self, service, ref, delimiter, first_page, reader, second_page, strict):
+    @staticmethod
+    def __descending_search(service, ref, delimiter, first_page, reader, second_page, strict):
         current_page = second_page
         while current_page >= first_page:
             # Vérifier si le premier délimiteur est présent dans le texte
@@ -86,7 +87,8 @@ class FinderService:
                 current_page = first_page
         return current_page
 
-    def __ascending_search(self, service, ref, delimiter, first_page, reader, second_page, strict):
+    @staticmethod
+    def __ascending_search(service, ref, delimiter, first_page, reader, second_page, strict):
         current_page = first_page
         while current_page <= second_page:
             # Vérifier si le premier délimiteur est présent dans le texte
@@ -101,7 +103,7 @@ class FinderService:
                                             message="delimiter: \"{delimiter}\" not found in the text".format(
                                                 delimiter=delimiter.pattern))
             else:
-                current_page = first_page
+                current_page = second_page
         return current_page
 
     @staticmethod
@@ -132,3 +134,8 @@ class FinderService:
             raise IndexError(
                 "{ref}, first_page: {first_page} > second_page: {second_page}".format(ref=ref, first_page=first_page,
                                                                                       second_page=second_page))
+
+    @staticmethod
+    def print_pdf(reader: PdfReader):
+        for page in reader.pages:
+            print(page.extract_text())

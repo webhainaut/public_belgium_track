@@ -196,8 +196,7 @@ Blondel Architectes + Alt -O + COSEAS + BESP  [....] ».""", text)
         delimiter_2 = r"coucou"
         with self.assertRaises(DataNotFoundException) as context:
             self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1,
-                                                                   delimiter_2,
-                                                                   strict_2=False)
+                                                                   delimiter_2, strict=False)
         self.assertEqual("finder non trouvée dans le pdf 255267 delimiter: \"coucou 1\" not found in the text",
                          str(context.exception))
 
@@ -207,18 +206,47 @@ Blondel Architectes + Alt -O + COSEAS + BESP  [....] ».""", text)
         delimiter_1 = r"suspension"
         delimiter_2 = r"coucou"
         text = self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1,
-                                                                      delimiter_2,
-                                                                      strict_2=False)
-        self.assertEqual("""suspension , selon la 
-procédure d’extrême urgence , de l’exécution  de « la décision prise par le Conseil 
-d'administration de la Société du Logement de la Région de Bruxelles -capitale (en 
-abrégé SLRB) en date du 6 octobre 2022, notifiée officiellement par courrier 
-recommandé daté du 10 octobre 2022 au groupement d'opérate urs économiques de 
-la CIT É JARDICOLE, d'attribuer le marché public de services d'études et de suivi 
-des travaux de construction d'environ 70 logements (80  % de logements sociaux et 
-20 % de logements moyens) et un équipement collectif sis avenue des Cailles  à 1170 
-Watermael -Boitsfort dans le cadre de l'Alliance Habitat à l'Association Pierre 
-Blondel Architectes + Alt -O + COSEAS + BESP  [....] ».""", text)
+                                                                      delimiter_2, strict=False, reverse_1=True)
+        self.assertEqual("""suspension de l’exécution de la décision prise par la Société du 
+Logement de la Région de Bruxelles -capitale  d'attribuer le marché public de services 
+d'études et de suivi des travaux de construction d'environ 70 logements (80 % de 
+logements sociaux et 2 0 % de logements moyens) et un équipement collectif sis 
+avenue des Cailles à 1170 Watermael -Boitsfort dans le cadre de l'Alliance Habitat à 
+l'Association Pierre Blondel Architectes + Alt -O + COSEAS + BESP  est ordonnée.  VIexturg - 22.440 - 22/22 
+ Article 2. 
+ 
+    L’exécution immédiate du présent arrêt est ordonnée.  
+ 
+Article 3. 
+     
+    Les pièces 6.1 à 6.7 du dossier des requérantes et les pièces 5 à 11 et 22 
+à 26 du dossier administratif  sont, à ce stade de la procédure, tenues pour 
+confidentielles.  
+ 
+Article 4. 
+ 
+    Conformément à l’article 3, § 1er, alinéa 2, de l’arrêté royal du 
+5 décembre 1991 déterminant la procédure en référé devant le Conseil d’État, le 
+présent arrêt sera notifié par télécopieur  aux partie s requérante s qui n’ont pas choisi 
+la procédure  électroni que. 
+ 
+Article 5. 
+ 
+    Les dépens, en ce compris l’indemnité de procédure, sont réservés.  
+ 
+ 
+    Ainsi prononcé à Bruxelles, en audience publique de la VIe chambre 
+siégeant en référé, le 14 décembre  2022, par : 
+ 
+  Imre Kovalovszky,   président de chambre,  
+ Vincent Durieux,   greffier.  
+ 
+ Le Greffier,  Le Président,  
+ 
+ 
+ 
+ 
+ Vincent Durieux  Imre Kovalovszky""", text)
 
     def test_extract_text_between_delimiters_reverse_1(self):
         arrest_ref = "255267"
