@@ -16,11 +16,11 @@ class PublicBelgiumTrack:
     # YEAR = datetime.now().year
     FILE_PATH_EXCEL_FORMAT = "result/CE VIe ch. {year}.xlsx"
 
-    def __init__(self, file_path=FILE_PATH_EXCEL_FORMAT, year=YEAR):
+    def __init__(self, result_path=FILE_PATH_EXCEL_FORMAT, year=YEAR):
         self.pd = pd
         self.load_workbook = load_workbook
         self.webscraper = WebScraper()
-        self.file_path = file_path.format(year=year)
+        self.result_path = result_path.format(year=year)
         self.previous_df = None
         self.begin_line = 0
         self.last_arrest = None
@@ -31,17 +31,17 @@ class PublicBelgiumTrack:
             if not df.empty:
                 df = df.sort_values(by=Arrest.REF)
             try:
-                with pd.ExcelWriter(self.file_path, engine='openpyxl', mode='a', if_sheet_exists="overlay") as writer:
+                with pd.ExcelWriter(self.result_path, engine='openpyxl', mode='a', if_sheet_exists="overlay") as writer:
                     df.to_excel(writer, sheet_name='Feuille1', index=False, startrow=self.begin_line, header=False)
                 print("remlir a partir de {begin_line} - last arrest : {arrest}".format(begin_line=self.begin_line,
                                                                                         arrest=self.last_arrest.as_dict()))
             except FileNotFoundError:
-                with pd.ExcelWriter(self.file_path, engine='openpyxl', mode='w') as writer:
+                with pd.ExcelWriter(self.result_path, engine='openpyxl', mode='w') as writer:
                     df.to_excel(writer, sheet_name='Feuille1', index=False)
 
     def read_from_excel(self):
-        if os.path.isfile(self.file_path):
-            return self.pd.read_excel(self.file_path)
+        if os.path.isfile(self.result_path):
+            return self.pd.read_excel(self.result_path)
         else:
             print(f"Le fichier n'existe pas.")
 
@@ -50,10 +50,17 @@ class PublicBelgiumTrack:
             return len(self.previous_df) + 1
         return 0
 
-    def find_last_arrest(self):
+    def find_last_arrest(self, current_arrests):
         self.previous_df = self.read_from_excel()
         self.begin_line = self.last_line()
-        self.last_arrest = self.find_last_arrest_from_previous_df()
+        self.last_arrest = current_arrests[-1]
+
+    def get_current_arrests(self):
+        self.previous_df = self.read_from_excel()
+        current_arrests = []
+        if self.previous_df is not None:
+            current_arrests = [Arrest.from_dic(arrest) for arrest in self.previous_df.to_dict(orient='records')]
+        return current_arrests
 
     def find_last_arrest_from_previous_df(self):
         if self.previous_df is not None:
@@ -69,7 +76,8 @@ class PublicBelgiumTrack:
 
 def main():
     public_belgium_track = PublicBelgiumTrack()
-    public_belgium_track.find_last_arrest()
+    current_arrests = public_belgium_track.get_current_arrests()
+    public_belgium_track.find_last_arrest(current_arrests)
     arrests = public_belgium_track.get_arrests(REFS)
     public_belgium_track.write_to_excel(arrests)
 
