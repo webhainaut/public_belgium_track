@@ -14,3 +14,5 @@ six==1.16.0
 soupsieve==2.5
 tzdata==2023.3
 urllib3==2.1.0
+
+jproperties~=2.1.1
