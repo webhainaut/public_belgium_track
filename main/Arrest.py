@@ -25,14 +25,14 @@ class Arrest:
         self.ask_procedures = []
         self.rulings = []
         self.surplus = False
-        self.error = ''
+        self.errors = []
 
     def as_dict(self):
         ruling_label = ', '.join([ruling.label for ruling in self.rulings])
         if self.surplus:
-            ruling_label = ruling_label + " (reject surplus)"
+            ruling_label = ruling_label + " (rejet surplus)"
         return {self.REF: self.ref,
-                self.ERRORS: self.error,
+                self.ERRORS: '\n'.join(self.errors),
                 self.N_PAGES: self.n_pages,
                 self.finder.roleNumberFinder.service: '\n'.join(self.roles_numbers),
                 self.finder.isRectifiedFinder.service: self.isRectified.real,
@@ -60,10 +60,7 @@ class Arrest:
 
     def check_errors(self, errors):
         if errors is not None:
-            if self.error == '':
-                self.error = errors
-            else:
-                self.error = self.error + '\n' + errors
+            self.errors.append(errors)
 
     def is_rectified(self):
         self.isRectified, errors = self.finder.isRectifiedFinder.find(self.ref, self.reader)
