@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from main.arrest_finder.ArrestFinder import ArrestFinder
 
 
@@ -7,7 +9,7 @@ class Arrest:
     PUBLISH_DATE = 'Date publication'
     CONTRACT_TYPE = 'Type de contrat'
 
-    def __init__(self, ref, reader, publish_date, contract_type):
+    def __init__(self, ref, reader, publish_date: datetime, contract_type):
         self.finder = ArrestFinder()
 
         self.ref = ref
