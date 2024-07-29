@@ -108,7 +108,7 @@ class WebScraper:
                     if last_ref < int(dic[Arrest.REF]):
                         arrest = self.find_one(int(dic[Arrest.REF]), dic[Arrest.PUBLISH_DATE],
                                                dic[Arrest.CONTRACT_TYPE], year)
-                        if arrest.arrest_date.year == year:
+                        if arrest.arrest_date is None or arrest.arrest_date.year == year:
                             arrests.append(arrest)
             except MissingSectionException as e:
                 print(f"{e}")
