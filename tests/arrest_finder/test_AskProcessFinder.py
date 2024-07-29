@@ -139,3 +139,24 @@ class TestAskProcessFinder(TestAbstractFinder):
         ask_procedures = self.askProcessFinder.find(arrest_ref, reader,
                                                     {self.askProcessFinder.IS_RECTIFIED_LABEL: False})
         self.assertEqual([Process.ANNULATION], ask_procedures, "")
+
+    def test_find_process_reparation(self):
+        arrest_ref = "258245"
+        reader = self.read_pdf(arrest_ref)
+        ask_procedures = self.askProcessFinder.find(arrest_ref, reader,
+                                                    {self.askProcessFinder.IS_RECTIFIED_LABEL: False})
+        self.assertEqual([Process.REPARATION], ask_procedures, "")
+
+    def test_find_process_annulation_in_procedure(self):
+        arrest_ref = "256675"
+        reader = self.read_pdf(arrest_ref)
+        ask_procedures = self.askProcessFinder.find(arrest_ref, reader,
+                                                    {self.askProcessFinder.IS_RECTIFIED_LABEL: False})
+        self.assertEqual([Process.SUSPENSION, Process.ANNULATION], ask_procedures, "")
+
+    def test_find_process_reparation_2(self):
+        arrest_ref = "257009"
+        reader = self.read_pdf(arrest_ref)
+        ask_procedures = self.askProcessFinder.find(arrest_ref, reader,
+                                                    {self.askProcessFinder.IS_RECTIFIED_LABEL: False})
+        self.assertEqual([Process.ANNULATION, Process.REPARATION], ask_procedures, "")
