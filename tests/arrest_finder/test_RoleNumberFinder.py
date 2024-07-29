@@ -10,14 +10,14 @@ class TestRoleNumberFinder(TestAbstractFinder):
     def test_find_role_only_one(self):
         arrest_ref = "247478"
         reader = self.read_pdf(arrest_ref)
-        roles_number = self.roleNumberFinder.find(arrest_ref, reader,
+        roles_number, error = self.roleNumberFinder.find(arrest_ref, reader,
                                                   {self.roleNumberFinder.IS_RECTIFIED_LABEL: False})
         self.assertEqual(["205.687"], roles_number, "Only one")
 
     def test_find_role_several(self):
         arrest_ref = "255472"
         reader = self.read_pdf(arrest_ref)
-        roles_number = self.roleNumberFinder.find(arrest_ref, reader,
+        roles_number, error = self.roleNumberFinder.find(arrest_ref, reader,
                                                   {self.roleNumberFinder.IS_RECTIFIED_LABEL: False})
         self.assertEqual(
             ["236.088", "236.089", "236.090", "236.091", "236.092", "236.093", "236.094",
@@ -30,34 +30,34 @@ class TestRoleNumberFinder(TestAbstractFinder):
     def test_find_role_is_rectified(self):
         arrest_ref = "256672"
         reader = self.read_pdf(arrest_ref)
-        roles_number = self.roleNumberFinder.find(arrest_ref, reader,
+        roles_number, error = self.roleNumberFinder.find(arrest_ref, reader,
                                                   {self.roleNumberFinder.IS_RECTIFIED_LABEL: True})
         self.assertEqual(["238.917"], roles_number, "Only one rectified")
 
     def test_find_role_no_space(self):
         arrest_ref = "255824"
         reader = self.read_pdf(arrest_ref)
-        roles_number = self.roleNumberFinder.find(arrest_ref, reader,
+        roles_number, error = self.roleNumberFinder.find(arrest_ref, reader,
                                                   {self.roleNumberFinder.IS_RECTIFIED_LABEL: False})
         self.assertEqual(["233.277"], roles_number, "No space after the A.")
 
     def test_find_role_no_A(self):
         arrest_ref = "240250"
         reader = self.read_pdf(arrest_ref)
-        roles_number = self.roleNumberFinder.find(arrest_ref, reader,
+        roles_number, error = self.roleNumberFinder.find(arrest_ref, reader,
                                                   {self.roleNumberFinder.IS_RECTIFIED_LABEL: False})
         self.assertEqual(["208.478"], roles_number, "No  A.")
 
     def test_find_role_space(self):
         arrest_ref = "258274"
         reader = self.read_pdf(arrest_ref)
-        roles_number = self.roleNumberFinder.find(arrest_ref, reader,
+        roles_number, error = self.roleNumberFinder.find(arrest_ref, reader,
                                                   {self.roleNumberFinder.IS_RECTIFIED_LABEL: False})
         self.assertEqual(["240.318"], roles_number, "")
 
     def test_find_role_no_2(self):
         arrest_ref = "255681"
         reader = self.read_pdf(arrest_ref)
-        roles_number = self.roleNumberFinder.find(arrest_ref, reader,
+        roles_number, error = self.roleNumberFinder.find(arrest_ref, reader,
                                                   {self.roleNumberFinder.IS_RECTIFIED_LABEL: False})
         self.assertEqual(["233.648"], roles_number, "")

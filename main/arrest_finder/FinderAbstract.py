@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from main.Exceptions.DataNotFoundException import DataNotFoundException
+
 
 class FinderAbstract(ABC):
     FIRST_TITLE_PATTERN = r'I\.\s*Objets*\s*(de\s*la|de\s*s|du)\s*(requête|recours)'
@@ -13,9 +15,17 @@ class FinderAbstract(ABC):
     def find(self, ref, reader, args=None):
         """Find data from Arrest file"""
         self._check_args_contains(args)
-        data = self._find_data(ref, reader, args)
-        return data
+        try:
+            data = self._find_data(ref, reader, args)
+        except DataNotFoundException as e:
+            return None, e.message
+        return data, None
 
+    """
+    Contrainte pour s'assurer que les arguments a passer à la fonction sont bien présent.
+    Exemple, vérifie qu'on aie bien l'information si l'arret est rectifier (si "IS_RECTIFIED_LABEL" est présent)
+    IS_RECTIFIED_LABEL est ensuite utiliser pour récupérer la première page de l'arret
+    """
     @abstractmethod
     def _check_args_contains(self, args):
         pass

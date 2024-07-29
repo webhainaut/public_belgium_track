@@ -53,7 +53,8 @@ class PublicBelgiumTrack:
     def find_last_arrest(self, current_arrests):
         self.previous_df = self.read_from_excel()
         self.begin_line = self.last_line()
-        self.last_arrest = current_arrests[-1]
+        if current_arrests:
+            self.last_arrest = current_arrests[-1]
 
     def get_current_arrests(self):
         self.previous_df = self.read_from_excel()
