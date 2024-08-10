@@ -8,9 +8,10 @@ locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
 
 
 def main():
-    public_belgium_track = PublicBelgiumTrack()
+    public_belgium_track = PublicBelgiumTrack("result/durable2 {year}.xlsx")
     arrests = []
     for ref in REFS:
+        start_time = datetime.now()
         pdf_reader = public_belgium_track.webscraper.find_public_procurement(ref, "motcle")
         arrest = (Arrest(ref, pdf_reader, datetime.strptime("01/01/2000", '%d/%m/%Y'), "durable")
                   .find_all().find_keywords("Durable fr", ["environnementales", "environnementale", "environnemental",
@@ -21,7 +22,7 @@ def main():
                                                            "recyclage", "recycler", "recyclé", "recycle", "réutilise",
                                                            "réutilisation", "réutilisé", "réutiliser", "réemployé",
                                                            "réemployer", "valorise", "valorisé", "valoriser", "7bis",
-                                                           "7 de la loi", "Biodiversité", "nature", "naturel",
+                                                           "7 de la loi", "Biodiversité", "la nature", "naturel",
                                                            "collecte", "Total cost of ownership", "TCO", "BREEAM",
                                                            "LCA", "LCC", "émission de CO2", "CO2", "émission",
                                                            "émissions de CO2", "émissions", "GRO", "TOTEM"])
@@ -41,12 +42,18 @@ def main():
                                   "ecologie", "gerecycleerd", "TOTEM", "7bis", "7 bis", "7 van de wet",
                                   "7 van de overheidsopdrachtenwet", "BREEAM", "GRO-criteria",
                                   "GRO criteria"]))
+        
+        # arrest = (Arrest(ref, pdf_reader, datetime.strptime("01/01/2000", '%d/%m/%Y'), "durable")
+        #           .find_all().find_keywords("Durable fr", ["la nature"]))
+
+        end_time = datetime.now()
+        execution_time = end_time - start_time
+        print("arrest : {ref} add to list en {execution_time} s".format(ref=arrest.ref, execution_time=execution_time))
         arrests.append(arrest)
 
     public_belgium_track.write_to_excel(arrests)
 
 
-#
 # REFS = [180222, 183810, 194062, 194417, 206351, 210191, 211549, 212703, 214718, 215784, 218356, 218804, 220563, 220813,
 #         221663, 222343, 224527, 225728, 226499, 226542, 227575, 227771, 229830, 230386, 231447, 231498, 231696, 231939,
 #         231989, 232789, 236508, 234160, 234881, 234899, 235176, 235612, 235624, 237014, 237198, 237283, 237577, 238562,
@@ -55,7 +62,7 @@ def main():
 #         248312, 249180, 249218, 249332, 249530, 249624, 249639, 250271, 250624, 250815, 251280, 251330, 251599, 251896,
 #         251902, 252822, 252899, 253439, 253621, 253860, 254465, 254752, 254959, 255182, 255226, 255245, 255291, 255545,
 #         255707, 255878, 256007, 256129, 256143, 257117, 257248, 257797, 257918, 257985, 258595, 258613, 258762, 259209,
-#         259289]
+#         259289, 251666]
 REFS = [255878]
 if __name__ == "__main__":
     start_time = datetime.now()

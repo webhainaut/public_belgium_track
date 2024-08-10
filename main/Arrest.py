@@ -45,6 +45,8 @@ class Arrest:
                self.finder.rulingsFinder.service: ruling_label,
                }
         for keyword_title in self.keywords.keys():
+            dic = dic | {keyword_title: '\n'.join(self.keywords_find[keyword_title])}
+        for keyword_title in self.keywords.keys():
             for keyword in self.keywords[keyword_title]:
                 dic = dic | {keyword_title + ": " + keyword: keyword in self.keywords_find[keyword_title]}
         return dic
