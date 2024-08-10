@@ -16,13 +16,14 @@ class FinderService:
         if args is None or self.IS_RECTIFIED_LABEL not in args:
             raise NotADirectoryError("{rectified} no in the dic".format(rectified=self.IS_RECTIFIED_LABEL))
 
-    def extract_text_between_delimiters_for_reader(self, service, ref, reader: PdfReader, pattern_delimiter_1,
+    def extract_text_between_delimiters_for_reader(self, service, ref, reader: PdfReader, pattern_delimiter_1=None,
                                                    pattern_delimiter_2=None, page_1=None, page_2=None,
                                                    strict=True, reverse_1=False, reverse_2=False,
                                                    flags=re.IGNORECASE + re.DOTALL):
         """Extract text between 2 delimiters (the text contain the delimiters)"""
-
-        delimiter_1 = re.compile(pattern_delimiter_1, flags)
+        delimiter_1 = None
+        if pattern_delimiter_1 is not None:
+            delimiter_1 = re.compile(pattern_delimiter_1, flags)
         delimiter_2 = None
         if pattern_delimiter_2 is not None:
             delimiter_2 = re.compile(pattern_delimiter_2, flags)
@@ -31,11 +32,13 @@ class FinderService:
         first_page, second_page = self.__get_pages_search(page_1, page_2, last_page)
 
         self.__check_page_range(ref, last_page, first_page, second_page)
-
-        if not reverse_1:
-            current_page_1 = self.__ascending_search(service, ref, delimiter_1, first_page, reader, second_page, True)
+        if delimiter_1 is None:
+            current_page_1 = first_page
         else:
-            current_page_1 = self.__descending_search(service, ref, delimiter_1, first_page, reader, second_page, True)
+            if not reverse_1:
+                current_page_1 = self.__ascending_search(service, ref, delimiter_1, first_page, reader, second_page, True)
+            else:
+                current_page_1 = self.__descending_search(service, ref, delimiter_1, first_page, reader, second_page, True)
 
         if delimiter_2 is None:
             current_page_2 = second_page
@@ -51,12 +54,23 @@ class FinderService:
                                                                pattern_delimiter_2,
                                                                flags, strict)
 
+    def search_word(self, service, ref, reader: PdfReader, word, pattern_delimiter_1=None,
+                    pattern_delimiter_2=None, page_1=None, page_2=None,
+                    strict=True, reverse_1=False, reverse_2=False, flags=re.IGNORECASE + re.DOTALL):
+        """ Recherche un mot 'word' """
+        extract_text = self.extract_text_between_delimiters_for_reader(service, ref, reader, pattern_delimiter_1,
+                                                                       pattern_delimiter_2, page_1, page_2, strict,
+                                                                       reverse_1, reverse_2, flags)
+
+        pattern_delimiter = re.compile(r'\W' + word + r'\W', flags)
+        match = pattern_delimiter.search(extract_text)
+        return match
+
     def extract_text_between_delimiters_for_string(self, service, ref, text, delimiter_1, delimiter_2,
                                                    flags=re.IGNORECASE + re.DOTALL, strict=False):
-        if delimiter_2 is None:
-            pattern_delimiter = re.compile(delimiter_1 + r'(.*)', flags)
-        else:
-            pattern_delimiter = re.compile(delimiter_1 + r'(.*)' + delimiter_2, flags)
+        pattern_1 = self.__get_pattern(delimiter_1)
+        pattern_2 = self.__get_pattern(delimiter_2)
+        pattern_delimiter = re.compile(pattern_1 + r'(.*)' + pattern_2, flags)
         match = pattern_delimiter.search(text)
 
         if match:
@@ -67,6 +81,13 @@ class FinderService:
             else:
                 return self.extract_text_between_delimiters_for_string(service, ref, text, delimiter_1, None, flags,
                                                                        strict)
+
+    @staticmethod
+    def __get_pattern(delimiter):
+        if delimiter is None:
+            return ""
+        else:
+            return delimiter
 
     @staticmethod
     def __descending_search(service, ref, delimiter, first_page, reader, second_page, strict):

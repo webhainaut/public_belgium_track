@@ -27,6 +27,22 @@ class TestFinderService(TestAbstractFinder):
     def test_get_first_age_0(self):
         self.assertEqual(0, self.finder._get_first_page({self.finder.IS_RECTIFIED_LABEL: False}))
 
+    def test_extract_text_between_delimiters_only_second_delimiter(self):
+        arrest_ref = "255267"
+        reader = self.read_pdf(arrest_ref)
+        delimiter_2 = r"décembre"
+        text = self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader,
+                                                                      pattern_delimiter_2=delimiter_2)
+        self.assertEqual("""VIexturg - 22.440 - 1/22 
+ CONSEIL D’ÉTAT, SECTION DU CONTENTIEUX ADMINISTRATIF  
+ 
+LE PRÉSIDENT DE LA VIe CHAMBRE SIÉGEANT EN RÉFÉRÉ  
+ 
+A R R Ê T  
+ 
+ 
+no 255.267 du 14 décembre""", text)
+
     def test_extract_text_between_delimiters_only_one_delimiter(self):
         arrest_ref = "255267"
         reader = self.read_pdf(arrest_ref)
@@ -373,3 +389,15 @@ Article 3.
             self.finder.extract_text_between_delimiters_for_reader("finder", arrest_ref, reader, delimiter_1, page_1=10,
                                                                    page_2=5)
         self.assertEqual("255267, first_page: 10 > second_page: 5", str(context.exception))
+
+    def test_search_word_false(self):
+        arrest_ref = "255267"
+        reader = self.read_pdf(arrest_ref)
+        search_result = self.finder.search_word("finder", arrest_ref, reader, "coucou")
+        self.assertFalse(search_result)
+
+    def test_search_word_true(self):
+        arrest_ref = "255267"
+        reader = self.read_pdf(arrest_ref)
+        search_result = self.finder.search_word("finder", arrest_ref, reader, "Suspension")
+        self.assertTrue(search_result)

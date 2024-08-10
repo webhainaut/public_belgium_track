@@ -25,23 +25,29 @@ class Arrest:
         self.ask_procedures = []
         self.rulings = []
         self.surplus = False
+        self.keywords_find = {}
+        self.keywords = {}
         self.errors = []
 
     def as_dict(self):
         ruling_label = ', '.join([ruling.label for ruling in self.rulings])
         if self.surplus:
             ruling_label = ruling_label + " (rejet surplus)"
-        return {self.REF: self.ref,
-                self.ERRORS: '\n'.join(self.errors),
-                self.N_PAGES: self.n_pages,
-                self.finder.roleNumberFinder.service: '\n'.join(self.roles_numbers),
-                self.finder.isRectifiedFinder.service: self.isRectified.real,
-                self.PUBLISH_DATE: self.publish_date,
-                self.CONTRACT_TYPE: self.contract_type,
-                self.finder.arrestDateFinder.service: self.arrest_date,
-                self.finder.askProcessFinder.service: ', '.join([process.label for process in self.ask_procedures]),
-                self.finder.rulingsFinder.service: ruling_label
-                }
+        dic = {self.REF: self.ref,
+               self.ERRORS: '\n'.join(self.errors),
+               self.N_PAGES: self.n_pages,
+               self.finder.roleNumberFinder.service: '\n'.join(self.roles_numbers),
+               self.finder.isRectifiedFinder.service: self.isRectified.real,
+               self.PUBLISH_DATE: self.publish_date,
+               self.CONTRACT_TYPE: self.contract_type,
+               self.finder.arrestDateFinder.service: self.arrest_date,
+               self.finder.askProcessFinder.service: ', '.join([process.label for process in self.ask_procedures]),
+               self.finder.rulingsFinder.service: ruling_label,
+               }
+        for keyword_title in self.keywords.keys():
+            for keyword in self.keywords[keyword_title]:
+                dic = dic | {keyword_title + ": " + keyword: keyword in self.keywords_find[keyword_title]}
+        return dic
 
     @classmethod
     def from_dic(cls, dic):
@@ -91,6 +97,14 @@ class Arrest:
             self.finder.rulingsFinder.IS_RECTIFIED_LABEL: self.isRectified})
         if rulings is not None:
             self.rulings, self.surplus = rulings
+        self.check_errors(errors)
+        return self
+
+    def find_keywords(self, title, keywords):
+        keywords_find, errors = self.finder.keywordsFinder.find(self.ref, self.reader, {
+            self.finder.keywordsFinder.KEYWORDS: keywords})
+        self.keywords[title] = keywords
+        self.keywords_find[title] = keywords_find
         self.check_errors(errors)
         return self
 
