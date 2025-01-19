@@ -11,6 +11,7 @@ class RoleNumberFinder(FinderAbstract, FinderService):
         self.args_contain_is_rectified(args)
 
     def _find_data(self, ref, reader, args=None):
+        # TODO use new method self.extract_text_between_delimiters_for_reader()
         index_page = self._get_first_page(args)
         try:
             text = reader.pages[index_page].extract_text()
