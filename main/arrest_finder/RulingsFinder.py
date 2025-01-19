@@ -30,7 +30,7 @@ class RulingsFinder(FinderAbstract, FinderService):
                                                                    second_delimiter_pattern, strict=False,
                                                                    reverse_1=True)
             surplus = re.search(SURPLUS_DELIMITER, text, re.IGNORECASE)
-            rulings = self.search_ruling_in_text(text)
+            rulings = self.search_ruling_in_text(text, ref)
 
         except IndexError:
             raise DataNotFoundException(data=self.service, ref=ref)
@@ -43,13 +43,13 @@ class RulingsFinder(FinderAbstract, FinderService):
             return False
         return True
 
-    @staticmethod
-    def search_ruling_in_text(text):
+    def search_ruling_in_text(self, text, ref):
         rulings = [item for item in Ruling if item.is_in(text)]
         if len(rulings) < 1:
             print("_____________________________RULINGS_ < 0__________________________")
+            print(ref)
             print(text)
-            return [Ruling.NOT_FOUND]
+            raise DataNotFoundException(data=self.service, ref=ref)
         return rulings
 
 
