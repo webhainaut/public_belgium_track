@@ -39,7 +39,7 @@ class Arrest:
                self.finder.roleNumberFinder.service: '\n'.join(self.roles_numbers),
                self.finder.isRectifiedFinder.service: self.isRectified.real,
                self.PUBLISH_DATE: self.publish_date,
-               self.CONTRACT_TYPE: self.contract_type,
+               # self.CONTRACT_TYPE: self.contract_type,
                self.finder.arrestDateFinder.service: self.arrest_date,
                self.finder.askProcessFinder.service: ', '.join([process.label for process in self.ask_procedures]),
                self.finder.rulingsFinder.service: ruling_label,
@@ -64,6 +64,7 @@ class Arrest:
                 .find_rulings()
                 .find_role_number()
                 .find_n_pages()
+                .find_keywords("Mots clés", ["Exigences minimals" , "Signatures", "prix anormaux", "motivation formelle"])
                 )
 
     def check_errors(self, errors):
