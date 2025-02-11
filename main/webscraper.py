@@ -12,6 +12,7 @@ from main.Arrest import Arrest
 from main.Exceptions.MissingSectionException import MissingSectionException
 
 NEW_DIRECTORY = "result/arrest/new"
+FILES_PATH_DOWNLOAD = "result/arrest/{year}"
 
 
 class WebScraper:
@@ -78,9 +79,9 @@ class WebScraper:
         with open(file_path, mode="wb") as file:
             file.write(pdf)
 
-    def find_public_procurement(self, num, year):
+    def find_public_procurement(self, num, year, download_directory = FILES_PATH_DOWNLOAD):
         """get pdf to the public procurement for num xxxxxx"""
-        directory = "result/arrest/{year}".format(year=year)
+        directory = download_directory.format(year=year)
         if not os.path.exists(directory):
             os.makedirs(directory)
         file_path = "{directory}/{num}.pdf".format(directory=directory, num=num)
