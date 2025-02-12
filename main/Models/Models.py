@@ -16,7 +16,6 @@ class ArrestModel(BaseModel):
     __tablename__ = 'arrest'
     ref: Mapped[int] = mapped_column(primary_key=True)
     pages = Column(Integer)
-    publish_date = Column(Date)
     contract_type = Column(String)
     is_rectified = Column(Boolean)
     arrest_date = mapped_column(Date)
@@ -28,6 +27,7 @@ class ArrestModel(BaseModel):
     en_causes = Column(String)
     contres = Column(String)
     intervenants = Column(String)
+    path_to_pdf = Column(String)
 
     procedures: Mapped[List["ProcedureModel"]] = relationship(back_populates='arrest', cascade="all, delete")
     rulings: Mapped[List["RulingModel"]] = relationship(back_populates='arrest', cascade="all, delete")

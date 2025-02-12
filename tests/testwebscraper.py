@@ -4,6 +4,8 @@ from unittest.mock import Mock
 
 from main.Exceptions.MissingSectionException import MissingSectionException
 from main.webscraper import WebScraper
+#TODO Remove
+
 
 REF_LIST = [{'Date publication': '16/04/2023', 'Réf.': '255878', 'Type de contrat': 'Marchés publics'},
             {'Date publication': '16/04/2023', 'Réf.': '255882', 'Type de contrat': 'Marchés publics'},

@@ -15,6 +15,7 @@ NEW_DIRECTORY = "result/arrest/new"
 FILES_PATH_DOWNLOAD = "result/arrest/{year}"
 
 
+#TODO Remove
 class WebScraper:
     URL_LAST_MONTH = 'http://www.conseildetat.be/?lang=fr&page=lastmonth_{month}'
     URL_PUBLIC_PROCUREMENT = 'http://www.conseildetat.be/arr.php?nr={num}&l=fr'
