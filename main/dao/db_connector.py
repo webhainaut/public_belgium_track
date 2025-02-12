@@ -1,52 +1,38 @@
+import logging
 import os
-import sqlite3
-from sqlite3 import Error
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 
 class DbConnector:
+    logging.basicConfig(level=logging.ERROR)
+    path = "dbs/main.db"
+    db_path = os.path.abspath(os.path.dirname(__file__)) + "/../../" + path
+    engine = create_engine(f"sqlite:///{db_path}", echo=True)
+    Session = sessionmaker(engine)
 
-    def __init__(self, path):
-        self.os = os
-        self.sqlite3 = sqlite3
-        self.connection = None
-        self.db_path = self.os.path.abspath(os.path.dirname(__file__)) + "/../../" + path
+    @classmethod
+    def set_path(cls, new_path):
+        cls.path = new_path
+        cls.db_path = os.path.abspath(os.path.dirname(__file__)) + "/../../" + cls.path
+        cls.engine = create_engine(f"sqlite:///{cls.db_path}", echo=True)
+        cls.Session = sessionmaker(cls.engine)
 
-    def create_connection(self):
+    def read(self, func):
+        session = self.Session()
         try:
-            self.connection = self.sqlite3.connect(self.db_path)
-            print("Connection to SQLite DB successful")
-        except Error as e:
-            print(f"The error '{e}' occurred")
-
-    def close_connection(self):
-        self.connection.close()
-
-    def execute_query(self, query, data=None):
-        cursor = self.connection.cursor()
-        try:
-            if data is None:
-                cursor.execute(query)
-            else:
-                cursor.execute(query, data)
-            self.connection.commit()
-            print("Query executed successfully")
-        except Error as e:
-            print(f"The error '{e}' occurred")
-
-    def execute_many_query(self, query, data):
-        cursor = self.connection.cursor()
-        try:
-            cursor.executemany(query, data)
-            self.connection.commit()
-            print("Query executed successfully")
-        except Error as e:
-            print(f"The error '{e}' occurred")
-
-    def execute_read_query(self, query, data):
-        cursor = self.connection.cursor()
-        try:
-            cursor.execute(query, data)
-            result = cursor.fetchall()
+            result = func(session)
             return result
-        except Error as e:
-            print(f"The error '{e}' occurred")
+        except Exception as e:
+            logging.error(f"An error occurred during execution: {e}")
+            return None
+
+    def execute(self, func):
+        with self.Session() as session:
+            try:
+                func(session)
+                session.commit()
+            except Exception as e:
+                session.rollback()
+                logging.error(f"An error occurred during execution: {e}")
