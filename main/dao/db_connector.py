@@ -9,14 +9,14 @@ class DbConnector:
     logging.basicConfig(level=logging.ERROR)
     path = "dbs/main.db"
     db_path = os.path.abspath(os.path.dirname(__file__)) + "/../../" + path
-    engine = create_engine(f"sqlite:///{db_path}", echo=True)
+    engine = create_engine(f"sqlite:///{db_path}", echo=False)
     Session = sessionmaker(engine)
 
     @classmethod
     def set_path(cls, new_path):
         cls.path = new_path
         cls.db_path = os.path.abspath(os.path.dirname(__file__)) + "/../../" + cls.path
-        cls.engine = create_engine(f"sqlite:///{cls.db_path}", echo=True)
+        cls.engine = create_engine(f"sqlite:///{cls.db_path}", echo=False)
         cls.Session = sessionmaker(cls.engine)
 
     def read(self, func):

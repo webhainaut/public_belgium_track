@@ -43,6 +43,10 @@ class ArrestDao:
     def add_arrests(self, arrests):
         self.db_connector.execute(lambda sess: sess.add_all(arrests))
 
+    def delete_arrests(self, arrests: List[ArrestModel]):
+        for arrest in arrests:
+            self.db_connector.execute(lambda sess: sess.delete(arrest))
+
     @staticmethod
     def _as_arrest2(result_arrest):
         print(result_arrest)

@@ -10,7 +10,7 @@ from tests.dao.test_arrest_dao import TestArrestDao
 from testwebscraper import TestWebScraper
 
 # Ajoutez toutes les classes de test que vous souhaitez exécuter
-test_classes = [TestWebScraper, TestArrest, TestArrestDateFinder, TestFinderService, TestRulingsFinder, TestArrestDao,
+test_classes = [TestArrestDao, TestWebScraper, TestArrest, TestArrestDateFinder, TestFinderService, TestRulingsFinder,
                 TestKeywordsFinder]
 
 # Créez une suite de tests
