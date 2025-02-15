@@ -68,7 +68,7 @@ class ArrestService:
             self.finder.rulingsFinder.IS_RECTIFIED_LABEL: arrest.is_rectified})
         rulings, surplus = rulings_find
         for ruling in rulings:
-            rulings_model.append(RulingModel(ruling=ruling, surplus=surplus))
+            rulings_model.append(RulingModel(ruling=ruling.name, surplus=surplus))
         self.check_errors(e, arrest)
         return rulings_model
 

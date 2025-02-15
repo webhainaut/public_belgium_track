@@ -42,7 +42,7 @@ class TestArrestService(TestCase):
         reader = self.read_pdf(ref)
         arrest = ArrestModel(ref=ref, is_rectified = False)
         rulings : List[RulingModel] = self.arrest_service.find_rulings(ref, reader, arrest)
-        self.assertEqual(Ruling.ORDERED, rulings[0].ruling)
+        self.assertEqual(Ruling.ORDERED.name, rulings[0].ruling)
         self.assertTrue(rulings[0].surplus)
 
     def test_find_rulings_without_surplus(self):
@@ -51,8 +51,8 @@ class TestArrestService(TestCase):
         arrest = ArrestModel(ref=ref, is_rectified = False)
         rulings : List[RulingModel] = self.arrest_service.find_rulings(ref, reader, arrest)
         self.assertEqual(2, len(rulings))
-        self.assertEqual(Ruling.ISSUES_DECREE, rulings[0].ruling)
-        self.assertEqual(Ruling.NO_LONGER_REQUIRED, rulings[1].ruling)
+        self.assertEqual(Ruling.ISSUES_DECREE.name, rulings[0].ruling)
+        self.assertEqual(Ruling.NO_LONGER_REQUIRED.name, rulings[1].ruling)
 
     def test_find_cases(self):
         ref = "255472"
