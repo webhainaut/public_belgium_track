@@ -5,8 +5,8 @@ from unittest import TestCase
 
 from main.Models.Models import ArrestModel, ProcedureModel
 from main.dao.arrest_dao import ArrestDao
+from main.dao.dbtable import DbTable
 from main.dao.local_properties_dao import LocalProperties
-from main.ressources.db_table import DbTable
 
 
 class TestArrestDao(TestCase):
@@ -22,8 +22,9 @@ class TestArrestDao(TestCase):
         if os.path.exists(root_path + configs.get("DB_PATH")):
             os.remove(root_path + configs.get("DB_PATH"))
 
-        db_table = DbTable(configs)
-        db_table.create_arrests_table()
+        install = DbTable()
+        install.db_connector.set_path(configs.get("DB_PATH"))
+        install.create_arrests_table()
 
     def setUp(self):
         self.arrestDao = ArrestDao()

@@ -132,3 +132,4 @@ dmypy.json
 /result/
 .idea
 /pyvenv.cfg
+/dbs/

@@ -1,9 +1,12 @@
 from typing import List
 
 from sqlalchemy import Column, Integer, Table, ForeignKey, Date, String, Boolean
-from sqlalchemy.orm import relationship, Mapped, mapped_column
+from sqlalchemy.orm import relationship, Mapped, mapped_column, DeclarativeBase
 
-from main.Models.BaseModel import BaseModel
+
+class BaseModel(DeclarativeBase):
+    pass
+
 
 case_arrest_association = Table(
     'case_arrest', BaseModel.metadata,
