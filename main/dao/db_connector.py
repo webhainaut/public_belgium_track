@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 
 class DbConnector:
     logging.basicConfig(level=logging.ERROR)
-    path = "dbs/main.db"
+    path = "dbs/public_belgium.db"
     db_path = os.path.abspath(os.path.dirname(__file__)) + "/../../" + path
     engine = create_engine(f"sqlite:///{db_path}", echo=False)
     Session = sessionmaker(engine)

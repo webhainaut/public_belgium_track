@@ -102,7 +102,8 @@ class TestRulingsFinder(TestAbstractFinder):
         rulings, error = self.rulingsFinder.find(arrest_ref, reader,
                                                   {self.rulingsFinder.IS_RECTIFIED_LABEL: False})
         ruling, surplus = rulings
-        self.assertEqual([Ruling.ORDERED], ruling)
+        #TODO ORDONE et REJETER pour le surplus
+        self.assertEqual([Ruling.ORDERED, Ruling.REJECT], ruling)
         self.assertTrue(surplus)
 
     def test_find_rulings_uncompleted(self):

@@ -4,10 +4,8 @@ from typing import List
 
 from sqlalchemy import select
 
-from main.Arrest import Arrest
 from main.Models.Models import ArrestModel
 from main.dao.db_connector import DbConnector
-from main.dao.local_properties_dao import LocalProperties
 
 locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
 LAST_YEAR = datetime.now().year - 1
@@ -15,9 +13,7 @@ LAST_YEAR = datetime.now().year - 1
 
 class ArrestDao:
 
-    def __init__(self, properties_path=LocalProperties.DEFAULT_PATH):
-        configs = LocalProperties(properties_path)
-        DbConnector.path = configs.get("DB_PATH")
+    def __init__(self):
         self.db_connector = DbConnector()
 
     def get_arrests_for_last_year(self, year: int = LAST_YEAR):
@@ -46,9 +42,3 @@ class ArrestDao:
     def delete_arrests(self, arrests: List[ArrestModel]):
         for arrest in arrests:
             self.db_connector.execute(lambda sess: sess.delete(arrest))
-
-    @staticmethod
-    def _as_arrest2(result_arrest):
-        print(result_arrest)
-        return Arrest(result_arrest[0], None, datetime.strptime(result_arrest[1], '%Y-%m-%d %H:%M:%S'),
-                      result_arrest[2])

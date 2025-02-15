@@ -11,6 +11,8 @@ case_arrest_association = Table(
     Column('arrest_id', Integer, ForeignKey('arrest.ref'))
 )
 
+DEFAULT_ARRESTS_DIRECTORY = "result/arrests/{langue}/ch_{chamber}/{date}"
+
 
 class ArrestModel(BaseModel):
     __tablename__ = 'arrest'
@@ -20,14 +22,13 @@ class ArrestModel(BaseModel):
     is_rectified = Column(Boolean)
     arrest_date = mapped_column(Date)
     avis = Column(String)  # Conforme / Contraire / Non qualifié / Pas d'avis
-    surplus = Column(Boolean)
     chamber = Column(Integer)  # > 0
     language = Column(String)  # fr / nl / de
 
     en_causes = Column(String)
     contres = Column(String)
     intervenants = Column(String)
-    path_to_pdf = Column(String)
+    path = Column(String)
 
     procedures: Mapped[List["ProcedureModel"]] = relationship(back_populates='arrest', cascade="all, delete")
     rulings: Mapped[List["RulingModel"]] = relationship(back_populates='arrest', cascade="all, delete")
@@ -36,11 +37,20 @@ class ArrestModel(BaseModel):
     cases: Mapped[List["CaseModel"]] = relationship(secondary=case_arrest_association, back_populates='arrests')
     errors: Mapped[List["ErrorModel"]] = relationship(back_populates='arrest', cascade="all, delete")
 
+    def get_path_to_pdf(self):
+        return f"{self.path}/{self.ref}.pdf"
+
+    def set_path(self):
+        if self.arrest_date is None:
+            directory = "date_not_found"
+        else:
+            directory = self.arrest_date.strftime("%Y/%m")
+        self.path = DEFAULT_ARRESTS_DIRECTORY.format(langue=self.language, chamber=self.chamber, date=directory)
+
     def __repr__(self):
         return (f"<ArrestModel(ref={self.ref}, pages={self.pages}, "
-                f"publish_date={self.publish_date}, contract_type={self.contract_type}, "
+                f"contract_type={self.contract_type}, "
                 f"is_rectified={self.is_rectified}, arrest_date={self.arrest_date}, "
-                f"surplus={self.surplus}, "
                 f"ask_procedures_count={len(self.procedures)}, "
                 f"rulings_count={len(self.rulings)}, "
                 f"keywords_count={len(self.keywords)})>")
@@ -48,7 +58,7 @@ class ArrestModel(BaseModel):
 
 class CaseModel(BaseModel):
     __tablename__ = 'case'
-    numRole: Mapped[int] = mapped_column(primary_key=True)
+    numRole = mapped_column(String, primary_key=True)
 
     arrests: Mapped[List["ArrestModel"]] = relationship(secondary=case_arrest_association, back_populates='cases')
 
@@ -59,7 +69,7 @@ class CaseModel(BaseModel):
 class ProcedureModel(BaseModel):
     __tablename__ = 'procedure'
     id: Mapped[int] = mapped_column(primary_key=True)
-    name = Column(String)
+    process = Column(String)
     request_date = Column(Date)
     decision_date = Column(Date)
     urgence = Column(Boolean)
@@ -68,7 +78,7 @@ class ProcedureModel(BaseModel):
     arrest: Mapped["ArrestModel"] = relationship(back_populates='procedures')
 
     def __repr__(self):
-        return (f"<ProcedureModel(id={self.id}, name='{self.name}', "
+        return (f"<ProcedureModel(id={self.id}, name='{self.process}', "
                 f"request_date={self.request_date}, decision_date={self.decision_date}, "
                 f"urgence={self.urgence}, arrest_ref={self.arrest_ref})>")
 
@@ -76,24 +86,27 @@ class ProcedureModel(BaseModel):
 class RulingModel(BaseModel):
     __tablename__ = 'ruling'
     id: Mapped[int] = mapped_column(primary_key=True)
-    name = Column(String)
+    ruling = Column(String)
+    surplus = Column(Boolean)
     arrest_ref: Mapped[int] = mapped_column(ForeignKey("arrest.ref"))
     arrest: Mapped["ArrestModel"] = relationship(back_populates='rulings')
 
     def __repr__(self):
-        return (f"<RulingModel(id={self.id}, name='{self.name}', "
+        return (f"<RulingModel(id={self.id}, name='{self.ruling}', "
+                f"surplus={self.surplus}, "
                 f"arrest_ref={self.arrest_ref})>")
 
 
 class KeywordModel(BaseModel):
     __tablename__ = 'keyword'
     id: Mapped[int] = mapped_column(primary_key=True)
+    title = Column(String)
     word = Column(String)
     arrest_ref: Mapped[int] = mapped_column(ForeignKey("arrest.ref"))
     arrest: Mapped["ArrestModel"] = relationship(back_populates='keywords')
 
     def __repr__(self):
-        return (f"<KeywordModel(id={self.id}, word='{self.word}', "
+        return (f"<KeywordModel(id={self.id}, title='{self.title}', word='{self.word}', "
                 f"arrest_ref={self.arrest_ref})>")
 
 
