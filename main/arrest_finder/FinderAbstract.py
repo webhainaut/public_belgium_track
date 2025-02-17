@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 
 from main.Exceptions.DataNotFoundException import DataNotFoundException
@@ -11,6 +12,7 @@ class FinderAbstract(ABC):
 
     def __init__(self, service):
         self.service = service
+        self.logger = logging.getLogger(__name__)
 
     def find(self, ref, reader, args=None):
         """Find data from Arrest file"""

@@ -1,3 +1,4 @@
+import logging
 import re
 
 from pypdf import PdfReader
@@ -7,6 +8,10 @@ from main.Exceptions.DataNotFoundException import DataNotFoundException
 
 class FinderService:
     IS_RECTIFIED_LABEL = 'isRectified'
+
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+        self.re = re
 
     def _get_first_page(self, args):
         index_page = 0 if not args[self.IS_RECTIFIED_LABEL] else 1
@@ -23,10 +28,10 @@ class FinderService:
         """Extract text between 2 delimiters (the text contain the delimiters)"""
         delimiter_1 = None
         if pattern_delimiter_1 is not None:
-            delimiter_1 = re.compile(pattern_delimiter_1, flags)
+            delimiter_1 = self.re.compile(pattern_delimiter_1, flags)
         delimiter_2 = None
         if pattern_delimiter_2 is not None:
-            delimiter_2 = re.compile(pattern_delimiter_2, flags)
+            delimiter_2 = self.re.compile(pattern_delimiter_2, flags)
         last_page = len(reader.pages) - 1
 
         first_page, second_page = self.__get_pages_search(page_1, page_2, last_page)
@@ -62,7 +67,7 @@ class FinderService:
                                                                        pattern_delimiter_2, page_1, page_2, strict,
                                                                        reverse_1, reverse_2, flags)
 
-        pattern_delimiter = re.compile(r'\W' + word + r'\W', flags)
+        pattern_delimiter = self.re.compile(r'\W' + word + r'\W', flags)
         match = pattern_delimiter.search(extract_text)
         return match
 
@@ -70,7 +75,7 @@ class FinderService:
                                                    flags=re.IGNORECASE + re.DOTALL, strict=False):
         pattern_1 = self.__get_pattern(delimiter_1)
         pattern_2 = self.__get_pattern(delimiter_2)
-        pattern_delimiter = re.compile(pattern_1 + r'(.*)' + pattern_2, flags)
+        pattern_delimiter = self.re.compile(pattern_1 + r'(.*)' + pattern_2, flags)
         match = pattern_delimiter.search(text)
 
         if match:
@@ -156,7 +161,6 @@ class FinderService:
                 "{ref}, first_page: {first_page} > second_page: {second_page}".format(ref=ref, first_page=first_page,
                                                                                       second_page=second_page))
 
-    @staticmethod
-    def print_pdf(reader: PdfReader):
+    def print_pdf(self, reader: PdfReader):
         for page in reader.pages:
-            print(page.extract_text())
+            self.logger.info(page.extract_text())

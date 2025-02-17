@@ -16,10 +16,10 @@ class WebScraper:
     """
     URL_LAST_MONTH = 'http://www.conseildetat.be/?lang=fr&page=lastmonth_{month}'
     URL_PUBLIC_PROCUREMENT = 'http://www.conseildetat.be/arr.php?nr={ref}'
-    logging.basicConfig(level=logging.ERROR)
 
     def __init__(self):
         self.requests = requests
+        self.logger = logging.getLogger(__name__)
 
     def find_arrest(self, ref):
         procurement_url = WebScraper.URL_PUBLIC_PROCUREMENT.format(ref=ref)
@@ -28,7 +28,7 @@ class WebScraper:
             raise Exception(
                 "Code error {status} on page {url}".format(status=response.status_code, url=procurement_url))
         elif response.headers.get('Content-Type') != "application/pdf":
-            logging.error(
+            self.logger.error(
                 f"Arrest '{ref}' not found Content-Type '{response.headers.get('Content-Type')}' : {response.content}")
             return None
         return response.content
@@ -46,7 +46,7 @@ class WebScraper:
             try:
                 arrests.append(self.find_public_procurements_refs_month(month, last_ref))
             except MissingSectionException as e:
-                logging.error(f"webscraper: {e}")
+                self.logger.error(f"webscraper: {e}")
         return arrests
 
     def find_public_procurements_refs_month(self, month, last_ref=None):

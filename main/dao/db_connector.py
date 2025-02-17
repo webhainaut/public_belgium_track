@@ -6,11 +6,13 @@ from sqlalchemy.orm import sessionmaker
 
 
 class DbConnector:
-    logging.basicConfig(level=logging.ERROR)
     path = "dbs/public_belgium.db"
     db_path = os.path.abspath(os.path.dirname(__file__)) + "/../../" + path
     engine = create_engine(f"sqlite:///{db_path}", echo=False)
     Session = sessionmaker(engine)
+
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
 
     @classmethod
     def set_path(cls, new_path):
@@ -25,7 +27,7 @@ class DbConnector:
             result = func(session)
             return result
         except Exception as e:
-            logging.error(f"An error occurred during execution: {e}")
+            self.logger.error(f"An error occurred during execution: {e}")
             return None
 
     def execute(self, func):
@@ -35,4 +37,4 @@ class DbConnector:
                 session.commit()
             except Exception as e:
                 session.rollback()
-                logging.error(f"An error occurred during execution: {e}")
+                self.logger.error(f"An error occurred during execution: {e}")

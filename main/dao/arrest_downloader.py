@@ -7,10 +7,10 @@ from main.Models.Models import ArrestModel
 
 
 class ArrestDownloader:
-    logging.basicConfig(level=logging.ERROR)
 
     def __init__(self):
         self.os = os
+        self.logger = logging.getLogger(__name__)
 
     def save_arrest(self, arrest: ArrestModel, pdf):
         if arrest.path is None:

@@ -46,9 +46,9 @@ class RulingsFinder(FinderAbstract, FinderService):
     def search_ruling_in_text(self, text, ref):
         rulings = [item for item in Ruling if item.is_in(text)]
         if len(rulings) < 1:
-            print("_____________________________RULINGS_ < 0__________________________")
-            print(ref)
-            print(text)
+            self.logger.error("_____________________________RULINGS_ < 0__________________________")
+            self.logger.error(ref)
+            self.logger.error(text)
             raise DataNotFoundException(data=self.service, ref=ref)
         return rulings
 

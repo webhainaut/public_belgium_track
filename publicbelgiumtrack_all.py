@@ -6,6 +6,7 @@ import pandas as pd
 from openpyxl.reader.excel import load_workbook
 
 from main.Arrest import Arrest
+from main.services.public_track_service import PublicTrackService
 from main.webscraper import WebScraper
 
 locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
@@ -24,6 +25,7 @@ class PublicBelgiumTrack:
         self.previous_df = None
         self.begin_line = 0
         self.last_arrest = None
+        self.public_track_service = PublicTrackService()
 
     def write_to_excel(self, arrests):
         if arrests:
@@ -77,10 +79,11 @@ class PublicBelgiumTrack:
 
 def main():
     public_belgium_track = PublicBelgiumTrack()
-    current_arrests = public_belgium_track.get_current_arrests()
-    public_belgium_track.find_last_arrest(current_arrests)
-    arrests = public_belgium_track.get_arrests(REFS)
-    public_belgium_track.write_to_excel(arrests)
+    public_belgium_track.public_track_service.download_arrest(255472)
+    # current_arrests = public_belgium_track.get_current_arrests()
+    # public_belgium_track.find_last_arrest(current_arrests)
+    # arrests = public_belgium_track.get_arrests(REFS)
+    # public_belgium_track.write_to_excel(arrests)
 
 
 REFS = None
