@@ -42,6 +42,10 @@ class TestArrestDao(TestCase):
         self.assertEqual(self.suspension, arrest_result.procedures[0].process)
         self.assertEqual(self.ref1, arrest_result.procedures[0].arrest_ref)
 
+    def test_exist_arrest(self):
+        self.assertTrue(self.arrestDao.arrest_exist(self.ref1))
+        self.assertFalse(self.arrestDao.arrest_exist(657789))
+
     def test_get_arrests(self):
         arrest_results: List["ArrestModel"] = self.arrestDao.get_arrests([self.ref1, self.ref2])
         self.assertEqual(2, len(arrest_results))

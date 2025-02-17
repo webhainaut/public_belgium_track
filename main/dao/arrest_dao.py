@@ -2,7 +2,7 @@ import locale
 from datetime import datetime, date
 from typing import List
 
-from sqlalchemy import select
+from sqlalchemy import select, exists
 
 from main.Models.Models import ArrestModel
 from main.dao.db_connector import DbConnector
@@ -31,6 +31,11 @@ class ArrestDao:
     def get_arrest(self, ref: int):
         stmt = select(ArrestModel).where(ArrestModel.ref.is_(ref))
         result = self.db_connector.read(lambda sess: sess.scalars(stmt).one())
+        return result
+
+    def arrest_exist(self, ref: int):
+        stmt = exists().where(ArrestModel.ref.is_(ref))
+        result = self.db_connector.read(lambda sess: sess.query(stmt).scalar())
         return result
 
     def add_arrest(self, arrest: ArrestModel):
