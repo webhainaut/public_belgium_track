@@ -1,4 +1,5 @@
 import locale
+import logging
 import os
 from datetime import datetime
 
@@ -10,6 +11,7 @@ from main.services.public_track_service import PublicTrackService
 from main.webscraper import WebScraper
 
 locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
+logging.basicConfig(level=logging.INFO)
 
 
 class PublicBelgiumTrack:
@@ -79,17 +81,18 @@ class PublicBelgiumTrack:
 
 def main():
     public_belgium_track = PublicBelgiumTrack()
-    public_belgium_track.public_track_service.download_arrest(255472)
+    # public_belgium_track.public_track_service.download_arrest(258763)
+    public_belgium_track.public_track_service.download_in_parallel(REFS)
     # current_arrests = public_belgium_track.get_current_arrests()
     # public_belgium_track.find_last_arrest(current_arrests)
     # arrests = public_belgium_track.get_arrests(REFS)
     # public_belgium_track.write_to_excel(arrests)
 
 
-REFS = None
-# REFS = [247478, 255267, 255438, 255470, 255472, 255668, 255678, 255679, 255681, 255844, 255962, 255964, 256014, 256484,
-#         256672, 257478, 257654, 257819, 257919, 257921, 258204, 255824, 258274, 255568, 258317, 256090, 256352, 256552,
-#         256835, 256952, 257003, 255570, 257985, 257647, 257248, 257984, 258070, 257009, 258245, 256675]
+# REFS = None
+REFS = [247478, 255267, 255438, 255470, 255472, 255668, 255678, 255679, 255681, 255844, 255962, 255964, 256014, 256484,
+        256672, 257478, 257654, 257819, 257919, 257921, 258204, 255824, 258274, 255568, 258317, 256090, 256352, 256552,
+        256835, 256952, 257003, 255570, 257985, 257647, 257248, 257984, 258070, 257009, 258245, 256675]
 # REFS = [247478, 255267, 258357, 258763]
 if __name__ == "__main__":
     start_time = datetime.now()
