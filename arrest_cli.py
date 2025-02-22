@@ -45,7 +45,7 @@ def download(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)]):
 
 @app.command()
 def update(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)]):
-    """Mets à jour le(s) arrêts :scroll: (à n'utiliser que si le script à changer"""
+    """Mets à jour le(s) arrêts :scroll: (à n'utiliser que si le script a changé)"""
     public_track_service.update_all(refs)
 
 
