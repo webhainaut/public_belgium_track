@@ -82,7 +82,7 @@ class PublicBelgiumTrack:
 def main():
     public_belgium_track = PublicBelgiumTrack()
     # public_belgium_track.public_track_service.download_arrest(258763)
-    public_belgium_track.public_track_service.download_in_parallel(REFS)
+    public_belgium_track.public_track_service.download_all(REFS)
     # current_arrests = public_belgium_track.get_current_arrests()
     # public_belgium_track.find_last_arrest(current_arrests)
     # arrests = public_belgium_track.get_arrests(REFS)
