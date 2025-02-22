@@ -23,11 +23,14 @@ class PublicTrackService:
         if self.arrest_dao.exist(ref):
             self.logger.warning(f"arret {ref} existe déjà")
         else:
-            pdf = self.web_scraper.find_arrest(ref)
-            arrest = self.arrestService.get_arrest_from_pdf(ref, pdf)
-            self.arrest_downloader.save_arrest(arrest, pdf)
-            self.arrest_dao.add_update(arrest)
-            self.logger.info(f"arret {ref} téléchargé")
+            try:
+                pdf = self.web_scraper.find_arrest(ref)
+                arrest = self.arrestService.get_arrest_from_pdf(ref, pdf)
+                self.arrest_downloader.save_arrest(arrest, pdf)
+                self.arrest_dao.add_update(arrest)
+                self.logger.info(f"arret {ref} téléchargé")
+            except Exception as e:
+                self.logger.error(f"{e}")
 
     def update(self, ref):
         """Met à jour l'arrest en fonction des règles définie dans arrestService (utile si les règles change)"""

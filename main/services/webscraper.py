@@ -28,9 +28,8 @@ class WebScraper:
             raise Exception(
                 "Code error {status} on page {url}".format(status=response.status_code, url=procurement_url))
         elif response.headers.get('Content-Type') != "application/pdf":
-            self.logger.error(
+            raise Exception(
                 f"Arrest '{ref}' not found Content-Type '{response.headers.get('Content-Type')}' : {response.content}")
-            return None
         return response.content
 
     def find_arrests(self, refs):

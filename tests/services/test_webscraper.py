@@ -128,8 +128,10 @@ class TestWebScraper(TestCase):
         response_mock.content = ARREST_NOT_FOUND.format(ref=ref)
         response_mock.headers = {'Content-Type': 'text/html'}
         self.requestsMock.get.return_value = response_mock
-        result = self.web_scraper.find_arrest(ref)
-        self.assertIsNone(result)
+        with self.assertRaises(Exception) as context:
+            self.web_scraper.find_arrest(ref)
+        self.assertEqual('Arrest \'{ref}\' not found Content-Type \'text/html\' : <html><head><title>Raadvst-Consetat</title><body>Het arrest <b>{ref}</b> is niet toegankelijk, of bestaat niet.</body></html>'.format(ref=ref),
+                         str(context.exception))
 
     def test_find_arrest_error(self):
         ref = 12345
