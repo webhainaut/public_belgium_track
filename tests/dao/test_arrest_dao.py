@@ -42,6 +42,10 @@ class TestArrestDao(TestCase):
         self.assertEqual(self.suspension, arrest_result.procedures[0].process)
         self.assertEqual(self.ref1, arrest_result.procedures[0].arrest_ref)
 
+    def test_get_last(self):
+        arrest_result: ArrestModel = self.arrestDao.get_last()
+        self.assertEqual(self.ref5, arrest_result.ref)
+
     def test_exist_arrest(self):
         self.assertTrue(self.arrestDao.exist(self.ref1))
         self.assertFalse(self.arrestDao.exist(657789))
@@ -116,4 +120,5 @@ class TestArrestDao(TestCase):
         self.arrest5 = ArrestModel(ref=self.ref5, language="fr")
 
         self.arrestDao.add_update(self.arrest1)
-        self.arrestDao.add_all([self.arrest2, self.arrest3, self.arrest4, self.arrest5])
+        self.arrestDao.add_all([self.arrest2, self.arrest3, self.arrest5])
+        self.arrestDao.add_update(self.arrest4)

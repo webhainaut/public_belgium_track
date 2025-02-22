@@ -33,14 +33,19 @@ class ArrestDao:
         result = self.db_connector.read(lambda sess: sess.scalars(stmt).one())
         return result
 
+    def get_last(self):
+        result = self.db_connector.read(lambda sess: sess.query(ArrestModel).order_by(ArrestModel.ref.desc()).first())
+        return result
+        pass
+
     def exist(self, ref: int):
         stmt = exists().where(ArrestModel.ref.is_(ref))
         result = self.db_connector.read(lambda sess: sess.query(stmt).scalar())
         return result
 
+
     def add_update(self, arrest: ArrestModel):
         self.db_connector.execute(lambda sess: sess.add(arrest))
-
 
     def add_all(self, arrests: List[ArrestModel]):
         self.db_connector.execute(lambda sess: sess.add_all(arrests))
