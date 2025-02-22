@@ -34,26 +34,39 @@ class TestArrestDao(TestCase):
         self.delete_arrests([self.arrest1, self.arrest2, self.arrest3, self.arrest4, self.arrest5])
 
     def delete_arrests(self, arrests):
-        self.arrestDao.delete_arrests(arrests)
+        self.arrestDao.delete_all(arrests)
 
     def test_get_arrest(self):
-        arrest_result: ArrestModel = self.arrestDao.get_arrest(self.ref1)
+        arrest_result: ArrestModel = self.arrestDao.get(self.ref1)
         self.assertEqual(self.ref1, arrest_result.ref)
         self.assertEqual(self.suspension, arrest_result.procedures[0].process)
         self.assertEqual(self.ref1, arrest_result.procedures[0].arrest_ref)
 
     def test_exist_arrest(self):
-        self.assertTrue(self.arrestDao.arrest_exist(self.ref1))
-        self.assertFalse(self.arrestDao.arrest_exist(657789))
+        self.assertTrue(self.arrestDao.exist(self.ref1))
+        self.assertFalse(self.arrestDao.exist(657789))
+
+    def test_update_arrest(self):
+        new_pages = 7
+        arrest_result: ArrestModel = self.arrestDao.get(self.ref1)
+        self.assertEqual(self.ref1, arrest_result.ref)
+        self.assertEqual(self.arrest1_pages, arrest_result.pages)
+        self.assertNotEqual(new_pages, arrest_result.pages)
+
+        self.arrest1.pages = new_pages
+        self.arrestDao.add_update(self.arrest1)
+        arrest_result2: ArrestModel = self.arrestDao.get(self.ref1)
+        self.assertEqual(new_pages, arrest_result2.pages)
+
 
     def test_get_arrests(self):
-        arrest_results: List["ArrestModel"] = self.arrestDao.get_arrests([self.ref1, self.ref2])
+        arrest_results: List["ArrestModel"] = self.arrestDao.get_all([self.ref1, self.ref2])
         self.assertEqual(2, len(arrest_results))
         self.assertEqual(self.ref1, arrest_results[0].ref)
         self.assertEqual(self.ref2, arrest_results[1].ref)
 
     def test_get_arrests_last_year(self):
-        arrest_results: List["ArrestModel"] = self.arrestDao.get_arrests_for_last_year(2024)
+        arrest_results: List["ArrestModel"] = self.arrestDao.get_for_last_year(2024)
         self.assertEqual(2, len(arrest_results))
         self.assertEqual(self.ref2, arrest_results[0].ref)
         self.assertEqual(self.ref4, arrest_results[1].ref)
@@ -70,8 +83,9 @@ class TestArrestDao(TestCase):
         procedure_annulation1 = ProcedureModel(process=annulation, request_date=request_annulation_date1,
                                                urgence=False)
         self.ref1 = 1
+        self.arrest1_pages = 5
         self.arrest1 = ArrestModel(ref=self.ref1, arrest_date=decision_suspension_date1, language="fr",
-                                   procedures=[procedure_suspension1, procedure_annulation1])
+                                   procedures=[procedure_suspension1, procedure_annulation1], pages=self.arrest1_pages)
 
         request_suspension_date2 = datetime.strptime("15/06/2024", '%d/%m/%Y')
         request_annulation_date2 = datetime.strptime("20/07/2024", '%d/%m/%Y')
@@ -101,4 +115,5 @@ class TestArrestDao(TestCase):
         self.ref5 = 5
         self.arrest5 = ArrestModel(ref=self.ref5, language="fr")
 
-        self.arrestDao.add_arrests([self.arrest1, self.arrest2, self.arrest3, self.arrest4, self.arrest5])
+        self.arrestDao.add_update(self.arrest1)
+        self.arrestDao.add_all([self.arrest2, self.arrest3, self.arrest4, self.arrest5])
