@@ -7,7 +7,7 @@ import pandas as pd
 from openpyxl.reader.excel import load_workbook
 
 from main.Arrest import Arrest
-from main.services.public_track_service import PublicTrackService
+from main.app.public_track_service import PublicTrackService
 from main.webscraper import WebScraper
 
 locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
@@ -81,8 +81,8 @@ class PublicBelgiumTrack:
 
 def main():
     public_belgium_track = PublicBelgiumTrack()
-    # public_belgium_track.public_track_service.download_arrest(258763)
-    public_belgium_track.public_track_service.download_all(REFS)
+    public_belgium_track.public_track_service.download(784569)
+    # public_belgium_track.public_track_service.download_all(REFS)
     # current_arrests = public_belgium_track.get_current_arrests()
     # public_belgium_track.find_last_arrest(current_arrests)
     # arrests = public_belgium_track.get_arrests(REFS)

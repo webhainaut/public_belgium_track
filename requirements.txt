@@ -6,4 +6,5 @@ requests==2.32.0
 
 jproperties~=2.1.1
 SQLAlchemy~=2.0.38
-pip~=23.2.1
+pip~=25.0
+typer~=0.15.1
