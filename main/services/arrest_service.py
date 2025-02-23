@@ -13,7 +13,10 @@ class ArrestService:
         self.finder = ArrestFinder()
 
     def get_arrest_from_pdf(self, ref, pdf):
-        pdf_reader = PdfReader(self.io.BytesIO(pdf))
+        if isinstance(pdf, PdfReader):
+            pdf_reader = pdf
+        else:
+            pdf_reader = PdfReader(self.io.BytesIO(pdf))
         arrest = ArrestModel(ref=ref)
         arrest.pages = self.find_n_pages(pdf_reader)
         arrest.language = self.find_language(ref, pdf_reader, arrest)

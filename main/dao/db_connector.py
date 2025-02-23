@@ -30,11 +30,11 @@ class DbConnector:
             self.logger.error(f"An error occurred during execution: {e}")
             return None
 
-    def execute(self, func):
+    def execute(self, func, refs=None):
         with self.Session() as session:
             try:
                 func(session)
                 session.commit()
             except Exception as e:
                 session.rollback()
-                self.logger.error(f"An error occurred during execution: {e}")
+                self.logger.error(f"An error occurred for {refs} during execution: {e}")

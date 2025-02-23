@@ -29,7 +29,7 @@ class PublicTrackService:
                 pdf = self.web_scraper.find_arrest(ref)
                 arrest = self.arrestService.get_arrest_from_pdf(ref, pdf)
                 self.arrest_downloader.save_arrest(arrest, pdf)
-                self.arrest_dao.add_update(arrest)
+                self.arrest_dao.add(arrest)
                 self.logger.info(f"arret {ref} téléchargé")
             except Exception as e:
                 self.logger.error(f"{e}")
@@ -68,10 +68,11 @@ class PublicTrackService:
     def update(self, ref):
         """Met à jour l'arrest en fonction des règles définie dans arrestService (utile si les règles change)"""
         if self.arrest_dao.exist(ref):
-            arrest = self.arrest_dao.get(ref)
+            arrest: ArrestModel = self.arrest_dao.get(ref)
             pdf = self.arrest_downloader.read_arrest(arrest)
             arrest_updated = self.arrestService.get_arrest_from_pdf(ref, pdf)
-            self.arrest_dao.add_update(arrest_updated)
+            self.arrest_downloader.move(arrest.get_path_to_pdf(), arrest_updated.get_path_to_pdf())
+            self.arrest_dao.update(arrest_updated)
             self.logger.info(f"arret {ref} updated")
         else:
             self.logger.warning(f"arret {ref} n'existe pas")
@@ -100,6 +101,9 @@ class PublicTrackService:
 
     def update_year(self, year):
         arrests = self.arrest_dao.get_for_year(year)
-        refs = [ref for arrest in arrests for ref in arrest.ref]
+        refs = [arrest.ref for arrest in arrests]
         self.update_all(refs)
+
+    def read(self, ref: int):
+        return self.arrest_dao.get(ref)
 

@@ -58,7 +58,7 @@ class TestArrestDao(TestCase):
         self.assertNotEqual(new_pages, arrest_result.pages)
 
         self.arrest1.pages = new_pages
-        self.arrestDao.add_update(self.arrest1)
+        self.arrestDao.update(self.arrest1)
         arrest_result2: ArrestModel = self.arrestDao.get(self.ref1)
         self.assertEqual(new_pages, arrest_result2.pages)
 
@@ -119,6 +119,6 @@ class TestArrestDao(TestCase):
         self.ref5 = 5
         self.arrest5 = ArrestModel(ref=self.ref5, language="fr")
 
-        self.arrestDao.add_update(self.arrest1)
+        self.arrestDao.add(self.arrest1)
         self.arrestDao.add_all([self.arrest2, self.arrest3, self.arrest5])
-        self.arrestDao.add_update(self.arrest4)
+        self.arrestDao.add(self.arrest4)

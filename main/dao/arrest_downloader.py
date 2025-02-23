@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 
 from pypdf import PdfReader
 
@@ -25,3 +26,8 @@ class ArrestDownloader:
         if arrest.path is None:
             arrest.set_path()
         return PdfReader(arrest.get_path_to_pdf())
+
+    @staticmethod
+    def move(source, destination):
+        if source != destination:
+            shutil.move(source, destination)

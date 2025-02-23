@@ -2,7 +2,7 @@ import locale
 from datetime import datetime, date
 from typing import List
 
-from sqlalchemy import select, exists
+from sqlalchemy import select, exists, update
 
 from main.Models.Models import ArrestModel
 from main.dao.db_connector import DbConnector
@@ -43,13 +43,18 @@ class ArrestDao:
         result = self.db_connector.read(lambda sess: sess.query(stmt).scalar())
         return result
 
-
-    def add_update(self, arrest: ArrestModel):
-        self.db_connector.execute(lambda sess: sess.add(arrest))
+    def add(self, arrest: ArrestModel):
+        self.db_connector.execute(lambda sess: sess.add(arrest), arrest.ref)
 
     def add_all(self, arrests: List[ArrestModel]):
-        self.db_connector.execute(lambda sess: sess.add_all(arrests))
+        self.db_connector.execute(lambda sess: sess.add_all(arrests), [arrest.ref for arrest in arrests])
 
     def delete_all(self, arrests: List[ArrestModel]):
         for arrest in arrests:
-            self.db_connector.execute(lambda sess: sess.delete(arrest))
+            self.db_connector.execute(lambda sess: sess.delete(arrest), arrest.ref)
+
+    def delete(self, arrest: ArrestModel):
+        self.db_connector.execute(lambda sess: sess.delete(arrest), arrest.ref)
+
+    def update(self, arrest:ArrestModel):
+        self.db_connector.execute(lambda sess: sess.flush(arrest), arrest.ref)

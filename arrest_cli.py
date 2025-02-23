@@ -67,7 +67,7 @@ def update(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)] = None,
         if refs is not None:
             public_track_service.update_all(refs)
         else:
-            logger.error("Il faut soit une liste de refs, soit --all")
+            logger.error("Il faut soit une liste de refs, soit une année year")
 
 
 if __name__ == "__main__":
