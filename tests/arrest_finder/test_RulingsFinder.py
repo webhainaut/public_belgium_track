@@ -121,8 +121,9 @@ class TestRulingsFinder(TestAbstractFinder):
         rulings, error = self.rulingsFinder.find(arrest_ref, reader,
                                                   {self.rulingsFinder.IS_RECTIFIED_LABEL: False})
         ruling, surplus = rulings
+        print(surplus)
         self.assertEqual([Ruling.ORDERED], ruling)
-        self.assertTrue(surplus)
+        self.assertTrue(isinstance(surplus, bool) and surplus)
 
     def test_find_rulings_sine_die(self):
         arrest_ref = "255713"

@@ -29,7 +29,7 @@ class RulingsFinder(FinderAbstract, FinderService):
             text = self.extract_text_between_delimiters_for_reader(self.service, ref, reader, first_delimiter_pattern,
                                                                    second_delimiter_pattern, strict=False,
                                                                    reverse_1=True)
-            surplus = re.search(SURPLUS_DELIMITER, text, re.IGNORECASE)
+            surplus = re.search(SURPLUS_DELIMITER, text, re.IGNORECASE) is not None
             rulings = self.search_ruling_in_text(text, ref)
 
         except IndexError:
