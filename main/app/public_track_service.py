@@ -41,7 +41,11 @@ class PublicTrackService:
 
     def download_latest(self):
         last_arrest: ArrestModel = self.arrest_dao.get_last()
-        refs: List[int] = self.web_scraper.find_public_procurements_refs(last_ref=last_arrest.ref)
+        if last_arrest is None:
+            last_ref = 0
+        else:
+            last_ref = last_arrest.ref
+        refs: List[int] = self.web_scraper.find_public_procurements_refs(last_ref=last_ref)
         if refs:
             self.download_all(refs)
         else:
