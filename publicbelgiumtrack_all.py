@@ -2,6 +2,7 @@ import locale
 import logging
 from datetime import datetime
 
+from main.Models.Models import ROLE_NUMBER, REF
 from main.app.public_track_service import PublicTrackService
 
 locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
@@ -15,11 +16,12 @@ def main():
     # public_track_service.download_all(REFS)
     # public_track_service.update_year(2024)
     # public_track_service.update_all(REFS)
-    # public_track_service.update(260454)
+    public_track_service.update(259294)
 
-    # public_track_service.read(259019)
+    print(public_track_service.read(259294).get(REF))
+    print(public_track_service.read(259294).get(ROLE_NUMBER))
     # public_track_service.print_to_excel_year(2024)
-    public_track_service.print_to_excel_all([261282])
+    # public_track_service.print_to_excel_all(REFS)
 
 # REFS = [260454, 260616]
 # REFS = [247478, 255267, 255438, 255470, 255472, 255668, 255678, 255679, 255681, 255844, 255962, 255964, 256014, 256484,

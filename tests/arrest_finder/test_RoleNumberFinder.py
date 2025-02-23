@@ -61,3 +61,10 @@ class TestRoleNumberFinder(TestAbstractFinder):
         roles_number, error = self.roleNumberFinder.find(arrest_ref, reader,
                                                   {self.roleNumberFinder.IS_RECTIFIED_LABEL: False})
         self.assertEqual(["233.648"], roles_number, "")
+
+    def test_find_role_no_3(self):
+        arrest_ref = "259294"
+        reader = self.read_pdf(arrest_ref)
+        roles_number, error = self.roleNumberFinder.find(arrest_ref, reader,
+                                                  {self.roleNumberFinder.IS_RECTIFIED_LABEL: False})
+        self.assertEqual(["241.407"], roles_number, "")

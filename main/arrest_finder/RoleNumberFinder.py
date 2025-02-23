@@ -11,14 +11,12 @@ class RoleNumberFinder(FinderAbstract, FinderService):
         self.args_contain_is_rectified(args)
 
     def _find_data(self, ref, reader, args=None):
-        # TODO use new method self.extract_text_between_delimiters_for_reader()
         index_page = self._get_first_page(args)
+        second_delimiter_pattern = self.FIRST_TITLE_PATTERN
+        text = self.extract_text_between_delimiters_for_reader(self.service, ref, reader, pattern_delimiter_2=second_delimiter_pattern,
+                                                               page_1=index_page, page_2=index_page + 1)
         try:
-            text = reader.pages[index_page].extract_text()
-            search_first_part = re.search(self.FIRST_TITLE_PATTERN, text, re.IGNORECASE)
-            if search_first_part is not None:
-                text = text[:search_first_part.span()[0]]
-            roles_numbers_fiter = re.findall(r'(\d+ *\d*\.\d+ *\d*\s*/\s*\w+\s*-\s*\d+)', text)
+            roles_numbers_fiter = re.findall(r'\d+ *\d*\.\d+ *\d*\s*/\s*\w+\s*\w*-\s*\d+', text)
             roles_numbers = [re.findall(r'(\d+ *\d*\.\d+ *\d*)', role)[0].replace(" ", "") for role in
                              roles_numbers_fiter]
         except IndexError:
