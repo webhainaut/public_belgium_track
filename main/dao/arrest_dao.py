@@ -16,7 +16,7 @@ class ArrestDao:
     def __init__(self):
         self.db_connector = DbConnector()
 
-    def get_for_last_year(self, year: int = LAST_YEAR):
+    def get_for_year(self, year: int = LAST_YEAR):
         stmt = select(ArrestModel).where(
             ArrestModel.arrest_date.between(date(year, 1, 1), date(year + 1, 1, 1))).order_by(
             ArrestModel.arrest_date)

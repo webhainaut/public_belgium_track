@@ -70,7 +70,7 @@ class TestArrestDao(TestCase):
         self.assertEqual(self.ref2, arrest_results[1].ref)
 
     def test_get_arrests_last_year(self):
-        arrest_results: List["ArrestModel"] = self.arrestDao.get_for_last_year(2024)
+        arrest_results: List["ArrestModel"] = self.arrestDao.get_for_year(2024)
         self.assertEqual(2, len(arrest_results))
         self.assertEqual(self.ref2, arrest_results[0].ref)
         self.assertEqual(self.ref4, arrest_results[1].ref)

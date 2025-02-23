@@ -98,3 +98,8 @@ class PublicTrackService:
             except Exception as e:
                 self.logger.error(f"Une erreur s'est produite pour {ref} : {e}")
 
+    def update_year(self, year):
+        arrests = self.arrest_dao.get_for_year(year)
+        refs = [ref for arrest in arrests for ref in arrest.ref]
+        self.update_all(refs)
+

@@ -13,6 +13,7 @@ public_track_service = PublicTrackService()
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
+
 @app.command()
 def bonjour():
     """
@@ -21,6 +22,7 @@ def bonjour():
     print(f"Bonjour, cette application permet à travers des différentes commandes \n"
           f"(et peut-être un jour de l'interface graphique) de traiter les arrêts \n"
           f"du conseil d'état qui se trouve sur : http://www.conseildetat.be")
+
 
 @app.command()
 def version():
@@ -33,6 +35,7 @@ def version():
     """
     print("Version 0.1")
 
+
 @app.command()
 def install():
     """
@@ -41,8 +44,9 @@ def install():
     """
     Installer.install()
 
+
 @app.command()
-def download(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)]= None, latest:bool =False):
+def download(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)] = None, latest: bool = False):
     """Télécharge le(s) arrêts :scroll:"""
     if latest:
         public_track_service.download_latest()
@@ -52,10 +56,18 @@ def download(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)]= None, l
         else:
             logger.error("Il faut soit une liste de refs, soit --latest")
 
+
 @app.command()
-def update(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)]):
+def update(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)] = None,
+           year: Annotated[int, typer.Argument(help="l'année des arrêts à mettre à jour")] = None):
     """Mets à jour le(s) arrêts :scroll: (à n'utiliser que si le script a changé)"""
-    public_track_service.update_all(refs)
+    if year:
+        public_track_service.update_year(year)
+    else:
+        if refs is not None:
+            public_track_service.update_all(refs)
+        else:
+            logger.error("Il faut soit une liste de refs, soit --all")
 
 
 if __name__ == "__main__":
