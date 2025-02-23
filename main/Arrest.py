@@ -3,6 +3,7 @@ from datetime import datetime
 from main.arrest_finder.ArrestFinder import ArrestFinder
 
 
+# @TODO Remove
 class Arrest:
     REF = 'Réf.'
     N_PAGES = 'Pages'

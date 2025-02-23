@@ -1,17 +1,16 @@
 # test_all.py
 import unittest
 
-from testarrest import TestArrest
 from tests.arrest_finder.test_ArrestDateFinder import TestArrestDateFinder
 from tests.arrest_finder.test_FinderService import TestFinderService
 from tests.arrest_finder.test_KeywordsFinder import TestKeywordsFinder
 from tests.arrest_finder.test_RulingsFinder import TestRulingsFinder
 from tests.dao.test_arrest_dao import TestArrestDao
 from tests.services.test_arrest_service import TestArrestService
-from testwebscraper import TestWebScraper
+from tests.services.test_webscraper import TestWebScraper
 
 # Ajoutez toutes les classes de test que vous souhaitez exécuter
-test_classes = [TestArrestDao, TestWebScraper, TestArrest, TestArrestDateFinder, TestFinderService, TestRulingsFinder,
+test_classes = [TestArrestDao, TestWebScraper, TestArrestDateFinder, TestFinderService, TestRulingsFinder,
                 TestKeywordsFinder, TestArrestService]
 
 # Créez une suite de tests

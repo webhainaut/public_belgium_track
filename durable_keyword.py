@@ -7,6 +7,7 @@ from publicbelgiumtrack_all import PublicBelgiumTrack
 locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
 
 
+# @TODO Remove
 def main():
     public_belgium_track = PublicBelgiumTrack("result/traveaux {year}.xlsx")
     arrests = []

@@ -8,7 +8,6 @@ from openpyxl.reader.excel import load_workbook
 
 from main.Arrest import Arrest
 from main.app.public_track_service import PublicTrackService
-from main.webscraper import WebScraper
 
 locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
 logging.basicConfig(level=logging.INFO)
@@ -22,7 +21,6 @@ class PublicBelgiumTrack:
     def __init__(self, result_path=FILE_PATH_EXCEL_FORMAT, year=YEAR):
         self.pd = pd
         self.load_workbook = load_workbook
-        self.webscraper = WebScraper()
         self.result_path = result_path.format(year=year)
         self.previous_df = None
         self.begin_line = 0
@@ -71,18 +69,14 @@ class PublicBelgiumTrack:
         if self.previous_df is not None:
             return Arrest.from_dic(self.previous_df.tail(1).to_dict(orient='records')[0])
 
-    def get_arrests(self, refs=None):
-        self.webscraper.clean_new_directory()
-        if refs is not None:
-            return self.webscraper.extract_arrets_list(refs, self.last_arrest)
-        else:
-            return self.webscraper.extract_arrets_year(self.YEAR, self.last_arrest)
 
 
 def main():
     public_belgium_track = PublicBelgiumTrack()
-    public_belgium_track.public_track_service.download(784569)
+    # public_belgium_track.public_track_service.download(784569)
     # public_belgium_track.public_track_service.download_all(REFS)
+    public_belgium_track.public_track_service.download_latest()
+
     # current_arrests = public_belgium_track.get_current_arrests()
     # public_belgium_track.find_last_arrest(current_arrests)
     # arrests = public_belgium_track.get_arrests(REFS)
@@ -92,7 +86,8 @@ def main():
 # REFS = None
 REFS = [247478, 255267, 255438, 255470, 255472, 255668, 255678, 255679, 255681, 255844, 255962, 255964, 256014, 256484,
         256672, 257478, 257654, 257819, 257919, 257921, 258204, 255824, 258274, 255568, 258317, 256090, 256352, 256552,
-        256835, 256952, 257003, 255570, 257985, 257647, 257248, 257984, 258070, 257009, 258245, 256675]
+        256835, 256952, 257003, 255570, 257985, 257647, 257248, 257984, 258070, 257009, 258245, 256675, 261996, 258994,
+        259019, 259068, 259209]
 # REFS = [247478, 255267, 258357, 258763]
 if __name__ == "__main__":
     start_time = datetime.now()
