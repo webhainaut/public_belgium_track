@@ -28,6 +28,7 @@ class FinderAbstract(ABC):
     Exemple, vérifie qu'on aie bien l'information si l'arret est rectifier (si "IS_RECTIFIED_LABEL" est présent)
     IS_RECTIFIED_LABEL est ensuite utiliser pour récupérer la première page de l'arret
     """
+
     @abstractmethod
     def _check_args_contains(self, args):
         pass

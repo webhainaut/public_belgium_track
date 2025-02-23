@@ -2,7 +2,7 @@ import locale
 from datetime import datetime, date
 from typing import List
 
-from sqlalchemy import select, exists, update
+from sqlalchemy import select, exists
 
 from main.Models.Models import ArrestModel
 from main.dao.db_connector import DbConnector
@@ -56,5 +56,5 @@ class ArrestDao:
     def delete(self, arrest: ArrestModel):
         self.db_connector.execute(lambda sess: sess.delete(arrest), arrest.ref)
 
-    def update(self, arrest:ArrestModel):
+    def update(self, arrest: ArrestModel):
         self.db_connector.execute(lambda sess: sess.flush(arrest), arrest.ref)

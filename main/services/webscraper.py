@@ -38,10 +38,10 @@ class WebScraper:
             pdfs.append(self.find_arrest(ref))
         return pdfs
 
-    def find_public_procurements_refs(self, last_month=1, last_ref:int=None):
+    def find_public_procurements_refs(self, last_month=1, last_ref: int = None):
         refs = []
         if last_month is None or last_month < 1:
-            last_month=1
+            last_month = 1
         months = self.get_months_order(last_month)
         for month in months:
             try:
@@ -50,7 +50,7 @@ class WebScraper:
                 self.logger.error(f"{e}")
         return refs
 
-    def find_public_procurements_refs_month(self, month, last_ref: int=None):
+    def find_public_procurements_refs_month(self, month, last_ref: int = None):
         """retourne une liste des refs des arrets du mois month"""
         month_format_url = WebScraper.URL_LAST_MONTH.format(month=month)
         response_last_month = self.requests.get(month_format_url)

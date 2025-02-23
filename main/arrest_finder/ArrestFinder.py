@@ -2,8 +2,8 @@ from main.arrest_finder.ArrestDateFinder import ArrestDateFinder
 from main.arrest_finder.AskProcessFinder import AskProcessFinder
 from main.arrest_finder.IsRectifiedFinder import IsRectifiedFinder
 from main.arrest_finder.KeywordsFinder import KeywordsFinder
-from main.arrest_finder.RulingsFinder import RulingsFinder
 from main.arrest_finder.RoleNumberFinder import RoleNumberFinder
+from main.arrest_finder.RulingsFinder import RulingsFinder
 
 
 class ArrestFinder:

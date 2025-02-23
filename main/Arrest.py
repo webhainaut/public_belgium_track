@@ -65,7 +65,8 @@ class Arrest:
                 .find_rulings()
                 .find_role_number()
                 .find_n_pages()
-                .find_keywords("Mots clés", ["Exigences minimals" , "Signatures", "prix anormaux", "motivation formelle"])
+                .find_keywords("Mots clés",
+                               ["Exigences minimals", "Signatures", "prix anormaux", "motivation formelle"])
                 )
 
     def check_errors(self, errors):

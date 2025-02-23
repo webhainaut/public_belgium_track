@@ -1,5 +1,5 @@
-from main.dao.db_connector import DbConnector
 from main.Models.Models import BaseModel
+from main.dao.db_connector import DbConnector
 
 
 class DbTable:

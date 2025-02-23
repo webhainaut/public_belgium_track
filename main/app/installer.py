@@ -5,6 +5,7 @@ from main.dao.dbtable import DbTable
 
 locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
 
+
 class Installer:
     @staticmethod
     def install():

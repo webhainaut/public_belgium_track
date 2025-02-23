@@ -40,9 +40,11 @@ class FinderService:
             current_page_1 = first_page
         else:
             if not reverse_1:
-                current_page_1 = self.__ascending_search(service, ref, delimiter_1, first_page, reader, second_page, True)
+                current_page_1 = self.__ascending_search(service, ref, delimiter_1, first_page, reader, second_page,
+                                                         True)
             else:
-                current_page_1 = self.__descending_search(service, ref, delimiter_1, first_page, reader, second_page, True)
+                current_page_1 = self.__descending_search(service, ref, delimiter_1, first_page, reader, second_page,
+                                                          True)
 
         if delimiter_2 is None:
             current_page_2 = second_page

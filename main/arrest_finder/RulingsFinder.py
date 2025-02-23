@@ -75,7 +75,7 @@ class Ruling(Enum):
                                                    r"r\s*e\s*o\s*u\s*v\s*e\s*r\s*t\s*u\s*r\s*e\s*((d\s*e\s*s)|("
                                                    r"d\s*u))\s*d\s*é\s*b\s*a\s*t))")
     NOT_FOUND = ("NOT FOUND", "$$$$$$$$$$$$$$$$$$$$$$$$$$$NOT FOUND$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    BIFFEE = ("Biffée", "affaire est biffée du rôle") ## TODO compléter
+    BIFFEE = ("Biffée", "affaire est biffée du rôle")  ## TODO compléter
 
     def __init__(self, label, pattern):
         self.label = label
