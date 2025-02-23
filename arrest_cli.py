@@ -69,12 +69,37 @@ def update(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)] = None,
         else:
             logger.error("Il faut soit une liste de refs, soit une année year")
 
+
 @app.command()
-def read(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)]):
+def read(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)] = None,
+         year: Annotated[int, typer.Argument(help="l'année des arrêts à ajouter à l'excel")] = None):
     """
-    Affiche l'arrêt
+    Affiche l'arrêt :memo:
     """
-    print(public_track_service.read_all(refs))
+    if year:
+        print(public_track_service.read_year(year))
+    else:
+        if refs is not None:
+            print(public_track_service.read_all(refs))
+        else:
+            logger.error("Il faut soit une liste de refs, soit une année year")
+
+
+@app.command(name="print")
+def print_excel(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)] = None,
+                year: Annotated[int, typer.Argument(help="l'année des arrêts à ajouter à l'excel")] = None,
+                file_name="result"):
+    """
+    Ajoute les arrets dans l'excel :book: :printer:
+    """
+    if year:
+        public_track_service.print_to_excel_year(year, file_name)
+    else:
+        if refs is not None:
+            public_track_service.print_to_excel_all(refs, file_name)
+        else:
+            logger.error("Il faut soit une liste de refs, soit une année year")
+
 
 if __name__ == "__main__":
     app()

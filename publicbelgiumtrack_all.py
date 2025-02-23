@@ -17,9 +17,9 @@ def main():
     # public_track_service.update_all(REFS)
     # public_track_service.update(260454)
 
-    public_track_service.read(259019)
-
-
+    # public_track_service.read(259019)
+    # public_track_service.print_to_excel_year(2024)
+    public_track_service.print_to_excel_all([261282])
 
 # REFS = [260454, 260616]
 # REFS = [247478, 255267, 255438, 255470, 255472, 255668, 255678, 255679, 255681, 255844, 255962, 255964, 256014, 256484,
