@@ -117,10 +117,27 @@ class PublicTrackService:
         return self.pd.DataFrame([arrest.as_dict()])
 
     def read_all(self, refs):
-        arrests = self.arrest_dao.get_all(refs)
+        arrests:List[ArrestModel] = self.arrest_dao.get_all(refs)
         return self.pd.DataFrame([arrest.as_dict() for arrest in arrests])
 
-    def print_to_excel(self, ref: int, file_name=None):
+    def read_year(self, year):
+        arrests:List[ArrestModel] = self.arrest_dao.get_for_year(year)
+        return self.pd.DataFrame([arrest.as_dict() for arrest in arrests])
+
+    def add_to_excel(self, ref: int, file_name=None):
         arrest: ArrestModel = self.arrest_dao.get(ref)
+        # S'assurer que l'arrêt est bien chargé...
         arrest.as_dict()
         self.excel_writter.add([arrest], file_name)
+
+    def print_to_excel_all(self, refs, file_name=None):
+        arrests:List[ArrestModel] = self.arrest_dao.get_all(refs)
+        # S'assurer que les arrêts est bien chargé...
+        [arrest.as_dict() for arrest in arrests]
+        self.excel_writter.add(arrests, file_name)
+
+    def print_to_excel_year(self, year, file_name=None):
+        arrests:List[ArrestModel] = self.arrest_dao.get_for_year(year)
+        # S'assurer que les arrêts est bien chargé...
+        [arrest.as_dict() for arrest in arrests]
+        self.excel_writter.add(arrests, file_name)
