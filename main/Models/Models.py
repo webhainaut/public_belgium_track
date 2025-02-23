@@ -18,13 +18,14 @@ DEFAULT_ARRESTS_DIRECTORY = "result/arrests/{langue}/ch_{chamber}/{date}"
 REF = 'Réf.'
 N_PAGES = 'Pages'
 ERRORS = 'Erreurs'
-ROLE_NUMBER= 'N° de Rôle'
+ROLE_NUMBER = 'N° de Rôle'
 RECTIF = 'Rectifié'
 ARREST_DATE = 'Date de l\'arrêt'
 ASK_PROCEDURE = 'Demande de procédure'
 RULING = 'Décision'
 KEYWORDS = 'Keywords'
 CONTRACT_TYPE = 'Type de contrat'
+
 
 class ArrestModel(BaseModel):
     __tablename__ = 'arrest'
@@ -121,7 +122,7 @@ class RulingModel(BaseModel):
     arrest_ref: Mapped[int] = mapped_column(ForeignKey("arrest.ref"))
     arrest: Mapped["ArrestModel"] = relationship(back_populates='rulings')
 
-    def get_label(self)-> str:
+    def get_label(self) -> str:
         surplus = " (rejet avec surplus)" if self.surplus else ""
         return f"{self.ruling}" + surplus
 

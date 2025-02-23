@@ -7,6 +7,7 @@ import pandas as pd
 from main.Models.Models import ArrestModel
 from main.dao.arrest_dao import ArrestDao
 from main.dao.arrest_downloader import ArrestDownloader
+from main.io.excel import Excel
 from main.services.arrest_service import ArrestService
 from main.services.webscraper import WebScraper
 
@@ -16,6 +17,7 @@ NB_CHUNKS = 1  # NB of threads
 class PublicTrackService:
 
     def __init__(self):
+        self.excel_writter = Excel()
         self.pd = pd
         self.web_scraper = WebScraper()
         self.arrest_downloader = ArrestDownloader()
@@ -47,7 +49,7 @@ class PublicTrackService:
 
     def download_all(self, refs: List[int]):
         chunk_size = len(refs) // NB_CHUNKS + (
-                    len(refs) % NB_CHUNKS > 0)  # Assurez-vous que toutes les références sont traitées
+                len(refs) % NB_CHUNKS > 0)  # Assurez-vous que toutes les références sont traitées
         chunks = [refs[i:i + chunk_size] for i in range(0, len(refs), chunk_size)]
 
         # Exécuter les téléchargements en parallèle
@@ -82,7 +84,7 @@ class PublicTrackService:
 
     def update_all(self, refs: List[int]):
         chunk_size = len(refs) // NB_CHUNKS + (
-                    len(refs) % NB_CHUNKS > 0)  # Assurez-vous que toutes les références sont traitées
+                len(refs) % NB_CHUNKS > 0)  # Assurez-vous que toutes les références sont traitées
         chunks = [refs[i:i + chunk_size] for i in range(0, len(refs), chunk_size)]
 
         # Exécuter les téléchargements en parallèle
@@ -111,3 +113,8 @@ class PublicTrackService:
     def read(self, ref: int):
         arrest: ArrestModel = self.arrest_dao.get(ref)
         return self.pd.DataFrame([arrest.as_dict()])
+
+    def print_to_excel(self, ref: int, file_name=None):
+        arrest: ArrestModel = self.arrest_dao.get(ref)
+        arrest.as_dict()
+        self.excel_writter.add([arrest], file_name)
