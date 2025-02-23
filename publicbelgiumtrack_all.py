@@ -17,7 +17,7 @@ def main():
     # public_track_service.update_all(REFS)
     # public_track_service.update(260454)
 
-    public_track_service.print_to_excel(259019)
+    public_track_service.read(259019)
 
 
 

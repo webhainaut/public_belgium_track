@@ -112,7 +112,13 @@ class PublicTrackService:
 
     def read(self, ref: int):
         arrest: ArrestModel = self.arrest_dao.get(ref)
+        if arrest is None:
+            return None
         return self.pd.DataFrame([arrest.as_dict()])
+
+    def read_all(self, refs):
+        arrests = self.arrest_dao.get_all(refs)
+        return self.pd.DataFrame([arrest.as_dict() for arrest in arrests])
 
     def print_to_excel(self, ref: int, file_name=None):
         arrest: ArrestModel = self.arrest_dao.get(ref)

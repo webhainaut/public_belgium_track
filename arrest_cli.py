@@ -69,6 +69,12 @@ def update(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)] = None,
         else:
             logger.error("Il faut soit une liste de refs, soit une année year")
 
+@app.command()
+def read(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)]):
+    """
+    Affiche l'arrêt
+    """
+    print(public_track_service.read_all(refs))
 
 if __name__ == "__main__":
     app()
