@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated, List
 
 import typer
@@ -9,6 +10,8 @@ HELP_REFS = "suite de référence d'arrêt exemple : 255267"
 
 app = typer.Typer(rich_markup_mode="rich")
 public_track_service = PublicTrackService()
+logging.basicConfig(level=logging.WARNING)
+logger = logging.getLogger(__name__)
 
 @app.command()
 def bonjour():
@@ -39,9 +42,15 @@ def install():
     Installer.install()
 
 @app.command()
-def download(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)]):
+def download(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)]= None, latest:bool =False):
     """Télécharge le(s) arrêts :scroll:"""
-    public_track_service.download_all(refs)
+    if latest:
+        public_track_service.download_latest()
+    else:
+        if refs is not None:
+            public_track_service.download_all(refs)
+        else:
+            logger.error("Il faut soit une liste de refs, soit --latest")
 
 @app.command()
 def update(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)]):

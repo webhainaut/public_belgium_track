@@ -1,7 +1,9 @@
 import concurrent.futures
 import logging
+from datetime import datetime
 from typing import List
 
+from main.Models.Models import ArrestModel
 from main.dao.arrest_dao import ArrestDao
 from main.dao.arrest_downloader import ArrestDownloader
 from main.services.arrest_service import ArrestService
@@ -32,16 +34,11 @@ class PublicTrackService:
             except Exception as e:
                 self.logger.error(f"{e}")
 
-    def update(self, ref):
-        """Met à jour l'arrest en fonction des règles définie dans arrestService (utile si les règles change)"""
-        if self.arrest_dao.exist(ref):
-            arrest = self.arrest_dao.get(ref)
-            pdf = self.arrest_downloader.read_arrest(arrest)
-            arrest_updated = self.arrestService.get_arrest_from_pdf(ref, pdf)
-            self.arrest_dao.add_update(arrest_updated)
-            self.logger.info(f"arret {ref} updated")
-        else:
-            self.logger.warning(f"arret {ref} n'existe pas")
+    def download_latest(self):
+        last_arrest:ArrestModel = self.arrest_dao.get_last()
+        refs = self.web_scraper.find_public_procurements_refs(last_ref= last_arrest)
+        self.download_all(refs)
+
 
     def download_all(self, refs: List[int]):
         chunk_size = len(refs) // NB_CHUNKS + (len(refs) % NB_CHUNKS > 0)  # Assurez-vous que toutes les références sont traitées
@@ -64,6 +61,17 @@ class PublicTrackService:
                 self.download(ref)
             except Exception as e:
                 self.logger.error(f"Une erreur s'est produite pour {ref} : {e}")
+
+    def update(self, ref):
+        """Met à jour l'arrest en fonction des règles définie dans arrestService (utile si les règles change)"""
+        if self.arrest_dao.exist(ref):
+            arrest = self.arrest_dao.get(ref)
+            pdf = self.arrest_downloader.read_arrest(arrest)
+            arrest_updated = self.arrestService.get_arrest_from_pdf(ref, pdf)
+            self.arrest_dao.add_update(arrest_updated)
+            self.logger.info(f"arret {ref} updated")
+        else:
+            self.logger.warning(f"arret {ref} n'existe pas")
 
     def update_all(self, refs: List[int]):
         chunk_size = len(refs) // NB_CHUNKS + (len(refs) % NB_CHUNKS > 0)  # Assurez-vous que toutes les références sont traitées

@@ -43,29 +43,29 @@ class PublicBelgiumTrack:
                 with pd.ExcelWriter(self.result_path, engine='openpyxl', mode='w') as writer:
                     df.to_excel(writer, sheet_name='Feuille1', index=False)
 
-    def read_from_excel(self):
-        if os.path.isfile(self.result_path):
-            return self.pd.read_excel(self.result_path)
-        else:
-            print(f"Le fichier n'existe pas.")
+    # def read_from_excel(self):
+    #     if os.path.isfile(self.result_path):
+    #         return self.pd.read_excel(self.result_path)
+    #     else:
+    #         print(f"Le fichier n'existe pas.")
 
     def last_line(self):
         if self.previous_df is not None:
             return len(self.previous_df) + 1
         return 0
 
-    def find_last_arrest(self, current_arrests):
-        self.previous_df = self.read_from_excel()
-        self.begin_line = self.last_line()
-        if current_arrests:
-            self.last_arrest = current_arrests[-1]
+    # def find_last_arrest(self, current_arrests):
+    #     self.previous_df = self.read_from_excel()
+    #     self.begin_line = self.last_line()
+    #     if current_arrests:
+    #         self.last_arrest = current_arrests[-1]
 
-    def get_current_arrests(self):
-        self.previous_df = self.read_from_excel()
-        current_arrests = []
-        if self.previous_df is not None:
-            current_arrests = [Arrest.from_dic(arrest) for arrest in self.previous_df.to_dict(orient='records')]
-        return current_arrests
+    # def get_current_arrests(self):
+    #     self.previous_df = self.read_from_excel()
+    #     current_arrests = []
+    #     if self.previous_df is not None:
+    #         current_arrests = [Arrest.from_dic(arrest) for arrest in self.previous_df.to_dict(orient='records')]
+    #     return current_arrests
 
     def find_last_arrest_from_previous_df(self):
         if self.previous_df is not None:

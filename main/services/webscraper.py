@@ -39,14 +39,16 @@ class WebScraper:
         return pdfs
 
     def find_public_procurements_refs(self, last_month=1, last_ref=None):
-        arrests = []
+        refs = []
+        if last_month is None or last_month < 1:
+            last_month=1
         months = self.get_months_order(last_month)
         for month in months:
             try:
-                arrests.append(self.find_public_procurements_refs_month(month, last_ref))
+                refs.append(self.find_public_procurements_refs_month(month, last_ref))
             except MissingSectionException as e:
-                self.logger.error(f"webscraper: {e}")
-        return arrests
+                self.logger.error(f"{e}")
+        return refs
 
     def find_public_procurements_refs_month(self, month, last_ref=None):
         """retourne une liste des refs des arrets du mois month"""
