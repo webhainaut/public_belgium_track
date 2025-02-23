@@ -75,11 +75,12 @@ def main():
     public_belgium_track = PublicBelgiumTrack()
 
     # public_belgium_track.public_track_service.download(259209)
-    public_belgium_track.public_track_service.download_all(REFS)
+    # public_belgium_track.public_track_service.download_all(REFS)
     # public_belgium_track.public_track_service.update_year(2024)
     # public_belgium_track.public_track_service.update_all(REFS)
     # public_belgium_track.public_track_service.update(260454)
 
+    print(public_belgium_track.public_track_service.read(259209))
 
     # current_arrests = public_belgium_track.get_current_arrests()
     # public_belgium_track.find_last_arrest(current_arrests)

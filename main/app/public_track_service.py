@@ -1,7 +1,8 @@
 import concurrent.futures
 import logging
-from datetime import datetime
 from typing import List
+
+import pandas as pd
 
 from main.Models.Models import ArrestModel
 from main.dao.arrest_dao import ArrestDao
@@ -9,11 +10,13 @@ from main.dao.arrest_downloader import ArrestDownloader
 from main.services.arrest_service import ArrestService
 from main.services.webscraper import WebScraper
 
-NB_CHUNKS = 1 # NB of threads
+NB_CHUNKS = 1  # NB of threads
+
 
 class PublicTrackService:
 
     def __init__(self):
+        self.pd = pd
         self.web_scraper = WebScraper()
         self.arrest_downloader = ArrestDownloader()
         self.arrest_dao = ArrestDao()
@@ -35,16 +38,16 @@ class PublicTrackService:
                 self.logger.error(f"{e}")
 
     def download_latest(self):
-        last_arrest:ArrestModel = self.arrest_dao.get_last()
-        refs: List[int] = self.web_scraper.find_public_procurements_refs(last_ref= last_arrest.ref)
+        last_arrest: ArrestModel = self.arrest_dao.get_last()
+        refs: List[int] = self.web_scraper.find_public_procurements_refs(last_ref=last_arrest.ref)
         if refs:
             self.download_all(refs)
         else:
             self.logger.info(f"Pas d'arrêt trouvé")
 
-
     def download_all(self, refs: List[int]):
-        chunk_size = len(refs) // NB_CHUNKS + (len(refs) % NB_CHUNKS > 0)  # Assurez-vous que toutes les références sont traitées
+        chunk_size = len(refs) // NB_CHUNKS + (
+                    len(refs) % NB_CHUNKS > 0)  # Assurez-vous que toutes les références sont traitées
         chunks = [refs[i:i + chunk_size] for i in range(0, len(refs), chunk_size)]
 
         # Exécuter les téléchargements en parallèle
@@ -78,7 +81,8 @@ class PublicTrackService:
             self.logger.warning(f"arret {ref} n'existe pas")
 
     def update_all(self, refs: List[int]):
-        chunk_size = len(refs) // NB_CHUNKS + (len(refs) % NB_CHUNKS > 0)  # Assurez-vous que toutes les références sont traitées
+        chunk_size = len(refs) // NB_CHUNKS + (
+                    len(refs) % NB_CHUNKS > 0)  # Assurez-vous que toutes les références sont traitées
         chunks = [refs[i:i + chunk_size] for i in range(0, len(refs), chunk_size)]
 
         # Exécuter les téléchargements en parallèle
@@ -105,5 +109,5 @@ class PublicTrackService:
         self.update_all(refs)
 
     def read(self, ref: int):
-        return self.arrest_dao.get(ref)
-
+        arrest: ArrestModel = self.arrest_dao.get(ref)
+        return self.pd.DataFrame([arrest.as_dict()])

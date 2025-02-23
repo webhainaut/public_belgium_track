@@ -15,14 +15,23 @@ case_arrest_association = Table(
 )
 
 DEFAULT_ARRESTS_DIRECTORY = "result/arrests/{langue}/ch_{chamber}/{date}"
-
+REF = 'Réf.'
+N_PAGES = 'Pages'
+ERRORS = 'Erreurs'
+ROLE_NUMBER= 'N° de Rôle'
+RECTIF = 'Rectifié'
+ARREST_DATE = 'Date de l\'arrêt'
+ASK_PROCEDURE = 'Demande de procédure'
+RULING = 'Décision'
+KEYWORDS = 'Keywords'
+CONTRACT_TYPE = 'Type de contrat'
 
 class ArrestModel(BaseModel):
     __tablename__ = 'arrest'
     ref: Mapped[int] = mapped_column(primary_key=True)
     pages = Column(Integer)
     contract_type = Column(String)
-    is_rectified = Column(Boolean)
+    is_rectified = mapped_column(Boolean)
     arrest_date = mapped_column(Date)
     avis = Column(String)  # Conforme / Contraire / Non qualifié / Pas d'avis
     chamber = Column(Integer)  # > 0
@@ -50,6 +59,24 @@ class ArrestModel(BaseModel):
             directory = self.arrest_date.strftime("%Y/%m")
         self.path = DEFAULT_ARRESTS_DIRECTORY.format(langue=self.language, chamber=self.chamber, date=directory)
 
+    def as_dict(self):
+        dic = {REF: self.ref,
+               ERRORS: '\n'.join([error.message for error in self.errors]),
+               N_PAGES: self.pages,
+               ROLE_NUMBER: '\n'.join([case.numRole for case in self.cases]),
+               RECTIF: self.is_rectified.real,
+               CONTRACT_TYPE: self.contract_type,
+               ARREST_DATE: self.arrest_date,
+               ASK_PROCEDURE: ', '.join([pross.process for pross in self.procedures]),
+               RULING: ', '.join([rul.get_label() for rul in self.rulings])
+               }
+        key_label = {}
+        for keyword in self.keywords:
+            if keyword.title not in key_label:
+                key_label[keyword.title] = []
+            key_label[keyword.title].append(keyword.word)
+        return dic | key_label
+
     def __repr__(self):
         return (f"<ArrestModel(ref={self.ref}, pages={self.pages}, "
                 f"contract_type={self.contract_type}, "
@@ -72,10 +99,10 @@ class CaseModel(BaseModel):
 class ProcedureModel(BaseModel):
     __tablename__ = 'procedure'
     id: Mapped[int] = mapped_column(primary_key=True)
-    process = Column(String)
-    request_date = Column(Date)
-    decision_date = Column(Date)
-    urgence = Column(Boolean)
+    process = mapped_column(String)
+    request_date = mapped_column(Date)
+    decision_date = mapped_column(Date)
+    urgence = mapped_column(Boolean)
 
     arrest_ref: Mapped[int] = mapped_column(ForeignKey("arrest.ref"))
     arrest: Mapped["ArrestModel"] = relationship(back_populates='procedures')
@@ -90,9 +117,13 @@ class RulingModel(BaseModel):
     __tablename__ = 'ruling'
     id: Mapped[int] = mapped_column(primary_key=True)
     ruling = Column(String)
-    surplus = Column(Boolean)
+    surplus = mapped_column(Boolean)
     arrest_ref: Mapped[int] = mapped_column(ForeignKey("arrest.ref"))
     arrest: Mapped["ArrestModel"] = relationship(back_populates='rulings')
+
+    def get_label(self)-> str:
+        surplus = " (rejet avec surplus)" if self.surplus else ""
+        return f"{self.ruling}" + surplus
 
     def __repr__(self):
         return (f"<RulingModel(id={self.id}, name='{self.ruling}', "
@@ -103,8 +134,8 @@ class RulingModel(BaseModel):
 class KeywordModel(BaseModel):
     __tablename__ = 'keyword'
     id: Mapped[int] = mapped_column(primary_key=True)
-    title = Column(String)
-    word = Column(String)
+    title = mapped_column(String)
+    word = mapped_column(String)
     arrest_ref: Mapped[int] = mapped_column(ForeignKey("arrest.ref"))
     arrest: Mapped["ArrestModel"] = relationship(back_populates='keywords')
 
@@ -116,7 +147,7 @@ class KeywordModel(BaseModel):
 class ErrorModel(BaseModel):
     __tablename__ = 'error'
     id: Mapped[int] = mapped_column(primary_key=True)
-    message = Column(String)
+    message = mapped_column(String)
     arrest_ref: Mapped[int] = mapped_column(ForeignKey("arrest.ref"))
     arrest: Mapped["ArrestModel"] = relationship(back_populates='errors')
 
