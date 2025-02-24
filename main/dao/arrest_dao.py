@@ -2,7 +2,7 @@ import locale
 from datetime import datetime, date
 from typing import List
 
-from sqlalchemy import select, exists
+from sqlalchemy import select, exists, delete, and_
 
 from main.Models.Models import ArrestModel
 from main.dao.db_connector import DbConnector
@@ -15,13 +15,6 @@ class ArrestDao:
 
     def __init__(self):
         self.db_connector = DbConnector()
-
-    def get_for_year(self, year: int = LAST_YEAR):
-        stmt = select(ArrestModel).where(
-            ArrestModel.arrest_date.between(date(year, 1, 1), date(year + 1, 1, 1))).order_by(
-            ArrestModel.arrest_date)
-        results = self.db_connector.read(lambda sess: sess.scalars(stmt).all())
-        return results
 
     def get_all(self, refs: List):
         stmt = select(ArrestModel).where(ArrestModel.ref.in_(refs)).order_by(ArrestModel.arrest_date)
@@ -49,12 +42,35 @@ class ArrestDao:
     def add_all(self, arrests: List[ArrestModel]):
         self.db_connector.execute(lambda sess: sess.add_all(arrests), [arrest.ref for arrest in arrests])
 
-    def delete_all(self, arrests: List[ArrestModel]):
-        for arrest in arrests:
-            self.db_connector.execute(lambda sess: sess.delete(arrest), arrest.ref)
+    def delete_all(self, refs: List[int]):
+        stmt = delete(ArrestModel).where(ArrestModel.ref.in_(refs))
+        self.db_connector.execute(lambda sess: sess.execute(stmt), refs)
 
     def delete(self, arrest: ArrestModel):
         self.db_connector.execute(lambda sess: sess.delete(arrest), arrest.ref)
 
-    def update(self, arrest: ArrestModel):
-        self.db_connector.execute(lambda sess: sess.flush(arrest), arrest.ref)
+    def replace(self, arrest: ArrestModel):
+        self.delete_all([arrest.ref])
+        self.add(arrest)
+
+    def search_refs_and(self, **kwargs):
+        query = select(ArrestModel.ref)
+        conditions = []
+        for attr, value in kwargs.items():
+            if hasattr(ArrestModel, attr):
+                if isinstance(value, list):
+                    conditions.append(getattr(ArrestModel, attr).in_(value))
+                else:
+                    conditions.append(getattr(ArrestModel, attr).is_(value))
+            else:
+                raise ValueError(f"Invalid parameter value: {attr}={value}")
+        if conditions:
+            query = query.filter(and_(*conditions))
+        return self.db_connector.read(lambda sess: sess.execute(query).scalars().all())
+
+    def search_arrests_for_year(self, year: int = LAST_YEAR):
+        stmt = select(ArrestModel).where(
+            ArrestModel.arrest_date.between(date(year, 1, 1), date(year + 1, 1, 1))).order_by(
+            ArrestModel.arrest_date)
+        results = self.db_connector.read(lambda sess: sess.scalars(stmt).all())
+        return results

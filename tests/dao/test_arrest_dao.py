@@ -31,10 +31,24 @@ class TestArrestDao(TestCase):
         self.add_arrest_for_tests()
 
     def tearDown(self):
-        self.delete_arrests([self.arrest1, self.arrest2, self.arrest3, self.arrest4, self.arrest5])
+        self.arrestDao.delete_all([self.ref1, self.ref2, self.ref3, self.ref4, self.ref5])
 
-    def delete_arrests(self, arrests):
-        self.arrestDao.delete_all(arrests)
+    def test_search_refs_and_bad_att(self):
+        with self.assertRaises(ValueError) as context:
+            self.arrestDao.search_refs_and(coucou="VI")
+        self.assertEqual("Invalid parameter value: coucou=VI", str(context.exception))
+
+    def test_search_refs_and_chamber(self):
+        result = self.arrestDao.search_refs_and(chamber="VI")
+        self.assertEqual([self.ref1, self.ref3], result)
+
+    def test_search_refs_and_chamber_2_args(self):
+        result = self.arrestDao.search_refs_and(chamber="VI", pages=self.arrest1_pages)
+        self.assertEqual([self.ref1], result)
+
+    def test_search_refs_and_chamber_list(self):
+        result = self.arrestDao.search_refs_and(chamber="VI", pages=[self.arrest1_pages, self.arrest3_pages])
+        self.assertEqual([self.ref1, self.ref3], result)
 
     def test_get_arrest(self):
         arrest_result: ArrestModel = self.arrestDao.get(self.ref1)
@@ -57,11 +71,11 @@ class TestArrestDao(TestCase):
         self.assertEqual(self.arrest1_pages, arrest_result.pages)
         self.assertNotEqual(new_pages, arrest_result.pages)
 
-        self.arrest1.pages = new_pages
-        self.arrestDao.update(self.arrest1)
+        arrest = ArrestModel(ref=self.ref1, language="fr", pages=new_pages, chamber="VII")
+        self.arrestDao.replace(arrest)
         arrest_result2: ArrestModel = self.arrestDao.get(self.ref1)
         self.assertEqual(new_pages, arrest_result2.pages)
-
+        self.assertEqual("VII", arrest_result2.chamber)
 
     def test_get_arrests(self):
         arrest_results: List["ArrestModel"] = self.arrestDao.get_all([self.ref1, self.ref2])
@@ -70,7 +84,7 @@ class TestArrestDao(TestCase):
         self.assertEqual(self.ref2, arrest_results[1].ref)
 
     def test_get_arrests_last_year(self):
-        arrest_results: List["ArrestModel"] = self.arrestDao.get_for_year(2024)
+        arrest_results: List["ArrestModel"] = self.arrestDao.search_arrests_for_year(2024)
         self.assertEqual(2, len(arrest_results))
         self.assertEqual(self.ref2, arrest_results[0].ref)
         self.assertEqual(self.ref4, arrest_results[1].ref)
@@ -89,7 +103,8 @@ class TestArrestDao(TestCase):
         self.ref1 = 1
         self.arrest1_pages = 5
         self.arrest1 = ArrestModel(ref=self.ref1, arrest_date=decision_suspension_date1, language="fr",
-                                   procedures=[procedure_suspension1, procedure_annulation1], pages=self.arrest1_pages)
+                                   procedures=[procedure_suspension1, procedure_annulation1], pages=self.arrest1_pages,
+                                   chamber="VI")
 
         request_suspension_date2 = datetime.strptime("15/06/2024", '%d/%m/%Y')
         request_annulation_date2 = datetime.strptime("20/07/2024", '%d/%m/%Y')
@@ -104,9 +119,11 @@ class TestArrestDao(TestCase):
         self.ref2 = 2
         self.arrest2 = ArrestModel(ref=self.ref2, arrest_date=decision_suspension_date2, language="fr",
                                    procedures=[procedure_suspension2, procedure_annulation2])
-        ref3 = 3
-        self.arrest3 = ArrestModel(ref=ref3, arrest_date=decision_annulation_date2, language="fr",
-                                   procedures=[procedure_suspension2, procedure_annulation2bis])
+        self.ref3 = 3
+        self.arrest3_pages = 7
+        self.arrest3 = ArrestModel(ref=self.ref3, arrest_date=decision_annulation_date2, language="fr",
+                                   procedures=[procedure_suspension2, procedure_annulation2bis], chamber="VI",
+                                   pages=self.arrest3_pages)
 
         request_suspension_date3 = datetime.strptime("15/07/2024", '%d/%m/%Y')
         decision_suspension_date3 = datetime.strptime("11/11/2024", '%d/%m/%Y')
