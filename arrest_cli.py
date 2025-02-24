@@ -58,47 +58,25 @@ def download(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)] = None, 
 
 
 @app.command()
-def update(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)] = None,
-           year: Annotated[int, typer.Argument(help="l'année des arrêts à mettre à jour")] = None):
+def update(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)]):
     """Mets à jour le(s) arrêts :scroll: (à n'utiliser que si le script a changé)"""
-    if year:
-        public_track_service.update_year(year)
-    else:
-        if refs is not None:
-            public_track_service.update_all(refs)
-        else:
-            logger.error("Il faut soit une liste de refs, soit une année year")
+    public_track_service.update_all(refs)
 
 
 @app.command()
-def read(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)] = None,
-         year: Annotated[int, typer.Argument(help="l'année des arrêts à ajouter à l'excel")] = None):
+def read(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)]):
     """
     Affiche l'arrêt :memo:
     """
-    if year:
-        print(public_track_service.read_year(year))
-    else:
-        if refs is not None:
-            print(public_track_service.read_all(refs))
-        else:
-            logger.error("Il faut soit une liste de refs, soit une année year")
+    print(public_track_service.read_all(refs))
 
 
 @app.command(name="print")
-def print_excel(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)] = None,
-                year: Annotated[int, typer.Argument(help="l'année des arrêts à ajouter à l'excel")] = None,
-                file_name="result"):
+def print_excel(refs: Annotated[List[int], typer.Argument(help=HELP_REFS)], file_name="result"):
     """
     Ajoute les arrets dans l'excel :book: :printer:
     """
-    if year:
-        public_track_service.print_to_excel_year(year, file_name)
-    else:
-        if refs is not None:
-            public_track_service.print_to_excel_all(refs, file_name)
-        else:
-            logger.error("Il faut soit une liste de refs, soit une année year")
+    public_track_service.print_to_excel_all(refs, file_name)
 
 
 if __name__ == "__main__":
