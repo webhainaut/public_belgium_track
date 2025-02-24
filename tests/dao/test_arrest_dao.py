@@ -42,6 +42,10 @@ class TestArrestDao(TestCase):
         result = self.arrestDao.search_refs_and(chamber="VI")
         self.assertEqual([self.ref1, self.ref3], result)
 
+    def test_search_refs_and_chamber_None(self):
+        result = self.arrestDao.search_refs_and(chamber=None)
+        self.assertEqual([self.ref2, self.ref4, self.ref5], result)
+
     def test_search_refs_and_chamber_2_args(self):
         result = self.arrestDao.search_refs_and(chamber="VI", pages=self.arrest1_pages)
         self.assertEqual([self.ref1], result)

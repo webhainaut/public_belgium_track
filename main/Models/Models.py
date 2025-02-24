@@ -35,7 +35,7 @@ class ArrestModel(BaseModel):
     is_rectified = mapped_column(Boolean)
     arrest_date = mapped_column(Date)
     avis = Column(String)  # Conforme / Contraire / Non qualifié / Pas d'avis
-    chamber = Column(String)  # > 0
+    chamber = Column(String)
     language = Column(String)  # fr / nl / de
 
     en_causes = Column(String)

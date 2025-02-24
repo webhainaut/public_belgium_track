@@ -55,9 +55,11 @@ class ArrestService:
         self.check_errors(e, arrest)
         return is_rectified
 
-    def find_chamber(self, ref, pdf_reader, arrest):
-        # TODO
-        return 6
+    def find_chamber(self, ref, reader, arrest):
+        chamber, e = self.finder.chamberFinder.find(ref, reader, {
+            self.finder.arrestDateFinder.IS_RECTIFIED_LABEL: arrest.is_rectified})
+        self.check_errors(e, arrest)
+        return chamber
 
     def find_arrest_date(self, ref, reader, arrest):
         arrest_date, e = self.finder.arrestDateFinder.find(ref, reader, {
