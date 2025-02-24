@@ -15,6 +15,7 @@ case_arrest_association = Table(
 )
 
 DEFAULT_ARRESTS_DIRECTORY = "result/arrests/{langue}/ch_{chamber}/{date}"
+
 REF = 'Réf.'
 N_PAGES = 'Pages'
 ERRORS = 'Erreurs'
@@ -54,10 +55,7 @@ class ArrestModel(BaseModel):
         return f"{self.path}/{self.ref}.pdf"
 
     def set_path(self):
-        if self.arrest_date is None:
-            directory = "date_not_found"
-        else:
-            directory = self.arrest_date.strftime("%Y/%m")
+        directory = self.arrest_date.strftime("%Y/%m") if self.arrest_date else "date_not_found"
         self.path = DEFAULT_ARRESTS_DIRECTORY.format(langue=self.language, chamber=self.chamber, date=directory)
 
     def as_dict(self):
