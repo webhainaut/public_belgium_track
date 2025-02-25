@@ -44,12 +44,12 @@ class ArrestModel(BaseModel):
     intervenants = Column(String)
     path = Column(String)
 
-    procedures: Mapped[List["ProcedureModel"]] = relationship(back_populates='arrest', cascade="all, delete")
-    rulings: Mapped[List["RulingModel"]] = relationship(back_populates='arrest', cascade="all, delete")
-    keywords: Mapped[List["KeywordModel"]] = relationship(back_populates='arrest', cascade="all, delete")
+    procedures: Mapped[List["ProcedureModel"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
+    rulings: Mapped[List["RulingModel"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
+    keywords: Mapped[List["KeywordModel"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
 
-    cases: Mapped[List["CaseModel"]] = relationship(secondary=case_arrest_association, back_populates='arrests')
-    errors: Mapped[List["ErrorModel"]] = relationship(back_populates='arrest', cascade="all, delete")
+    cases: Mapped[List["CaseModel"]] = relationship(secondary=case_arrest_association, back_populates='arrests', cascade="all, delete, delete-orphan")
+    errors: Mapped[List["ErrorModel"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
 
     def get_path_to_pdf(self):
         return f"{self.path}/{self.ref}.pdf"

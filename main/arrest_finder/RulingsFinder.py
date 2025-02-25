@@ -12,9 +12,7 @@ SURPLUS_DELIMITER = r"r\s*e\s*j\s*e\s*t\s*é\s*e?\s*p\s*o\s*u\s*r\s*l\s*e\s*s\s*
 
 
 class RulingsFinder(FinderAbstract, FinderService):
-    """
-    Quel est la décision
-    """
+    """Quel est la décision"""
 
     def _check_args_contains(self, args):
         pass

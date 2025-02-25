@@ -18,6 +18,7 @@ class ArrestService:
         else:
             pdf_reader = PdfReader(self.io.BytesIO(pdf))
         arrest = ArrestModel(ref=ref)
+        arrest.errors = []
         arrest.pages = self.find_n_pages(pdf_reader)
         arrest.language = self.find_language(ref, pdf_reader, arrest)
         arrest.is_rectified = self.is_rectified(ref, pdf_reader, arrest)
