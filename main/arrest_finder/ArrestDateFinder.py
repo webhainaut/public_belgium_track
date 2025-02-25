@@ -14,8 +14,6 @@ class ArrestDateFinder(FinderAbstract, FinderService):
     """
 
     ARREST_DATE_PATTERN = r'(n\s*o\s*[\d.,]+\s*(?:du)?\s*\d{1,2}(?:er)?\s*[\wé]+\s*\d{4})'
-    DATE_EXTRACT_PATTERN = r'(\d{1,2})\s*([^\d\s]+)\s*(\d{4})'
-    DATE_PATTERN = r'(\d{1,2}\s*[\wé]+\s*\d{4})'
 
     def _check_args_contains(self, args):
         self.args_contain_is_rectified(args)
@@ -28,19 +26,8 @@ class ArrestDateFinder(FinderAbstract, FinderService):
         except IndexError:
             raise DataNotFoundException(data=self.service, ref=ref)
 
-        date_str = self._normalize_date_string(date_line, ref)
+        date_str = self.normalize_date_string(self, date_line, ref)
         try:
             return datetime.strptime(date_str, '%d %B %Y')
         except ValueError:
             raise DataNotFoundException(data=self.service, ref=ref)
-
-    def _normalize_date_string(self, date_line, ref):
-        date_line_clean = " ".join(date_line.split()).lower()
-        date_line_clean = date_line_clean.replace('1er', '1').replace('du', '')
-
-        date_part = re.search(self.DATE_PATTERN, date_line_clean)
-        if not date_part:
-            raise DataNotFoundException(data=self.service, ref=ref)
-
-        date_str = date_part.group(1)
-        return re.sub(self.DATE_EXTRACT_PATTERN, lambda m: f"{m.group(1)} {m.group(2)} {m.group(3)}", date_str)

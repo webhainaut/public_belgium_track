@@ -8,6 +8,8 @@ from main.Exceptions.DataNotFoundException import DataNotFoundException
 
 class FinderService:
     IS_RECTIFIED_LABEL = 'isRectified'
+    DATE_EXTRACT_PATTERN = r'(\d{1,2})\s*([^\d\s]+)\s*(\d{4})'
+    DATE_PATTERN = r'(\d{1,2}\s*[\wé]+\s*\d{4})'
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -19,6 +21,23 @@ class FinderService:
     def args_contain_is_rectified(self, args):
         if args is None or self.IS_RECTIFIED_LABEL not in args:
             raise NotADirectoryError("{rectified} no in the dic".format(rectified=self.IS_RECTIFIED_LABEL))
+
+    def normalize_date_string(self, service, date_line, ref):
+        """
+        Normalise une chaîne de date mal formatée en un format standard.
+        Exemples: "1ermars2025" -> "1 mars 2025", "9 février2024" -> "9 février 2024".
+        Gère "1er" et supprime "du".
+        Raises: DataNotFoundException si aucune date n'est trouvée.
+        """
+        date_line_clean = " ".join(date_line.split()).lower()
+        date_line_clean = date_line_clean.replace('1er', '1').replace('du', '')
+
+        date_part = re.search(self.DATE_PATTERN, date_line_clean)
+        if not date_part:
+            raise DataNotFoundException(data=service, ref=ref)
+
+        date_str = date_part.group(1)
+        return re.sub(self.DATE_EXTRACT_PATTERN, lambda m: f"{m.group(1)} {m.group(2)} {m.group(3)}", date_str)
 
     def extract_text_between_delimiters_for_reader(self, service, ref, reader: PdfReader, pattern_delimiter_1=None,
                                                    pattern_delimiter_2=None, page_1=None, page_2=None,
@@ -161,7 +180,3 @@ class FinderService:
             raise IndexError(
                 "{ref}, first_page: {first_page} > second_page: {second_page}".format(ref=ref, first_page=first_page,
                                                                                       second_page=second_page))
-
-    def print_pdf(self, reader: PdfReader):
-        for page in reader.pages:
-            self.logger.info(page.extract_text())
