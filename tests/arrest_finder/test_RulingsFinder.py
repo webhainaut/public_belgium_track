@@ -121,7 +121,6 @@ class TestRulingsFinder(TestAbstractFinder):
         rulings, error = self.rulingsFinder.find(arrest_ref, reader,
                                                   {self.rulingsFinder.IS_RECTIFIED_LABEL: False})
         ruling, surplus = rulings
-        print(surplus)
         self.assertEqual([Ruling.ORDERED], ruling)
         self.assertTrue(isinstance(surplus, bool) and surplus)
 
