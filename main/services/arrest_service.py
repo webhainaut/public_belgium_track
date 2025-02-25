@@ -25,12 +25,13 @@ class ArrestService:
         arrest.chamber = self.find_chamber(ref, pdf_reader, arrest)
         arrest.arrest_date = self.find_arrest_date(ref, pdf_reader, arrest)
         arrest.cases = self.find_cases(ref, pdf_reader, arrest)
-        arrest.rulings = self.find_rulings(ref, pdf_reader, arrest)
         arrest.keywords = self.find_keywords("Mots clés", ["Exigences minimals", "Signatures", "prix anormaux",
                                                            "motivation formelle"], ref, pdf_reader, arrest)
+        arrest.rulings = self.find_rulings(ref, pdf_reader, arrest)
         # arrest.procedures = self.find_procedure(ref, pdf_reader, arrest)
-        # arrest.contract_type = self.find_contract_type(ref, pdf_reader, arrest)
         # arrest.avis = self.find_avis(ref, pdf_reader, arrest)
+
+        # arrest.contract_type = self.find_contract_type(ref, pdf_reader, arrest)
         # arrest.en_causes = self.find_avis(ref, pdf_reader, arrest)
         # arrest.contres = self.find_avis(ref, pdf_reader, arrest)
         # arrest.intervenants = self.find_avis(ref, pdf_reader, arrest)
@@ -79,11 +80,8 @@ class ArrestService:
         return rulings_model
 
     def find_cases(self, ref, reader, arrest):
-        cases = []
-        roles_numbers, e = self.finder.roleNumberFinder.find(ref, reader, {
-            self.finder.roleNumberFinder.IS_RECTIFIED_LABEL: arrest.is_rectified})
-        for roles_number in roles_numbers:
-            cases.append(CaseModel(numRole=roles_number))
+        cases, e = self.finder.casesFinder.find(ref, reader, {
+            self.finder.casesFinder.IS_RECTIFIED_LABEL: arrest.is_rectified})
         self.check_errors(e, arrest)
         return cases
 

@@ -1,11 +1,12 @@
 import re
 
 from main.Exceptions.DataNotFoundException import DataNotFoundException
+from main.Models.Models import CaseModel
 from main.arrest_finder.FinderAbstract import FinderAbstract
 from main.arrest_finder.FinderService import FinderService
 
 
-class RoleNumberFinder(FinderAbstract, FinderService):
+class CasesFinder(FinderAbstract, FinderService):
 
     def _check_args_contains(self, args):
         self.args_contain_is_rectified(args)
@@ -21,4 +22,4 @@ class RoleNumberFinder(FinderAbstract, FinderService):
                              roles_numbers_fiter]
         except IndexError:
             raise DataNotFoundException(data=self.service, ref=ref)
-        return roles_numbers
+        return [CaseModel(numRole=roles_number) for roles_number in roles_numbers]

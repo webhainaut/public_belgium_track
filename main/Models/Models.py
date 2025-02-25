@@ -48,7 +48,7 @@ class ArrestModel(BaseModel):
     rulings: Mapped[List["RulingModel"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
     keywords: Mapped[List["KeywordModel"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
 
-    cases: Mapped[List["CaseModel"]] = relationship(secondary=case_arrest_association, back_populates='arrests', cascade="all, delete, delete-orphan")
+    cases: Mapped[List["CaseModel"]] = relationship(secondary=case_arrest_association, back_populates='arrests', cascade="all, delete")
     errors: Mapped[List["ErrorModel"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
 
     def get_path_to_pdf(self):
