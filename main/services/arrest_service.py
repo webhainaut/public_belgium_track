@@ -70,20 +70,16 @@ class ArrestService:
         return arrest_date
 
     def find_rulings(self, ref, reader, arrest):
-        rulings_model = []
-        rulings_find, e = self.finder.rulingsFinder.find(ref, reader, {
+        rulings, e = self.finder.rulingsFinder.find(ref, reader, {
             self.finder.rulingsFinder.IS_RECTIFIED_LABEL: arrest.is_rectified})
-        rulings, surplus = rulings_find
-        for ruling in rulings:
-            rulings_model.append(RulingModel(ruling=ruling.name, surplus=surplus))
         self.check_errors(e, arrest)
-        return rulings_model
+        return [] if rulings is None else rulings
 
     def find_cases(self, ref, reader, arrest):
         cases, e = self.finder.casesFinder.find(ref, reader, {
             self.finder.casesFinder.IS_RECTIFIED_LABEL: arrest.is_rectified})
         self.check_errors(e, arrest)
-        return cases
+        return [] if cases is None else cases
 
     def find_keywords(self, title, keywords, ref, reader, arrest):
         keywords_model = []
