@@ -140,7 +140,7 @@ class PublicTrackService:
         [arrest.as_dict() for arrest in arrests]
         self.excel_writter.add(arrests, file_name)
 
-    def print_to_excel_year(self, year, file_name=None):
+    def print_to_excel_by_year(self, year, file_name=None):
         arrests: List[ArrestModel] = self.arrest_dao.search_arrests_for_year(year)
         # S'assurer que les arrêts est bien chargé...
         [arrest.as_dict() for arrest in arrests]

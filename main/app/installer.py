@@ -1,4 +1,5 @@
 import locale
+import os
 from datetime import datetime
 
 from main.dao.dbtable import DbTable
@@ -7,10 +8,15 @@ locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
 
 
 class Installer:
-    @staticmethod
-    def install():
-        install = DbTable()
-        install.create_arrests_table()
+
+    def __init__(self):
+        self.db_table = DbTable()
+
+    def install(self):
+        self.db_table.create_arrests_table()
+
+    def db_exists(self):
+        return os.path.exists(self.db_table.db_connector.db_path)
 
 
 if __name__ == "__main__":
