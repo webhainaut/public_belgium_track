@@ -69,12 +69,18 @@ class ArrestModel(BaseModel):
                ASK_PROCEDURE: ', '.join([pross.process for pross in self.procedures]),
                RULING: ', '.join([rul.get_label() for rul in self.rulings])
                }
-        key_label = {}
+        return dic | self.get_key_labels()
+
+    def get_key_labels(self):
+        keywords = {}
         for keyword in self.keywords:
-            if keyword.title not in key_label:
-                key_label[keyword.title] = []
-            key_label[keyword.title].append(keyword.word)
-        return dic | key_label
+            if keyword.title not in keywords:
+                keywords[keyword.title] = []
+            keywords[keyword.title].append(keyword.word)
+        key_labels = {}
+        for title, words in keywords.items():
+            key_labels[title] = ', '.join(words)
+        return key_labels
 
     def __repr__(self):
         return (f"<ArrestModel(ref={self.ref}, pages={self.pages}, "

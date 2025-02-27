@@ -163,7 +163,6 @@ class TestRulingsFinder(TestAbstractFinder):
         self.assertFalse(rulings[0].surplus)
 
     def test_find_rulings_annulation_suspension_diff(self):
-        # TODO faire autrement ?
         arrest_ref = "255570"
         reader = self.read_pdf(arrest_ref)
         rulings, error = self.rulingsFinder.find(arrest_ref, reader,
