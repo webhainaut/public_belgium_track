@@ -6,7 +6,7 @@ import pandas as pd
 
 from main.Models.Models import ArrestModel
 from main.dao.arrest_dao import ArrestDao
-from main.dao.arrest_downloader import ArrestDownloader
+from main.io.arrest_downloader import ArrestDownloader
 from main.io.excel import Excel
 from main.services.arrest_service import ArrestService
 from main.services.webscraper import WebScraper

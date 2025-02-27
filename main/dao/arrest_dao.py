@@ -15,39 +15,40 @@ class ArrestDao:
 
     def __init__(self):
         self.db_connector = DbConnector()
+        self.session = self.db_connector.Session()
 
     def get_all(self, refs: List):
         stmt = select(ArrestModel).where(ArrestModel.ref.in_(refs)).order_by(ArrestModel.arrest_date)
-        results = self.db_connector.read(lambda sess: sess.scalars(stmt).all())
+        results = self.db_connector.read(lambda sess: sess.scalars(stmt).all(), session=self.session)
         return results
 
     def get(self, ref: int):
         stmt = select(ArrestModel).where(ArrestModel.ref.is_(ref))
-        result = self.db_connector.read(lambda sess: sess.scalars(stmt).one())
+        result = self.db_connector.read(lambda sess: sess.scalars(stmt).one(), session=self.session)
         return result
 
     def get_last(self):
-        result = self.db_connector.read(lambda sess: sess.query(ArrestModel).order_by(ArrestModel.ref.desc()).first())
+        result = self.db_connector.read(lambda sess: sess.query(ArrestModel).order_by(ArrestModel.ref.desc()).first(), session=self.session)
         return result
         pass
 
     def exist(self, ref: int):
         stmt = exists().where(ArrestModel.ref.is_(ref))
-        result = self.db_connector.read(lambda sess: sess.query(stmt).scalar())
+        result = self.db_connector.read(lambda sess: sess.query(stmt).scalar(), session=self.session)
         return result
 
     def add(self, arrest: ArrestModel):
-        self.db_connector.execute(lambda sess: sess.add(arrest), arrest.ref)
+        self.db_connector.execute(lambda sess: sess.add(arrest), arrest.ref, session=self.session)
 
     def add_all(self, arrests: List[ArrestModel]):
-        self.db_connector.execute(lambda sess: sess.add_all(arrests), [arrest.ref for arrest in arrests])
+        self.db_connector.execute(lambda sess: sess.add_all(arrests), [arrest.ref for arrest in arrests], session=self.session)
 
     def delete_all(self, refs: List[int]):
         stmt = delete(ArrestModel).where(ArrestModel.ref.in_(refs))
-        self.db_connector.execute(lambda sess: sess.execute(stmt), refs)
+        self.db_connector.execute(lambda sess: sess.execute(stmt), refs, session=self.session)
 
     def delete(self, arrest: ArrestModel):
-        self.db_connector.execute(lambda sess: sess.delete(arrest), arrest.ref)
+        self.db_connector.execute(lambda sess: sess.delete(arrest), arrest.ref, session=self.session)
 
     def replace(self, arrest: ArrestModel):
         self.delete_all([arrest.ref])
@@ -66,11 +67,11 @@ class ArrestDao:
                 raise ValueError(f"Invalid parameter value: {attr}={value}")
         if conditions:
             query = query.filter(and_(*conditions))
-        return self.db_connector.read(lambda sess: sess.execute(query).scalars().all())
+        return self.db_connector.read(lambda sess: sess.execute(query).scalars().all(), session=self.session)
 
     def search_arrests_for_year(self, year: int = LAST_YEAR):
         stmt = select(ArrestModel).where(
             ArrestModel.arrest_date.between(date(year, 1, 1), date(year + 1, 1, 1))).order_by(
             ArrestModel.arrest_date)
-        results = self.db_connector.read(lambda sess: sess.scalars(stmt).all())
+        results = self.db_connector.read(lambda sess: sess.scalars(stmt).all(), session=self.session)
         return results

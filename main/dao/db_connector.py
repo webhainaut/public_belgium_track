@@ -21,8 +21,7 @@ class DbConnector:
         cls.engine = create_engine(f"sqlite:///{cls.db_path}", echo=False)
         cls.Session = sessionmaker(cls.engine)
 
-    def read(self, func):
-        session = self.Session()
+    def read(self, func, session=Session()):
         try:
             result = func(session)
             return result
@@ -30,11 +29,10 @@ class DbConnector:
             self.logger.error(f"An error occurred during execution: {e}")
             return None
 
-    def execute(self, func, refs=None):
-        with self.Session() as session:
-            try:
-                func(session)
-                session.commit()
-            except Exception as e:
-                session.rollback()
-                self.logger.error(f"An error occurred for {refs} during execution: {e}")
+    def execute(self, func, refs=None, session=Session()):
+        try:
+            func(session)
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            self.logger.error(f"An error occurred for {refs} during execution: {e}")
