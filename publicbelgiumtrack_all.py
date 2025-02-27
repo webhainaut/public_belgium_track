@@ -15,8 +15,8 @@ def main():
 
     # public_track_service.arrest_dao.delete_all(REFS)
 
-    # public_track_service.download_all(REF_ERROR)
-    public_track_service.download(260087)
+    public_track_service.download_all(REF_ERROR)
+    # public_track_service.download(260087)
 
     # public_track_service.print_to_excel_by_year(2024)
 

@@ -4,6 +4,7 @@ from main.Exceptions.DataNotFoundException import DataNotFoundException
 from main.Models.Models import CaseModel
 from main.arrest_finder.FinderAbstract import FinderAbstract
 from main.arrest_finder.FinderService import FinderService
+from main.dao.arrest_dao import ArrestDao
 from main.dao.case_dao import CaseDao
 
 
@@ -11,6 +12,7 @@ class CasesFinder(FinderAbstract, FinderService):
 
     def __init__(self, service):
         super().__init__(service)
+        self.arrest_dao = ArrestDao()
         self.case_dao = CaseDao()
 
     def _check_args_contains(self, args):

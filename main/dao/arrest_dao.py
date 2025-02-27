@@ -38,6 +38,7 @@ class ArrestDao:
         return result
 
     def add(self, arrest: ArrestModel):
+        arrest.cases = [self.session.merge(case) for case in arrest.cases]
         self.db_connector.execute(lambda sess: sess.add(arrest), arrest.ref, session=self.session)
 
     def add_all(self, arrests: List[ArrestModel]):
