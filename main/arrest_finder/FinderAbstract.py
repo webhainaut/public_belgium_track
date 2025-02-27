@@ -5,7 +5,7 @@ from main.Exceptions.DataNotFoundException import DataNotFoundException
 
 
 class FinderAbstract(ABC):
-    FIRST_TITLE_PATTERN = r'I\.\s*Objets*\s*(de\s*la|de\s*s|du)\s*(requête|recours)'
+    FIRST_TITLE_PATTERN = r'I\.\s*Objets*\s*(de\s*la|de\s*s|du)\s*(requ(ê|e)te|recours)'
     RULING_PATTERN = (r"L\s*E\s*C\s*O\s*N\s*S\s*E\s*I\s*L\s*D\s*(’|')\s*("
                       r"É|E)\s*T\s*A\s*T\s*D\s*É\s*C\s*I\s*D\s*E\s*.*\s*:")
     IS_RECTIFIED_LABEL = 'isRectified'

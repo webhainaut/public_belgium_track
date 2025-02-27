@@ -12,7 +12,6 @@ class TestCasesFinder(TestAbstractFinder):
         reader = self.read_pdf(arrest_ref)
         cases, error = self.casesFinder.find(arrest_ref, reader,
                                              {self.casesFinder.IS_RECTIFIED_LABEL: False})
-        print(cases)
         self.assertEqual("205.687", cases[0].numRole, "Only one")
 
     def test_find_role_several(self):
@@ -69,3 +68,10 @@ class TestCasesFinder(TestAbstractFinder):
         cases, error = self.casesFinder.find(arrest_ref, reader,
                                              {self.casesFinder.IS_RECTIFIED_LABEL: False})
         self.assertEqual(["241.407"], [case.numRole for case in cases], "")
+
+    def test_find_role_a(self):
+        arrest_ref = "260008"
+        reader = self.read_pdf(arrest_ref)
+        cases, error = self.casesFinder.find(arrest_ref, reader,
+                                             {self.casesFinder.IS_RECTIFIED_LABEL: False})
+        self.assertEqual(["241.769"], [case.numRole for case in cases], "")
