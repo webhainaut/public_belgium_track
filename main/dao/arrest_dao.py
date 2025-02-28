@@ -75,7 +75,6 @@ class ArrestDao:
         current_arrest.rulings = arrest_merge.rulings
         current_arrest.keywords = arrest_merge.keywords
         current_arrest.cases = arrest_merge.cases
-
         current_arrest.errors = arrest_merge.errors
 
         self.session.commit()

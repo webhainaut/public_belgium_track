@@ -79,3 +79,10 @@ class TestArrestDateFinder(TestAbstractFinder):
         find_date, error = self.arrestDateFinder.find(arrest_ref, reader,
                                                       {self.arrestDateFinder.IS_RECTIFIED_LABEL: False})
         self.assertEqual("09/02/2024", find_date.strftime("%d/%m/%Y"), "No space")
+
+    def test_find_date_space_in_number_role(self):
+        arrest_ref = "258950"
+        reader = self.read_pdf(arrest_ref)
+        find_date, error = self.arrestDateFinder.find(arrest_ref, reader,
+                                                      {self.arrestDateFinder.IS_RECTIFIED_LABEL: False})
+        self.assertEqual("28/02/2024", find_date.strftime("%d/%m/%Y"), "space in number role")

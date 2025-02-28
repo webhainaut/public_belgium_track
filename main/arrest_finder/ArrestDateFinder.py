@@ -13,7 +13,7 @@ class ArrestDateFinder(FinderAbstract, FinderService):
     Gère les cas particuliers comme les espaces multiples, '1er', et 'n\n o'.
     """
 
-    ARREST_DATE_PATTERN = r'(n\s*o\s*[\d.,]+\s*(?:du)?\s*\d{1,2}(?:er)?\s*[\wé]+\s*\d{4})'
+    ARREST_DATE_PATTERN = r'(n\s*o\s*[\d.,\s]+\s*(?:du)?\s*\d{1,2}(?:er)?\s*[\wé]+\s*\d{4})'
 
     def _check_args_contains(self, args):
         self.args_contain_is_rectified(args)
