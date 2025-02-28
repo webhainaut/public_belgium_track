@@ -2,7 +2,7 @@ import locale
 from datetime import datetime, date
 from typing import List
 
-from sqlalchemy import select, exists, delete, and_
+from sqlalchemy import select, exists, delete, and_, inspect
 
 from main.Models.Models import ArrestModel
 from main.dao.db_connector import DbConnector
@@ -28,7 +28,8 @@ class ArrestDao:
         return result
 
     def get_last(self):
-        result = self.db_connector.read(lambda sess: sess.query(ArrestModel).order_by(ArrestModel.ref.desc()).first(), session=self.session)
+        result = self.db_connector.read(lambda sess: sess.query(ArrestModel).order_by(ArrestModel.ref.desc()).first(),
+                                        session=self.session)
         return result
         pass
 
@@ -42,7 +43,8 @@ class ArrestDao:
         self.db_connector.execute(lambda sess: sess.add(arrest), arrest.ref, session=self.session)
 
     def add_all(self, arrests: List[ArrestModel]):
-        self.db_connector.execute(lambda sess: sess.add_all(arrests), [arrest.ref for arrest in arrests], session=self.session)
+        self.db_connector.execute(lambda sess: sess.add_all(arrests), [arrest.ref for arrest in arrests],
+                                  session=self.session)
 
     def delete_all(self, refs: List[int]):
         stmt = delete(ArrestModel).where(ArrestModel.ref.in_(refs))
@@ -51,9 +53,33 @@ class ArrestDao:
     def delete(self, arrest: ArrestModel):
         self.db_connector.execute(lambda sess: sess.delete(arrest), arrest.ref, session=self.session)
 
-    def replace(self, arrest: ArrestModel):
-        self.delete_all([arrest.ref])
-        self.add(arrest)
+    def update(self, arrest: ArrestModel) -> ArrestModel:
+        """
+        Update the arrest with values from the new arrest.
+        arrest (ArrestModel): The new arrest with updated values
+        Returns:
+        ArrestModel: The updated arrest
+        """
+        current_arrest = self.get(arrest.ref)
+        # Get all column names of the ArrestModel
+        columns = inspect(ArrestModel).columns.keys()
+
+        # Update each column except 'ref'
+        for column in columns:
+            if column != 'ref':
+                setattr(current_arrest, column, getattr(arrest, column))
+
+        # Handle relationships separately if needed
+        arrest_merge = self.session.merge(arrest)
+        current_arrest.procedures = arrest_merge.procedures
+        current_arrest.rulings = arrest_merge.rulings
+        current_arrest.keywords = arrest_merge.keywords
+        current_arrest.cases = arrest_merge.cases
+
+        current_arrest.errors = arrest_merge.errors
+
+        self.session.commit()
+        return current_arrest
 
     def search_refs_and(self, **kwargs):
         query = select(ArrestModel.ref)

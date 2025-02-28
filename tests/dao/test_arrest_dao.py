@@ -49,7 +49,7 @@ class TestArrestDao(TestAbstractDao):
         self.assertNotEqual(new_pages, arrest_result.pages)
 
         arrest = ArrestModel(ref=self.ref1, language="fr", pages=new_pages, chamber="VII")
-        self.arrestDao.replace(arrest)
+        self.arrestDao.update(arrest)
         arrest_result2: ArrestModel = self.arrestDao.get(self.ref1)
         self.assertEqual(new_pages, arrest_result2.pages)
         self.assertEqual("VII", arrest_result2.chamber)

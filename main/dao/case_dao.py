@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, inspect
 
 from main.Models.Models import CaseModel
 from main.dao.db_connector import DbConnector

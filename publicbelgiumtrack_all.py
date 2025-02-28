@@ -15,13 +15,13 @@ def main():
 
     # public_track_service.arrest_dao.delete_all(REFS)
 
-    public_track_service.download_all(REF_ERROR)
+    # public_track_service.download_all(REF_ERROR)
     # public_track_service.download(260087)
 
     # public_track_service.print_to_excel_by_year(2024)
 
     # public_track_service.update_year(2024)
-    # public_track_service.update_all(REFS)
+    public_track_service.update_all(REF_ERROR)
     # public_track_service.download(259819)
 
     # print(public_track_service.read(259819))
@@ -33,7 +33,7 @@ def main():
 
     # public_track_service.print_to_excel_year(2024)
     # public_track_service.print_to_excel_all(REFS)
-    # public_track_service.print_to_excel_all([259819])
+    # public_track_service.print_to_excel_all([260008])
 
 
 # REFS = [260454, 260616]

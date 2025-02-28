@@ -81,7 +81,7 @@ class PublicTrackService:
             pdf = self.arrest_downloader.read_arrest(arrest)
             arrest_updated = self.arrestService.get_arrest_from_pdf(ref, pdf)
             self.arrest_downloader.move(arrest.get_path_to_pdf(), arrest_updated.get_path_to_pdf())
-            self.arrest_dao.replace(arrest_updated)
+            self.arrest_dao.update(arrest_updated)
             self.logger.info(f"arret {ref} updated")
         else:
             self.logger.warning(f"arret {ref} n'existe pas")
