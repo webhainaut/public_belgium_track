@@ -37,7 +37,7 @@ class Excel:
             self.logger.info("remlir a partir de {begin_line}".format(begin_line=begin_line))
         except FileNotFoundError:
             with pd.ExcelWriter(DEFAULT_PATH.format(file_name=file_name), engine='openpyxl', mode='w') as writer:
-                df.to_excel(writer, sheet_name=SHEET_NAME, index=False, freeze_panes=(1, 0))
+                df.to_excel(writer, sheet_name=SHEET_NAME, index=False, freeze_panes=(1, 1))
                 self.change_excel(df, writer)
 
     def change_excel(self, df, writer):

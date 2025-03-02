@@ -21,7 +21,7 @@ def main():
     # public_track_service.print_to_excel_by_year(2024)
 
     # public_track_service.update_year(2024)
-    public_track_service.update_all(REFS2)
+    # public_track_service.update_all(REFS2)
     # public_track_service.download(259819)
 
     # print(public_track_service.read(259819))
@@ -31,9 +31,9 @@ def main():
 
     # print(public_track_service.arrest_dao.search_refs_and(arrest_date=None))
 
-    # public_track_service.print_to_excel_year(2024)
+    public_track_service.print_to_excel_by_year(2024)
     # public_track_service.print_to_excel_all(REFS)
-    public_track_service.print_to_excel_all([258950])
+    # public_track_service.print_to_excel_all([258950])
 
 
 # REFS = [260454, 260616]

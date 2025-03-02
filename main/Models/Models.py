@@ -17,6 +17,8 @@ case_arrest_association = Table(
 DEFAULT_ARRESTS_DIRECTORY = "result/arrests/{langue}/ch_{chamber}/{date}"
 
 REF = 'Réf.'
+LANGUE = 'Langue'
+CHAMBER = 'Chambre'
 N_PAGES = 'Pages'
 ERRORS = 'Erreurs'
 ROLE_NUMBER = 'N° de Rôle'
@@ -44,11 +46,13 @@ class ArrestModel(BaseModel):
     intervenants = Column(String)
     path = Column(String)
 
-    procedures: Mapped[List["ProcedureModel"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
+    procedures: Mapped[List["ProcedureModel"]] = relationship(back_populates='arrest',
+                                                              cascade="all, delete, delete-orphan")
     rulings: Mapped[List["RulingModel"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
     keywords: Mapped[List["KeywordModel"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
 
-    cases: Mapped[List["CaseModel"]] = relationship(secondary=case_arrest_association, back_populates='arrests', cascade="all, delete")
+    cases: Mapped[List["CaseModel"]] = relationship(secondary=case_arrest_association, back_populates='arrests',
+                                                    cascade="all, delete")
     errors: Mapped[List["ErrorModel"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
 
     def get_path_to_pdf(self):
@@ -59,17 +63,19 @@ class ArrestModel(BaseModel):
         self.path = DEFAULT_ARRESTS_DIRECTORY.format(langue=self.language, chamber=self.chamber, date=directory)
 
     def as_dict(self):
-        dic = {REF: self.ref,
-               ERRORS: '\n'.join([error.message for error in self.errors]),
-               N_PAGES: self.pages,
-               ROLE_NUMBER: '\n'.join([case.numRole for case in self.cases]),
-               RECTIF: self.is_rectified.real,
-               CONTRACT_TYPE: self.contract_type,
-               ARREST_DATE: self.arrest_date,
-               ASK_PROCEDURE: ', '.join([pross.process for pross in self.procedures]),
-               RULING: ', '.join([rul.get_label() for rul in self.rulings])
-               }
-        return dic | self.get_key_labels()
+        dic = ({REF: self.ref,
+                LANGUE: self.language,
+                CHAMBER: self.chamber,
+                N_PAGES: self.pages,
+                ROLE_NUMBER: '\n'.join([case.numRole for case in self.cases]),
+                RECTIF: self.is_rectified.real,
+                CONTRACT_TYPE: self.contract_type,
+                ARREST_DATE: self.arrest_date,
+                ASK_PROCEDURE: ', '.join([pross.process for pross in self.procedures]),
+                RULING: ', '.join([rul.get_label() for rul in self.rulings])
+                } |
+               self.get_key_labels())
+        return dic | {ERRORS: '\n'.join([error.message for error in self.errors])}
 
     def get_key_labels(self):
         keywords = {}
