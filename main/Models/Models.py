@@ -14,7 +14,7 @@ case_arrest_association = Table(
     Column('arrest_id', Integer, ForeignKey('arrest.ref'))
 )
 
-DEFAULT_ARRESTS_DIRECTORY = "result/arrests/{langue}/ch_{chamber}/{date}"
+DEFAULT_ARRESTS_DIRECTORY = "result/arrests/{date}/{langue}/ch_{chamber}"
 
 REF = 'Réf.'
 LANGUE = 'Langue'
