@@ -11,7 +11,7 @@ ERRORS = 'Erreurs'
 ROLE_NUMBER = 'N° de Rôle'
 RECTIF = 'Rectifié'
 ARREST_DATE = 'Date de l\'arrêt'
-ASK_PROCEDURE = 'Demande de procédure'
+PROCEDURE = 'Procédure'
 RULING = 'Décision'
 KEYWORDS = 'Keywords'
 CONTRACT_TYPE = 'Type de contrat'
@@ -67,7 +67,7 @@ class ArrestModel(BaseModel):
                 RECTIF: self.is_rectified.real,
                 CONTRACT_TYPE: self.contract_type,
                 ARREST_DATE: self.arrest_date,
-                ASK_PROCEDURE: ', '.join([pross.process for pross in self.procedures]),
+                PROCEDURE: ', '.join([pross.process for pross in self.procedures]),
                 RULING: ', '.join([rul.get_label() for rul in self.rulings])
                 } |
                self.get_key_labels())

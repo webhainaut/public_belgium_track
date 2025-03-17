@@ -14,21 +14,6 @@ case_arrest_association = Table(
     Column('arrest_id', Integer, ForeignKey('arrest.ref'))
 )
 
-DEFAULT_ARRESTS_DIRECTORY = "result/arrests/{date}/{langue}/ch_{chamber}"
-
-REF = 'Réf.'
-LANGUE = 'Langue'
-CHAMBER = 'Chambre'
-N_PAGES = 'Pages'
-ERRORS = 'Erreurs'
-ROLE_NUMBER = 'N° de Rôle'
-RECTIF = 'Rectifié'
-ARREST_DATE = 'Date de l\'arrêt'
-ASK_PROCEDURE = 'Demande de procédure'
-RULING = 'Décision'
-KEYWORDS = 'Keywords'
-CONTRACT_TYPE = 'Type de contrat'
-
 
 class ArrestModelDao(BaseModelDao):
     __tablename__ = 'arrest'
@@ -55,39 +40,8 @@ class ArrestModelDao(BaseModelDao):
                                                        cascade="all, delete")
     errors: Mapped[List["ErrorModelDao"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
 
-
-    def set_path(self):
-        directory = self.arrest_date.strftime("%Y/%m") if self.arrest_date else "date_not_found"
-        self.path = DEFAULT_ARRESTS_DIRECTORY.format(langue=self.language, chamber=self.chamber, date=directory)
-
-    def as_dict(self):
-        dic = ({REF: self.ref,
-                LANGUE: self.language,
-                CHAMBER: self.chamber,
-                N_PAGES: self.pages,
-                ROLE_NUMBER: '\n'.join([case.numRole for case in self.cases]),
-                RECTIF: self.is_rectified.real,
-                CONTRACT_TYPE: self.contract_type,
-                ARREST_DATE: self.arrest_date,
-                ASK_PROCEDURE: ', '.join([pross.process for pross in self.procedures]),
-                RULING: ', '.join([rul.get_label() for rul in self.rulings])
-                } |
-               self.get_key_labels())
-        return dic | {ERRORS: '\n'.join([error.message for error in self.errors])}
-
-    def get_key_labels(self):
-        keywords = {}
-        for keyword in self.keywords:
-            if keyword.title not in keywords:
-                keywords[keyword.title] = []
-            keywords[keyword.title].append(keyword.word)
-        key_labels = {}
-        for title, words in keywords.items():
-            key_labels[title] = ', '.join(words)
-        return key_labels
-
     def __repr__(self):
-        return (f"<ArrestModel(ref={self.ref}, pages={self.pages}, "
+        return (f"<ArrestModelDao(ref={self.ref}, pages={self.pages}, "
                 f"contract_type={self.contract_type}, "
                 f"is_rectified={self.is_rectified}, arrest_date={self.arrest_date}, "
                 f"ask_procedures_count={len(self.procedures)}, "
@@ -102,7 +56,7 @@ class CaseModelDao(BaseModelDao):
     arrests: Mapped[List["ArrestModelDao"]] = relationship(secondary=case_arrest_association, back_populates='cases')
 
     def __repr__(self):
-        return f"<CaseModel(numRole={self.numRole})>"
+        return f"<CaseModelDao(numRole={self.numRole})>"
 
 
 class ProcedureModelDao(BaseModelDao):
@@ -117,7 +71,7 @@ class ProcedureModelDao(BaseModelDao):
     arrest: Mapped["ArrestModelDao"] = relationship(back_populates='procedures')
 
     def __repr__(self):
-        return (f"<ProcedureModel(id={self.id}, name='{self.process}', "
+        return (f"<ProcedureModelDao(id={self.id}, name='{self.process}', "
                 f"request_date={self.request_date}, decision_date={self.decision_date}, "
                 f"urgence={self.urgence}, arrest_ref={self.arrest_ref})>")
 
@@ -130,12 +84,8 @@ class RulingModelDao(BaseModelDao):
     arrest_ref: Mapped[int] = mapped_column(ForeignKey("arrest.ref"))
     arrest: Mapped["ArrestModelDao"] = relationship(back_populates='rulings')
 
-    def get_label(self) -> str:
-        surplus = " (rejet avec surplus)" if self.surplus else ""
-        return f"{self.ruling}" + surplus
-
     def __repr__(self):
-        return (f"<RulingModel(id={self.id}, name='{self.ruling}', "
+        return (f"<RulingModelDao(id={self.id}, name='{self.ruling}', "
                 f"surplus={self.surplus}, "
                 f"arrest_ref={self.arrest_ref})>")
 
@@ -149,7 +99,7 @@ class KeywordModelDao(BaseModelDao):
     arrest: Mapped["ArrestModelDao"] = relationship(back_populates='keywords')
 
     def __repr__(self):
-        return (f"<KeywordModel(id={self.id}, title='{self.title}', word='{self.word}', "
+        return (f"<KeywordModelDao(id={self.id}, title='{self.title}', word='{self.word}', "
                 f"arrest_ref={self.arrest_ref})>")
 
 
@@ -161,4 +111,4 @@ class ErrorModelDao(BaseModelDao):
     arrest: Mapped["ArrestModelDao"] = relationship(back_populates='errors')
 
     def __repr__(self):
-        return f"<ErrorModel(id={self.id}, message={self.message})>"
+        return f"<ErrorModelDao(id={self.id}, message={self.message})>"
