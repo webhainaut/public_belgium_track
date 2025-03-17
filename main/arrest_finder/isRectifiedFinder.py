@@ -1,6 +1,6 @@
 import re
 
-from main.arrest_finder.FinderAbstract import FinderAbstract
+from main.arrest_finder.finderAbstract import FinderAbstract
 
 
 class IsRectifiedFinder(FinderAbstract):

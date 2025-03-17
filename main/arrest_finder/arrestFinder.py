@@ -1,10 +1,10 @@
-from main.arrest_finder.ArrestDateFinder import ArrestDateFinder
-from main.arrest_finder.AskProcessFinder import AskProcessFinder
-from main.arrest_finder.ChamberFinder import ChamberFinder
-from main.arrest_finder.IsRectifiedFinder import IsRectifiedFinder
-from main.arrest_finder.KeywordsFinder import KeywordsFinder
-from main.arrest_finder.CasesFinder import CasesFinder
-from main.arrest_finder.RulingsFinder import RulingsFinder
+from main.arrest_finder.arrestDateFinder import ArrestDateFinder
+from main.arrest_finder.askProcessFinder import AskProcessFinder
+from main.arrest_finder.chamberFinder import ChamberFinder
+from main.arrest_finder.isRectifiedFinder import IsRectifiedFinder
+from main.arrest_finder.keywordsFinder import KeywordsFinder
+from main.arrest_finder.casesFinder import CasesFinder
+from main.arrest_finder.rulingsFinder import RulingsFinder
 
 
 class ArrestFinder:

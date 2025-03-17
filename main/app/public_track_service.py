@@ -4,10 +4,10 @@ from typing import List
 
 import pandas as pd
 
-from main.Models.ModelsDao import ArrestModelDao
+from main.models.models import ArrestModel
 from main.dao.arrest_dao import ArrestDao
-from main.io.arrest_downloader import ArrestDownloader
-from main.io.excel import Excel
+from main.io_exit.arrest_downloader import ArrestDownloader
+from main.io_exit.excel import Excel
 from main.services.arrest_service import ArrestService
 from main.services.webscraper import WebScraper
 
@@ -40,7 +40,7 @@ class PublicTrackService:
                 self.logger.error(f"{e}")
 
     def download_latest(self):
-        last_arrest: ArrestModelDao = self.arrest_dao.get_last()
+        last_arrest: ArrestModel = self.arrest_dao.get_last()
         if last_arrest is None:
             last_ref = 0
         else:
@@ -77,7 +77,7 @@ class PublicTrackService:
     def update(self, ref):
         """Met à jour l'arrest en fonction des règles définie dans arrestService (utile si les règles change)"""
         if self.arrest_dao.exist(ref):
-            arrest: ArrestModelDao = self.arrest_dao.get(ref)
+            arrest: ArrestModel = self.arrest_dao.get(ref)
             pdf = self.arrest_downloader.read_arrest(arrest)
             arrest_updated = self.arrestService.get_arrest_from_pdf(ref, pdf)
             self.arrest_downloader.move(arrest.get_path_to_pdf(), arrest_updated.get_path_to_pdf())
@@ -115,33 +115,33 @@ class PublicTrackService:
         self.update_all(refs)
 
     def read(self, ref: int):
-        arrest: ArrestModelDao = self.arrest_dao.get(ref)
+        arrest: ArrestModel = self.arrest_dao.get(ref)
         if arrest is None:
             return None
         return self.pd.DataFrame([arrest.as_dict()])
 
     def read_all(self, refs):
-        arrests: List[ArrestModelDao] = self.arrest_dao.get_all(refs)
+        arrests: List[ArrestModel] = self.arrest_dao.get_all(refs)
         return self.pd.DataFrame([arrest.as_dict() for arrest in arrests])
 
     def read_year(self, year):
-        arrests: List[ArrestModelDao] = self.arrest_dao.search_arrests_for_year(year)
+        arrests: List[ArrestModel] = self.arrest_dao.search_arrests_for_year(year)
         return self.pd.DataFrame([arrest.as_dict() for arrest in arrests])
 
     def add_to_excel(self, ref: int, file_name=None):
-        arrest: ArrestModelDao = self.arrest_dao.get(ref)
+        arrest: ArrestModel = self.arrest_dao.get(ref)
         # S'assurer que l'arrêt est bien chargé...
         arrest.as_dict()
         self.excel_writter.add([arrest], file_name)
 
     def print_to_excel_all(self, refs, file_name=None):
-        arrests: List[ArrestModelDao] = self.arrest_dao.get_all(refs)
+        arrests: List[ArrestModel] = self.arrest_dao.get_all(refs)
         # S'assurer que les arrêts est bien chargé...
         [arrest.as_dict() for arrest in arrests]
         self.excel_writter.add(arrests, file_name)
 
     def print_to_excel_by_year(self, year, file_name=None):
-        arrests: List[ArrestModelDao] = self.arrest_dao.search_arrests_for_year(year)
+        arrests: List[ArrestModel] = self.arrest_dao.search_arrests_for_year(year)
         # S'assurer que les arrêts est bien chargé...
         [arrest.as_dict() for arrest in arrests]
         self.excel_writter.add(arrests, file_name)

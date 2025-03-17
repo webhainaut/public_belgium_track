@@ -4,7 +4,7 @@ import shutil
 
 from pypdf import PdfReader
 
-from main.Models.ModelsDao import ArrestModelDao
+from main.models.models import ArrestModel
 
 
 class ArrestDownloader:
@@ -13,7 +13,7 @@ class ArrestDownloader:
         self.os = os
         self.logger = logging.getLogger(__name__)
 
-    def save_arrest(self, arrest: ArrestModelDao, pdf):
+    def save_arrest(self, arrest: ArrestModel, pdf):
         if arrest.path is None:
             arrest.set_path()
         if not self.os.path.exists(arrest.path):
@@ -22,7 +22,7 @@ class ArrestDownloader:
             file.write(pdf)
 
     @staticmethod
-    def read_arrest(arrest: ArrestModelDao):
+    def read_arrest(arrest: ArrestModel):
         if arrest.path is None:
             arrest.set_path()
         return PdfReader(arrest.get_path_to_pdf())

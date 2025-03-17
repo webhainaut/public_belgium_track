@@ -1,7 +1,7 @@
 from pypdf import PdfReader
 
-from main.arrest_finder.FinderAbstract import FinderAbstract
-from main.arrest_finder.FinderService import FinderService
+from main.arrest_finder.finderAbstract import FinderAbstract
+from main.arrest_finder.finderService import FinderService
 
 
 class KeywordsFinder(FinderAbstract, FinderService):

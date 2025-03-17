@@ -1,4 +1,4 @@
-from main.arrest_finder.KeywordsFinder import KeywordsFinder
+from main.arrest_finder.keywordsFinder import KeywordsFinder
 from tests.arrest_finder.testAbstract_Finder import TestAbstractFinder
 
 

@@ -2,7 +2,7 @@ import unittest
 from unittest import TestCase
 from unittest.mock import Mock
 
-from main.Exceptions.MissingSectionException import MissingSectionException
+from main.exceptions.missingSectionException import MissingSectionException
 from main.services.webscraper import WebScraper
 
 REF_LIST = [255878, 255882, 255896, 255905, 255906, 255907, 255908, 255909, 255954, 255962,

@@ -1,19 +1,15 @@
 import re
 
-from main.Exceptions.DataNotFoundException import DataNotFoundException
-from main.Models.ModelsDao import CaseModelDao
-from main.arrest_finder.FinderAbstract import FinderAbstract
-from main.arrest_finder.FinderService import FinderService
-from main.dao.arrest_dao import ArrestDao
-from main.dao.case_dao import CaseDao
+from main.models.models import CaseModel
+from main.exceptions.dataNotFoundException import DataNotFoundException
+from main.arrest_finder.finderAbstract import FinderAbstract
+from main.arrest_finder.finderService import FinderService
 
 
 class CasesFinder(FinderAbstract, FinderService):
 
     def __init__(self, service):
         super().__init__(service)
-        self.arrest_dao = ArrestDao()
-        self.case_dao = CaseDao()
 
     def _check_args_contains(self, args):
         self.args_contain_is_rectified(args)
@@ -30,14 +26,4 @@ class CasesFinder(FinderAbstract, FinderService):
                              roles_numbers_fiter]
         except IndexError:
             raise DataNotFoundException(data=self.service, ref=ref)
-        return self._get_cases(roles_numbers)
-
-    def _get_cases(self, roles_numbers):
-        cases = []
-        for roles_number in roles_numbers:
-            case = self.case_dao.get(roles_number)
-            if case is None:
-                cases.append(CaseModelDao(numRole=roles_number))
-            else:
-                cases.append(case)
-        return cases
+        return [CaseModel(num_role=num_role) for num_role in roles_numbers]

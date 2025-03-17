@@ -1,7 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 
-from main.Exceptions.DataNotFoundException import DataNotFoundException
+from main.exceptions.dataNotFoundException import DataNotFoundException
 
 
 class FinderAbstract(ABC):

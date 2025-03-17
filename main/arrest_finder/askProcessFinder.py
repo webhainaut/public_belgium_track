@@ -1,8 +1,8 @@
 import re
 from enum import Enum
 
-from main.arrest_finder.FinderAbstract import FinderAbstract
-from main.arrest_finder.FinderService import FinderService
+from main.arrest_finder.finderAbstract import FinderAbstract
+from main.arrest_finder.finderService import FinderService
 
 
 class AskProcessFinder(FinderAbstract, FinderService):

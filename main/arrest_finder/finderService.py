@@ -3,7 +3,7 @@ import re
 
 from pypdf import PdfReader
 
-from main.Exceptions.DataNotFoundException import DataNotFoundException
+from main.exceptions.dataNotFoundException import DataNotFoundException
 
 
 class FinderService:

@@ -1,6 +1,6 @@
 from typing import List
 
-from main.Models.ModelsDao import ArrestModelDao
+from main.models.models import ArrestModel
 from tests.dao.testAbstract_dao import TestAbstractDao
 
 
@@ -28,13 +28,13 @@ class TestArrestDao(TestAbstractDao):
         self.assertEqual([self.ref1, self.ref3], result)
 
     def test_get_arrest(self):
-        arrest_result: ArrestModelDao = self.arrestDao.get(self.ref1)
+        arrest_result: ArrestModel = self.arrestDao.get(self.ref1)
         self.assertEqual(self.ref1, arrest_result.ref)
         self.assertEqual(self.suspension, arrest_result.procedures[0].process)
         self.assertEqual(self.ref1, arrest_result.procedures[0].arrest_ref)
 
     def test_get_last(self):
-        arrest_result: ArrestModelDao = self.arrestDao.get_last()
+        arrest_result: ArrestModel = self.arrestDao.get_last()
         self.assertEqual(self.ref5, arrest_result.ref)
 
     def test_exist_arrest(self):
@@ -43,25 +43,25 @@ class TestArrestDao(TestAbstractDao):
 
     def test_update_arrest(self):
         new_pages = 7
-        arrest_result: ArrestModelDao = self.arrestDao.get(self.ref1)
+        arrest_result: ArrestModel = self.arrestDao.get(self.ref1)
         self.assertEqual(self.ref1, arrest_result.ref)
         self.assertEqual(self.arrest1_pages, arrest_result.pages)
         self.assertNotEqual(new_pages, arrest_result.pages)
 
-        arrest = ArrestModelDao(ref=self.ref1, language="fr", pages=new_pages, chamber="VII")
+        arrest = ArrestModel(ref=self.ref1, language="fr", pages=new_pages, chamber="VII")
         self.arrestDao.update(arrest)
-        arrest_result2: ArrestModelDao = self.arrestDao.get(self.ref1)
+        arrest_result2: ArrestModel = self.arrestDao.get(self.ref1)
         self.assertEqual(new_pages, arrest_result2.pages)
         self.assertEqual("VII", arrest_result2.chamber)
 
     def test_get_arrests(self):
-        arrest_results: List["ArrestModelDao"] = self.arrestDao.get_all([self.ref1, self.ref2])
+        arrest_results: List["ArrestModel"] = self.arrestDao.get_all([self.ref1, self.ref2])
         self.assertEqual(2, len(arrest_results))
         self.assertEqual(self.ref1, arrest_results[0].ref)
         self.assertEqual(self.ref2, arrest_results[1].ref)
 
     def test_get_arrests_last_year(self):
-        arrest_results: List["ArrestModelDao"] = self.arrestDao.search_arrests_for_year(2024)
+        arrest_results: List["ArrestModel"] = self.arrestDao.search_arrests_for_year(2024)
         self.assertEqual(2, len(arrest_results))
         self.assertEqual(self.ref2, arrest_results[0].ref)
         self.assertEqual(self.ref4, arrest_results[1].ref)

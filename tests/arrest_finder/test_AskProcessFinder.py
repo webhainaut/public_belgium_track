@@ -1,4 +1,4 @@
-from main.arrest_finder.AskProcessFinder import AskProcessFinder, Process
+from main.arrest_finder.askProcessFinder import AskProcessFinder, Process
 from tests.arrest_finder.testAbstract_Finder import TestAbstractFinder
 
 

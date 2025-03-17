@@ -15,13 +15,13 @@ def main():
 
     # public_track_service.arrest_dao.delete_all(REFS)
 
-    # public_track_service.download_all(REF_ERROR)
-    # public_track_service.download(260087)
+    # public_track_service.download_all(REFS)
+    # public_track_service.download(258561)
 
     # public_track_service.print_to_excel_by_year(2024)
 
     # public_track_service.update_year(2024)
-    # public_track_service.update_all(REFS2)
+    # public_track_service.update_all(REFS)
     # public_track_service.download(259819)
 
     # print(public_track_service.read(259819))
@@ -32,7 +32,7 @@ def main():
     # print(public_track_service.arrest_dao.search_refs_and(arrest_date=None))
 
     public_track_service.print_to_excel_by_year(2024)
-    # public_track_service.print_to_excel_all(REFS)
+    public_track_service.print_to_excel_all(REFS2)
     # public_track_service.print_to_excel_all([258950])
 
 
@@ -72,7 +72,7 @@ REFS = [259072, 258561, 261634, 260612, 260613, 260614, 260615, 260616, 259089, 
 REF_ERROR = [260087, 260073, 261074, 261563, 261536, 258950, 259419, 259905, 261872, 261871, 261869, 260825, 260824,
              258762, 260285, 259193, 258613, ]
 
-REFS2 = [258950]
+REFS2 = [259557, 259833, 259834]
 
 if __name__ == "__main__":
     start_time = datetime.now()

@@ -4,12 +4,12 @@ from sqlalchemy import Column, Integer, Table, ForeignKey, Date, String, Boolean
 from sqlalchemy.orm import relationship, Mapped, mapped_column, DeclarativeBase
 
 
-class BaseModel(DeclarativeBase):
+class BaseModelDao(DeclarativeBase):
     pass
 
 
 case_arrest_association = Table(
-    'case_arrest', BaseModel.metadata,
+    'case_arrest', BaseModelDao.metadata,
     Column('case_id', Integer, ForeignKey('case.numRole')),
     Column('arrest_id', Integer, ForeignKey('arrest.ref'))
 )
@@ -30,7 +30,7 @@ KEYWORDS = 'Keywords'
 CONTRACT_TYPE = 'Type de contrat'
 
 
-class ArrestModelDao(BaseModel):
+class ArrestModelDao(BaseModelDao):
     __tablename__ = 'arrest'
     ref: Mapped[int] = mapped_column(primary_key=True)
     pages = Column(Integer)
@@ -55,8 +55,6 @@ class ArrestModelDao(BaseModel):
                                                        cascade="all, delete")
     errors: Mapped[List["ErrorModelDao"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
 
-    def get_path_to_pdf(self):
-        return f"{self.path}/{self.ref}.pdf"
 
     def set_path(self):
         directory = self.arrest_date.strftime("%Y/%m") if self.arrest_date else "date_not_found"
@@ -97,7 +95,7 @@ class ArrestModelDao(BaseModel):
                 f"keywords_count={len(self.keywords)})>")
 
 
-class CaseModelDao(BaseModel):
+class CaseModelDao(BaseModelDao):
     __tablename__ = 'case'
     numRole = mapped_column(String, primary_key=True)
 
@@ -107,7 +105,7 @@ class CaseModelDao(BaseModel):
         return f"<CaseModel(numRole={self.numRole})>"
 
 
-class ProcedureModelDao(BaseModel):
+class ProcedureModelDao(BaseModelDao):
     __tablename__ = 'procedure'
     id: Mapped[int] = mapped_column(primary_key=True)
     process = mapped_column(String)
@@ -124,7 +122,7 @@ class ProcedureModelDao(BaseModel):
                 f"urgence={self.urgence}, arrest_ref={self.arrest_ref})>")
 
 
-class RulingModelDao(BaseModel):
+class RulingModelDao(BaseModelDao):
     __tablename__ = 'ruling'
     id: Mapped[int] = mapped_column(primary_key=True)
     ruling = Column(String)
@@ -142,7 +140,7 @@ class RulingModelDao(BaseModel):
                 f"arrest_ref={self.arrest_ref})>")
 
 
-class KeywordModelDao(BaseModel):
+class KeywordModelDao(BaseModelDao):
     __tablename__ = 'keyword'
     id: Mapped[int] = mapped_column(primary_key=True)
     title = mapped_column(String)
@@ -155,7 +153,7 @@ class KeywordModelDao(BaseModel):
                 f"arrest_ref={self.arrest_ref})>")
 
 
-class ErrorModelDao(BaseModel):
+class ErrorModelDao(BaseModelDao):
     __tablename__ = 'error'
     id: Mapped[int] = mapped_column(primary_key=True)
     message = mapped_column(String)

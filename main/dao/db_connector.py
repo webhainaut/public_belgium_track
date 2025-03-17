@@ -32,7 +32,6 @@ class DbConnector:
     def execute(self, func, refs=None, session=Session()):
         try:
             func(session)
-            print(session.info)
             session.commit()
         except Exception as e:
             session.rollback()

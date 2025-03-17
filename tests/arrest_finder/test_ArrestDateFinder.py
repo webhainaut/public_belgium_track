@@ -1,4 +1,4 @@
-from main.arrest_finder.ArrestDateFinder import ArrestDateFinder
+from main.arrest_finder.arrestDateFinder import ArrestDateFinder
 from tests.arrest_finder.testAbstract_Finder import TestAbstractFinder
 
 

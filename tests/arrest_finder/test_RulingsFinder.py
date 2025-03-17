@@ -1,4 +1,4 @@
-from main.arrest_finder.RulingsFinder import RulingsFinder, Ruling
+from main.arrest_finder.rulingsFinder import RulingsFinder, Ruling
 from tests.arrest_finder.testAbstract_Finder import TestAbstractFinder
 
 

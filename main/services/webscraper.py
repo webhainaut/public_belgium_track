@@ -4,7 +4,7 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-from main.Exceptions.MissingSectionException import MissingSectionException
+from main.exceptions.missingSectionException import MissingSectionException
 
 NEW_DIRECTORY = "result/arrest/new"
 FILES_PATH_DOWNLOAD = "result/arrest/{year}"

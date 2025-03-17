@@ -1,5 +1,5 @@
-from main.Exceptions.DataNotFoundException import DataNotFoundException
-from main.arrest_finder.FinderService import FinderService
+from main.exceptions.dataNotFoundException import DataNotFoundException
+from main.arrest_finder.finderService import FinderService
 from tests.arrest_finder.testAbstract_Finder import TestAbstractFinder
 
 

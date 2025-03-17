@@ -1,4 +1,4 @@
-from main.arrest_finder.CasesFinder import CasesFinder
+from main.arrest_finder.casesFinder import CasesFinder
 from tests.arrest_finder.testAbstract_Finder import TestAbstractFinder
 
 

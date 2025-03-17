@@ -1,4 +1,4 @@
-from main.arrest_finder.ChamberFinder import ChamberFinder
+from main.arrest_finder.chamberFinder import ChamberFinder
 from tests.arrest_finder.testAbstract_Finder import TestAbstractFinder
 
 

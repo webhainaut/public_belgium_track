@@ -4,10 +4,10 @@ from typing import List
 
 from pypdf import PdfReader
 
-from main.Exceptions.DataNotFoundException import DataNotFoundException
-from main.Models.ModelsDao import RulingModelDao
-from main.arrest_finder.FinderAbstract import FinderAbstract
-from main.arrest_finder.FinderService import FinderService
+from main.exceptions.dataNotFoundException import DataNotFoundException
+from main.models.modelsDao import RulingModelDao
+from main.arrest_finder.finderAbstract import FinderAbstract
+from main.arrest_finder.finderService import FinderService
 
 # surplus_delimiter = r"\s*pour\s*le\s*surplus"
 SURPLUS_DELIMITER = r"\s*p\s*o\s*u\s*r\s*l\s*e\s*s\s*u\s*r\s*p\s*l\s*u\s*s"

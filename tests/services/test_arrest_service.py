@@ -6,8 +6,8 @@ from unittest import TestCase
 
 from pypdf import PdfReader
 
-from main.Models.ModelsDao import ArrestModelDao, RulingModelDao, CaseModelDao, KeywordModelDao
-from main.arrest_finder.RulingsFinder import Ruling
+from main.models.modelsDao import ArrestModelDao, RulingModelDao, CaseModelDao, KeywordModelDao
+from main.arrest_finder.rulingsFinder import Ruling
 from main.services.arrest_service import ArrestService
 
 locale.setlocale(locale.LC_ALL, 'fr_BE.UTF-8')
@@ -42,8 +42,11 @@ class TestArrestService(TestCase):
         reader = self.read_pdf(ref)
         arrest = ArrestModelDao(ref=ref, is_rectified = False)
         rulings : List[RulingModelDao] = self.arrest_service.find_rulings(ref, reader, arrest)
-        self.assertEqual(Ruling.ORDERED.name, rulings[0].ruling)
+        self.assertEqual(2, len(rulings))
+        self.assertEqual(Ruling.ORDERED.label, rulings[1].ruling)
+        self.assertEqual(Ruling.REJECT.label, rulings[0].ruling)
         self.assertTrue(rulings[0].surplus)
+        self.assertFalse(rulings[1].surplus)
 
     def test_find_rulings_without_surplus(self):
         ref = "256835"
@@ -51,8 +54,8 @@ class TestArrestService(TestCase):
         arrest = ArrestModelDao(ref=ref, is_rectified = False)
         rulings : List[RulingModelDao] = self.arrest_service.find_rulings(ref, reader, arrest)
         self.assertEqual(2, len(rulings))
-        self.assertEqual(Ruling.ISSUES_DECREE.name, rulings[0].ruling)
-        self.assertEqual(Ruling.NO_LONGER_REQUIRED.name, rulings[1].ruling)
+        self.assertEqual(Ruling.ISSUES_DECREE.label, rulings[0].ruling)
+        self.assertEqual(Ruling.NO_LONGER_REQUIRED.label, rulings[1].ruling)
 
     def test_find_cases(self):
         ref = "255472"

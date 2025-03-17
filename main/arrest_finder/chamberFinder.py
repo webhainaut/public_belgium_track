@@ -1,8 +1,8 @@
 import re
 
-from main.Exceptions.DataNotFoundException import DataNotFoundException
-from main.arrest_finder.FinderAbstract import FinderAbstract
-from main.arrest_finder.FinderService import FinderService
+from main.exceptions.dataNotFoundException import DataNotFoundException
+from main.arrest_finder.finderAbstract import FinderAbstract
+from main.arrest_finder.finderService import FinderService
 
 
 class ChamberFinder(FinderAbstract, FinderService):
