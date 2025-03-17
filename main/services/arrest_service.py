@@ -2,7 +2,7 @@ import io
 
 from pypdf import PdfReader
 
-from main.Models.Models import ArrestModel, RulingModel, CaseModel, KeywordModel, ErrorModel
+from main.Models.ModelsDao import ArrestModelDao, RulingModelDao, CaseModelDao, KeywordModelDao, ErrorModelDao
 from main.arrest_finder.ArrestFinder import ArrestFinder
 
 
@@ -17,7 +17,7 @@ class ArrestService:
             pdf_reader = pdf
         else:
             pdf_reader = PdfReader(self.io.BytesIO(pdf))
-        arrest = ArrestModel(ref=ref)
+        arrest = ArrestModelDao(ref=ref)
         arrest.errors = []
         arrest.pages = self.find_n_pages(pdf_reader)
         arrest.language = self.find_language(ref, pdf_reader, arrest)
@@ -42,7 +42,7 @@ class ArrestService:
     @staticmethod
     def check_errors(e, arrest):
         if e is not None:
-            arrest.errors.append(ErrorModel(message=e))
+            arrest.errors.append(ErrorModelDao(message=e))
 
     @staticmethod
     def find_n_pages(reader):
@@ -86,7 +86,7 @@ class ArrestService:
         keywords_find, e = self.finder.keywordsFinder.find(ref, reader, {
             self.finder.keywordsFinder.KEYWORDS: keywords})
         for keyword in keywords_find:
-            keywords_model.append(KeywordModel(word=keyword, title=title))
+            keywords_model.append(KeywordModelDao(word=keyword, title=title))
         self.check_errors(e, arrest)
         return keywords_model
 

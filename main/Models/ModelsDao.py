@@ -30,7 +30,7 @@ KEYWORDS = 'Keywords'
 CONTRACT_TYPE = 'Type de contrat'
 
 
-class ArrestModel(BaseModel):
+class ArrestModelDao(BaseModel):
     __tablename__ = 'arrest'
     ref: Mapped[int] = mapped_column(primary_key=True)
     pages = Column(Integer)
@@ -46,14 +46,14 @@ class ArrestModel(BaseModel):
     intervenants = Column(String)
     path = Column(String)
 
-    procedures: Mapped[List["ProcedureModel"]] = relationship(back_populates='arrest',
-                                                              cascade="all, delete, delete-orphan")
-    rulings: Mapped[List["RulingModel"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
-    keywords: Mapped[List["KeywordModel"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
+    procedures: Mapped[List["ProcedureModelDao"]] = relationship(back_populates='arrest',
+                                                                 cascade="all, delete, delete-orphan")
+    rulings: Mapped[List["RulingModelDao"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
+    keywords: Mapped[List["KeywordModelDao"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
 
-    cases: Mapped[List["CaseModel"]] = relationship(secondary=case_arrest_association, back_populates='arrests',
-                                                    cascade="all, delete")
-    errors: Mapped[List["ErrorModel"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
+    cases: Mapped[List["CaseModelDao"]] = relationship(secondary=case_arrest_association, back_populates='arrests',
+                                                       cascade="all, delete")
+    errors: Mapped[List["ErrorModelDao"]] = relationship(back_populates='arrest', cascade="all, delete, delete-orphan")
 
     def get_path_to_pdf(self):
         return f"{self.path}/{self.ref}.pdf"
@@ -97,17 +97,17 @@ class ArrestModel(BaseModel):
                 f"keywords_count={len(self.keywords)})>")
 
 
-class CaseModel(BaseModel):
+class CaseModelDao(BaseModel):
     __tablename__ = 'case'
     numRole = mapped_column(String, primary_key=True)
 
-    arrests: Mapped[List["ArrestModel"]] = relationship(secondary=case_arrest_association, back_populates='cases')
+    arrests: Mapped[List["ArrestModelDao"]] = relationship(secondary=case_arrest_association, back_populates='cases')
 
     def __repr__(self):
         return f"<CaseModel(numRole={self.numRole})>"
 
 
-class ProcedureModel(BaseModel):
+class ProcedureModelDao(BaseModel):
     __tablename__ = 'procedure'
     id: Mapped[int] = mapped_column(primary_key=True)
     process = mapped_column(String)
@@ -116,7 +116,7 @@ class ProcedureModel(BaseModel):
     urgence = mapped_column(Boolean)
 
     arrest_ref: Mapped[int] = mapped_column(ForeignKey("arrest.ref"))
-    arrest: Mapped["ArrestModel"] = relationship(back_populates='procedures')
+    arrest: Mapped["ArrestModelDao"] = relationship(back_populates='procedures')
 
     def __repr__(self):
         return (f"<ProcedureModel(id={self.id}, name='{self.process}', "
@@ -124,13 +124,13 @@ class ProcedureModel(BaseModel):
                 f"urgence={self.urgence}, arrest_ref={self.arrest_ref})>")
 
 
-class RulingModel(BaseModel):
+class RulingModelDao(BaseModel):
     __tablename__ = 'ruling'
     id: Mapped[int] = mapped_column(primary_key=True)
     ruling = Column(String)
     surplus = mapped_column(Boolean)
     arrest_ref: Mapped[int] = mapped_column(ForeignKey("arrest.ref"))
-    arrest: Mapped["ArrestModel"] = relationship(back_populates='rulings')
+    arrest: Mapped["ArrestModelDao"] = relationship(back_populates='rulings')
 
     def get_label(self) -> str:
         surplus = " (rejet avec surplus)" if self.surplus else ""
@@ -142,25 +142,25 @@ class RulingModel(BaseModel):
                 f"arrest_ref={self.arrest_ref})>")
 
 
-class KeywordModel(BaseModel):
+class KeywordModelDao(BaseModel):
     __tablename__ = 'keyword'
     id: Mapped[int] = mapped_column(primary_key=True)
     title = mapped_column(String)
     word = mapped_column(String)
     arrest_ref: Mapped[int] = mapped_column(ForeignKey("arrest.ref"))
-    arrest: Mapped["ArrestModel"] = relationship(back_populates='keywords')
+    arrest: Mapped["ArrestModelDao"] = relationship(back_populates='keywords')
 
     def __repr__(self):
         return (f"<KeywordModel(id={self.id}, title='{self.title}', word='{self.word}', "
                 f"arrest_ref={self.arrest_ref})>")
 
 
-class ErrorModel(BaseModel):
+class ErrorModelDao(BaseModel):
     __tablename__ = 'error'
     id: Mapped[int] = mapped_column(primary_key=True)
     message = mapped_column(String)
     arrest_ref: Mapped[int] = mapped_column(ForeignKey("arrest.ref"))
-    arrest: Mapped["ArrestModel"] = relationship(back_populates='errors')
+    arrest: Mapped["ArrestModelDao"] = relationship(back_populates='errors')
 
     def __repr__(self):
         return f"<ErrorModel(id={self.id}, message={self.message})>"

@@ -1,4 +1,4 @@
-from main.Models.Models import BaseModel
+from main.Models.ModelsDao import BaseModel
 from main.dao.db_connector import DbConnector
 
 

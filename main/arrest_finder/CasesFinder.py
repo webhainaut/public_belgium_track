@@ -1,7 +1,7 @@
 import re
 
 from main.Exceptions.DataNotFoundException import DataNotFoundException
-from main.Models.Models import CaseModel
+from main.Models.ModelsDao import CaseModelDao
 from main.arrest_finder.FinderAbstract import FinderAbstract
 from main.arrest_finder.FinderService import FinderService
 from main.dao.arrest_dao import ArrestDao
@@ -37,7 +37,7 @@ class CasesFinder(FinderAbstract, FinderService):
         for roles_number in roles_numbers:
             case = self.case_dao.get(roles_number)
             if case is None:
-                cases.append(CaseModel(numRole=roles_number))
+                cases.append(CaseModelDao(numRole=roles_number))
             else:
                 cases.append(case)
         return cases

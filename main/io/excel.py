@@ -9,7 +9,7 @@ SHEET_NAME = 'result'
 
 DATE_STYLE = NamedStyle(name='date_style', number_format='DD/MM/YYYY')
 
-from main.Models.Models import ArrestModel, REF
+from main.Models.ModelsDao import ArrestModelDao, REF
 
 DEFAULT_PATH = "result/{file_name}.xlsx"
 DEFAULT_NAME = "result"
@@ -21,7 +21,7 @@ class Excel:
         self.logger = logging.getLogger(__name__)
         self.pd = pd
 
-    def add(self, arrests: List[ArrestModel], file_name=DEFAULT_NAME):
+    def add(self, arrests: List[ArrestModelDao], file_name=DEFAULT_NAME):
         if file_name is None:
             file_name = DEFAULT_NAME
         begin_line = self.get_last_line(file_name) + 1

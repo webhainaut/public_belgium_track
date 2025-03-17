@@ -1,6 +1,6 @@
 from sqlalchemy import select, inspect
 
-from main.Models.Models import CaseModel
+from main.Models.ModelsDao import CaseModelDao
 from main.dao.db_connector import DbConnector
 
 
@@ -11,6 +11,6 @@ class CaseDao:
         self.session = self.db_connector.Session()
 
     def get(self, roles_number: str):
-        stmt = select(CaseModel).where(CaseModel.numRole.is_(roles_number))
+        stmt = select(CaseModelDao).where(CaseModelDao.numRole.is_(roles_number))
         result = self.db_connector.read(lambda sess: sess.scalars(stmt).one(), session=self.session)
         return result

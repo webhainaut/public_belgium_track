@@ -5,7 +5,7 @@ from typing import List
 from pypdf import PdfReader
 
 from main.Exceptions.DataNotFoundException import DataNotFoundException
-from main.Models.Models import RulingModel
+from main.Models.ModelsDao import RulingModelDao
 from main.arrest_finder.FinderAbstract import FinderAbstract
 from main.arrest_finder.FinderService import FinderService
 
@@ -42,11 +42,11 @@ class RulingsFinder(FinderAbstract, FinderService):
         return True
 
     def search_ruling_in_text(self, text, ref):
-        rulings: List[RulingModel] = []
+        rulings: List[RulingModelDao] = []
         for item in Ruling:
             if item.is_in(text):
                 surplus = item.is_suplus(text)
-                rulings.append(RulingModel(ruling=item.label, surplus=surplus))
+                rulings.append(RulingModelDao(ruling=item.label, surplus=surplus))
         if len(rulings) < 1:
             raise DataNotFoundException(data=self.service, ref=ref)
         return rulings
